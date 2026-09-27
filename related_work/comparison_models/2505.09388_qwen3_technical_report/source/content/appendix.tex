@@ -1,0 +1,589 @@
+
+\section{Appendix}
+\label{sec:appendix}
+
+\subsection{Additional Evaluation Results}
+\subsubsection{Long-Context Ability}
+
+\begin{table}[h]
+\centering
+\caption{\textbf{Performance of Qwen3 Models on the RULER benchmark.}}
+\label{tab:ruler}
+\small
+\begin{tabular}{@{}cllllllll@{}}
+\toprule
+& \multirow{2}[2]{*}{\bf Model} & \multicolumn{6}{c}{\bf RULER}  \\ 
+\cmidrule{3-9}
+&  &  \bf Avg.  & \bf 4K   & \bf 8K    & \bf 16K  & \bf 32K  & \bf 64K   & \bf 128K  \\ \midrule
+& {Qwen2.5-7B-Instruct}  & 85.4 & 96.7 & 95.1 &93.7 & 89.4&82.3&55.1\\
+& {Qwen2.5-14B-Instruct} & 91.4 &97.7 &96.8 &95.9 &93.4 & 86.7 & 78.1 \\
+& {Qwen2.5-32B-Instruct} & 92.9 & 96.9 & 97.1 & 95.5 & 95.5 & 90.3 & 82.0  \\
+& {Qwen2.5-72B-Instruct} & \bf95.1 & \bf97.7 & \bf 97.2 & \bf 97.7 & \bf 96.5 & 93.0 & 88.4 \\
+\midrule
+\multirow{6}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & \textbf{Qwen3-4B} & 85.2 & 95.1 & 93.6 & 91.0 & 87.8 & 77.8 & 66.0 \\
+& \textbf{Qwen3-8B} & 89.1 & 96.3 & 96.0 & 91.8 & 91.2 & 82.1 & 77.4 \\
+& \textbf{Qwen3-14B} & 94.6 & 98.0 & 97.8 & 96.4 & 96.1 & 94.0 & 85.1 \\
+& \textbf{Qwen3-32B} & 93.7 & 98.4 & 96.0 & 96.2 & 94.4 & 91.8 & 85.6 \\
+& \textbf{Qwen3-30B-A3B} & 91.6 & 96.5 & 97.0 & 95.3 & 92.4 & 89.1 & 79.2 \\
+& \textbf{Qwen3-235B-A22B} & 95.0 & \bf97.7 & \bf97.2 & 96.4 & 95.1 & \bf93.3 & \bf90.6 \\
+\midrule
+\multirow{6}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & \textbf{Qwen3-4B} & 83.5 & 92.7 & 88.7 & 86.5 & 83.2 & 83.0 & 67.2 \\
+& \textbf{Qwen3-8B} & 84.4 & 94.7 & 94.4 & 86.1 & 80.8 & 78.3 & 72.0 \\
+& \textbf{Qwen3-14B} & 90.1 & 95.4 & 93.6 & 89.8 & 91.9 & 90.6 & 79.0 \\
+& \textbf{Qwen3-32B} & 91.0 & 94.7 & 93.7 & 91.6 & 92.5 & 90.0 & 83.5 \\
+& \textbf{Qwen3-30B-A3B} & 86.6 & 94.1 & 92.7 & 89.0 & 86.6 & 82.1 & 75.0 \\
+& \textbf{Qwen3-235B-A22B} & 92.2 & 95.1 & 94.8 & 93.0 & 92.3 & 92.0 & 86.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For evaluating long-context processing capabilities, we report the results on the RULER benchmark~\citep{hsieh2024ruler} in Table~\ref{tab:ruler}. To enable length extrapolation, we utilize YARN~\citep{yarn} with a \texttt{scaling\_factor=4}. In thinking mode, we set the thinking budget to 8192 tokens to mitigate overly verbose reasoning on the extremely long inputs.
+
+The results show that:
+\begin{enumerate}
+    \item In non-thinking mode, Qwen3 outperforms Qwen2.5 models of a similar size in long-context processing tasks.
+    \item In thinking mode, the model's performance slightly degrades. We hypothesize that the thinking content does not provide significant benefits for these retrieval tasks,  which do not rely on reasoning and may instead interfere with the retrieval process. We are committed to enhancing the long-context capability in the thinking mode in future versions.
+\end{enumerate}
+
+
+\subsubsection{Multilingual Ability}
+Table \ref{tab:scores_es}-\ref{tab:scores_th} presents the detailed benchmark scores across various languages, including Spanish, French, Portuguese, Italian, Arabic, Japanese, Korean, Indonesian, Russian, Vietnamese, German, and Thai. The results of these tables demonstrate that the Qwen3 series models achieve competitive performance across all evaluated benchmarks, showcasing their strong multilingual capabilities.
+
+To evaluate the performance of Qwen3 across a broader range of languages, we utilize Belebele~\citep{belebele}, a benchmark for natural language understanding. We conduct evaluations on 80 supported languages from the benchmark, excluding 42 unoptimized languages, as shown in Table \ref{tab:Belebele_language_codes} (organized by language family). The performance comparison between Qwen3 and other baseline models on the Belebele benchmark is presented in Table \ref{tab:belebele}. The results show that Qwen3 achieves comparable performance to similarly-sized Gemma models while outperforming Qwen2.5 significantly. 
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Spanish (es)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_es}
+
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccccc}
+\toprule
+ & Model & Multi-IF & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \textbf{80.1} & 70.0 & \textbf{96.4} & \textbf{88.7} & \textbf{90.0} & \underline{54.4} & \textbf{79.9} \\
+ & QwQ-32B & 70.0 & \underline{75.0} & 81.8 & 84.5 & 76.7 & 52.2 & 73.4 \\
+ & \textbf{Qwen3-235B-A22B} & 74.2 & \textbf{76.2} & 89.1 & \underline{86.7} & \underline{86.7} & \textbf{57.3} & \underline{78.4} \\
+ & \textbf{Qwen3-32B} & 74.7 & 68.8 & \underline{90.9} & 82.8 & 76.7 & 51.8 & 74.3 \\
+ & \textbf{Qwen3-30B-A3B} & 74.9 & 71.2 & 80.0 & 81.9 & 76.7 & 48.5 & 72.2 \\
+ & \textbf{Qwen3-14B} & \underline{76.2} & 67.5 & 83.6 & 81.1 & 73.3 & 50.3 & 72.0 \\
+ & \textbf{Qwen3-8B} & 74.1 & 70.0 & 78.2 & 79.2 & 70.0 & 43.7 & 69.2 \\
+ & \textbf{Qwen3-4B} & 69.1 & 68.8 & 72.7 & 75.7 & 66.7 & 42.3 & 65.9 \\
+ & \textbf{Qwen3-1.7B} & 56.0 & 55.0 & 72.7 & 64.5 & 46.7 & 30.2 & 54.2 \\
+ & \textbf{Qwen3-0.6B} & 39.2 & 42.5 & 54.5 & 48.8 & 13.3 & 14.3 & 35.4 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 67.5 & 52.5 & \textbf{89.1} & \underline{80.6} & 10.0 & 15.5 & 52.5 \\
+ & Gemma-3-27b-IT & \underline{73.5} & 57.5 & \textbf{89.1} & 77.7 & 30.0 & 22.4 & 58.4 \\
+ & Qwen2.5-72B-Instruct & 66.7 & 61.3 & 80.0 & 80.1 & 20.0 & 18.8 & 54.5 \\
+ & \textbf{Qwen3-235B-A22B} & 71.7 & \textbf{66.2} & 83.6 & \textbf{83.7} & \underline{33.3} & \textbf{29.5} & \textbf{61.3} \\
+ & \textbf{Qwen3-32B} & 72.1 & \underline{65.0} & 83.6 & 80.4 & 26.7 & 24.7 & 58.8 \\
+ & \textbf{Qwen3-30B-A3B} & 72.1 & 53.8 & \underline{85.5} & 78.3 & \underline{33.3} & \underline{25.0} & 58.0 \\
+ & \textbf{Qwen3-14B} & \textbf{76.2} & 63.7 & 78.2 & 77.4 & \textbf{40.0} & \underline{25.0} & \underline{60.1} \\
+ & \textbf{Qwen3-8B} & 73.1 & 50.0 & 80.0 & 73.7 & 16.7 & 21.3 & 52.5 \\
+ & \textbf{Qwen3-4B} & 65.8 & 50.0 & 60.0 & 68.3 & 13.3 & 17.3 & 45.8 \\
+ & \textbf{Qwen3-1.7B} & 47.9 & 43.8 & 50.9 & 54.3 & 10.0 & 11.6 & 36.4 \\
+ & \textbf{Qwen3-0.6B} & 35.5 & 37.5 & 43.6 & 39.5 & 3.3 & 5.8 & 27.5 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: French (fr)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_fr}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccccc}
+\toprule
+ & Model & Multi-IF & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \textbf{80.5} & 73.8 & \textbf{85.7} & \textbf{88.3} & 80.0 & \underline{52.8} & \underline{76.8} \\
+ & QwQ-32B & 72.4 & \underline{78.8} & 76.2 & 84.0 & 80.0 & 49.4 & 73.5 \\
+ & \textbf{Qwen3-235B-A22B} & 77.3 & \underline{78.8} & \textbf{85.7} & \underline{86.6} & \textbf{86.7} & \textbf{57.4} & \textbf{78.8} \\
+ & \textbf{Qwen3-32B} & 76.7 & \textbf{81.2} & 76.2 & 82.1 & \underline{83.3} & 47.1 & 74.4 \\
+ & \textbf{Qwen3-30B-A3B} & 75.2 & 67.5 & \underline{83.3} & 81.0 & 76.7 & 46.9 & 71.8 \\
+ & \textbf{Qwen3-14B} & \underline{77.6} & 71.2 & 73.8 & 80.4 & 73.3 & 44.2 & 70.1 \\
+ & \textbf{Qwen3-8B} & 73.8 & 66.2 & \textbf{85.7} & 77.9 & 70.0 & 45.3 & 69.8 \\
+ & \textbf{Qwen3-4B} & 71.3 & 63.7 & 71.4 & 74.5 & 66.7 & 40.2 & 64.6 \\
+ & \textbf{Qwen3-1.7B} & 52.6 & 56.2 & 54.8 & 64.8 & 60.0 & 28.7 & 52.8 \\
+ & \textbf{Qwen3-0.6B} & 36.1 & 48.8 & 47.6 & 48.4 & 6.7 & 14.0 & 33.6 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 67.8 & 56.2 & \underline{85.7} & \textbf{81.8} & 10.0 & 15.3 & 52.8 \\
+ & Gemma-3-27b-IT & 73.9 & 57.5 & 73.8 & 78.3 & 23.3 & 21.5 & 54.7 \\
+ & Qwen2.5-72B-Instruct & 72.1 & 55.0 & 81.0 & 80.2 & 26.7 & 15.7 & 55.1 \\
+ & \textbf{Qwen3-235B-A22B} & 73.2 & \textbf{65.0} & \textbf{88.1} & \underline{81.1} & \textbf{36.7} & \textbf{28.1} & \textbf{62.0} \\
+ & \textbf{Qwen3-32B} & \underline{75.8} & 60.0 & 73.8 & 79.5 & 30.0 & 23.0 & 57.0 \\
+ & \textbf{Qwen3-30B-A3B} & 75.6 & 52.5 & 69.0 & 77.9 & 26.7 & \underline{27.3} & 54.8 \\
+ & \textbf{Qwen3-14B} & \textbf{78.4} & \underline{63.7} & 73.8 & 75.1 & \underline{33.3} & 24.4 & \underline{58.1} \\
+ & \textbf{Qwen3-8B} & 71.9 & 52.5 & 71.4 & 71.7 & 20.0 & 21.4 & 51.5 \\
+ & \textbf{Qwen3-4B} & 64.2 & 47.5 & 61.9 & 67.6 & 20.0 & 19.2 & 46.7 \\
+ & \textbf{Qwen3-1.7B} & 46.1 & 43.8 & 64.3 & 53.2 & 3.3 & 11.6 & 37.0 \\
+ & \textbf{Qwen3-0.6B} & 32.8 & 35.0 & 38.1 & 39.4 & 6.7 & 4.6 & 26.1 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Portuguese (pt)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_pt}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccccc}
+\toprule
+ & Model & Multi-IF & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \textbf{80.5} & 73.8 & \textbf{83.9} & \textbf{88.9} & 73.3 & 52.2 & \underline{75.4} \\
+ & QwQ-32B & 70.5 & 70.0 & \underline{80.4} & 84.0 & 80.0 & 48.7 & 72.3 \\
+ & \textbf{Qwen3-235B-A22B} & 73.6 & \textbf{78.8} & 78.6 & \underline{86.2} & \textbf{86.7} & \textbf{58.3} & \textbf{77.0} \\
+ & \textbf{Qwen3-32B} & 74.1 & \underline{76.2} & 76.8 & 82.6 & 80.0 & \underline{52.4} & 73.7 \\
+ & \textbf{Qwen3-30B-A3B} & 76.1 & 71.2 & 71.4 & 81.0 & 76.7 & 49.3 & 71.0 \\
+ & \textbf{Qwen3-14B} & \underline{77.3} & 68.8 & 75.0 & 81.6 & \underline{83.3} & 46.7 & 72.1 \\
+ & \textbf{Qwen3-8B} & 73.9 & 67.5 & 75.0 & 78.6 & 56.7 & 44.8 & 66.1 \\
+ & \textbf{Qwen3-4B} & 70.6 & 62.5 & 71.4 & 75.1 & 73.3 & 44.2 & 66.2 \\
+ & \textbf{Qwen3-1.7B} & 55.6 & 60.0 & 53.6 & 64.6 & 46.7 & 28.2 & 51.4 \\
+ & \textbf{Qwen3-0.6B} & 38.7 & 33.8 & 42.9 & 47.5 & 10.0 & 12.7 & 30.9 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 66.8 & 57.5 & \underline{78.6} & 80.7 & 10.0 & 15.0 & 51.4 \\
+ & Gemma-3-27b-IT & \underline{72.9} & 55.0 & 75.0 & 77.1 & \textbf{33.3} & 20.9 & 55.7 \\
+ & Qwen2.5-72B-Instruct & 68.8 & 55.0 & 71.4 & \underline{82.2} & 23.3 & 11.3 & 52.0 \\
+ & \textbf{Qwen3-235B-A22B} & 72.5 & \textbf{67.5} & \textbf{82.1} & \textbf{83.5} & \textbf{33.3} & \textbf{28.3} & \textbf{61.2} \\
+ & \textbf{Qwen3-32B} & 71.1 & \underline{61.3} & 73.2 & 80.6 & \underline{30.0} & 23.9 & \underline{56.7} \\
+ & \textbf{Qwen3-30B-A3B} & 72.3 & 47.5 & 67.9 & 77.8 & 26.7 & 24.0 & 52.7 \\
+ & \textbf{Qwen3-14B} & \textbf{75.5} & 58.8 & 75.0 & 76.5 & 26.7 & \underline{25.8} & 56.4 \\
+ & \textbf{Qwen3-8B} & 71.9 & 56.2 & 71.4 & 72.9 & 20.0 & 19.7 & 52.0 \\
+ & \textbf{Qwen3-4B} & 66.1 & 50.0 & 73.2 & 66.7 & 10.0 & 18.1 & 47.4 \\
+ & \textbf{Qwen3-1.7B} & 49.5 & 33.8 & 39.3 & 52.9 & 6.7 & 12.8 & 32.5 \\
+ & \textbf{Qwen3-0.6B} & 36.6 & 37.5 & 42.9 & 37.5 & 3.3 & 5.7 & 27.2 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Italian (it)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_it}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clcccccc}
+\toprule
+ & Model & Multi-IF & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \textbf{80.9} & \textbf{100.0} & \textbf{87.2} & \textbf{90.0} & \underline{54.1} & \textbf{82.4} \\
+ & QwQ-32B & 71.2 & \underline{96.4} & 84.9 & 76.7 & 49.3 & 75.7 \\
+ & \textbf{Qwen3-235B-A22B} & 73.7 & \underline{96.4} & \underline{85.7} & \underline{80.0} & \textbf{57.4} & \underline{78.6} \\
+ & \textbf{Qwen3-32B} & 76.6 & 90.9 & 81.6 & \underline{80.0} & 49.7 & 75.8 \\
+ & \textbf{Qwen3-30B-A3B} & 75.9 & 94.5 & 81.9 & \underline{80.0} & 48.1 & 76.1 \\
+ & \textbf{Qwen3-14B} & \underline{79.0} & 94.5 & 80.2 & 70.0 & 47.0 & 74.1 \\
+ & \textbf{Qwen3-8B} & 74.6 & 89.1 & 77.5 & 76.7 & 46.1 & 72.8 \\
+ & \textbf{Qwen3-4B} & 69.8 & 83.6 & 74.4 & 76.7 & 44.5 & 69.8 \\
+ & \textbf{Qwen3-1.7B} & 54.6 & 74.5 & 64.2 & 53.3 & 29.6 & 55.2 \\
+ & \textbf{Qwen3-0.6B} & 37.8 & 45.5 & 45.9 & 6.7 & 13.3 & 29.8 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 67.6 & \textbf{98.2} & \underline{80.7} & 13.3 & 15.2 & 55.0 \\
+ & Gemma-3-27b-IT & \underline{74.6} & 90.9 & 78.4 & 23.3 & 20.5 & 57.5 \\
+ & Qwen2.5-72B-Instruct & 67.2 & \underline{94.5} & \underline{80.7} & 16.7 & 16.7 & 55.2 \\
+ & \textbf{Qwen3-235B-A22B} & 72.9 & 92.7 & \textbf{82.6} & \textbf{33.3} & \textbf{28.6} & \textbf{62.0} \\
+ & \textbf{Qwen3-32B} & 71.4 & 92.7 & 79.5 & \underline{30.0} & 23.0 & 59.3 \\
+ & \textbf{Qwen3-30B-A3B} & 73.9 & 87.3 & 77.7 & \textbf{33.3} & 24.8 & \underline{59.4} \\
+ & \textbf{Qwen3-14B} & \textbf{75.8} & 89.1 & 75.7 & 26.7 & \underline{27.6} & 59.0 \\
+ & \textbf{Qwen3-8B} & 72.1 & 85.5 & 72.9 & 13.3 & 23.8 & 53.5 \\
+ & \textbf{Qwen3-4B} & 63.0 & 78.2 & 67.8 & 23.3 & 19.3 & 50.3 \\
+ & \textbf{Qwen3-1.7B} & 46.1 & 70.9 & 53.4 & 6.7 & 11.9 & 37.8 \\
+ & \textbf{Qwen3-0.6B} & 35.1 & 43.6 & 39.0 & 0.0 & 4.5 & 24.4 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Arabic (ar)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_ar}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clcccccc}
+\toprule
+ & Model & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \underline{75.0} & \textbf{89.3} & \textbf{87.8} & 76.7 & \underline{52.6} & \textbf{76.3} \\
+ & QwQ-32B & \underline{75.0} & 67.9 & 81.8 & 80.0 & 41.3 & 69.2 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{80.0} & 71.4 & \underline{83.6} & 76.7 & \textbf{53.7} & \underline{73.1} \\
+ & \textbf{Qwen3-32B} & 66.2 & \underline{73.2} & 80.1 & \textbf{86.7} & 47.0 & 70.6 \\
+ & \textbf{Qwen3-30B-A3B} & 66.2 & 66.1 & 77.2 & \underline{83.3} & 47.3 & 68.0 \\
+ & \textbf{Qwen3-14B} & 71.2 & 67.9 & 77.4 & \underline{83.3} & 46.6 & 69.3 \\
+ & \textbf{Qwen3-8B} & 65.0 & 67.9 & 74.4 & 76.7 & 44.9 & 65.8 \\
+ & \textbf{Qwen3-4B} & 62.5 & 55.4 & 67.7 & 66.7 & 41.2 & 58.7 \\
+ & \textbf{Qwen3-1.7B} & 55.0 & 44.6 & 53.2 & 36.7 & 25.8 & 43.1 \\
+ & \textbf{Qwen3-0.6B} & 40.0 & 41.1 & 38.9 & 10.0 & 11.7 & 28.3 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 51.2 & \textbf{78.6} & \textbf{80.9} & 13.3 & 12.9 & 47.4 \\
+ & Gemma-3-27b-IT & \underline{56.2} & 62.5 & 74.4 & 26.7 & 22.8 & 48.5 \\
+ & Qwen2.5-72B-Instruct & \underline{56.2} & 66.1 & 77.2 & 6.7 & 14.7 & 44.2 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{66.2} & 67.9 & \underline{79.5} & \textbf{40.0} & \textbf{28.2} & \textbf{56.4} \\
+ & \textbf{Qwen3-32B} & 55.0 & \underline{69.6} & 75.7 & 23.3 & \underline{25.4} & \underline{49.8} \\
+ & \textbf{Qwen3-30B-A3B} & 48.8 & 64.3 & 71.6 & \underline{30.0} & 22.6 & 47.5 \\
+ & \textbf{Qwen3-14B} & 52.5 & 60.7 & 69.5 & 23.3 & 23.5 & 45.9 \\
+ & \textbf{Qwen3-8B} & 45.0 & 58.9 & 64.6 & 13.3 & 16.4 & 39.6 \\
+ & \textbf{Qwen3-4B} & 52.5 & 42.9 & 56.7 & 13.3 & 15.3 & 36.1 \\
+ & \textbf{Qwen3-1.7B} & 31.2 & 37.5 & 43.6 & 3.3 & 9.4 & 25.0 \\
+ & \textbf{Qwen3-0.6B} & 40.0 & 39.3 & 35.4 & 0.0 & 3.8 & 23.7 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Japanese (ja)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_ja}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clcccccc}
+\toprule
+ & Model & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & 72.5 & 74.5 & \underline{83.8} & \textbf{83.3} & \textbf{55.4} & \underline{73.9} \\
+ & QwQ-32B & \underline{73.8} & 86.3 & 82.3 & 53.3 & 39.9 & 67.1 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{75.0} & \textbf{94.1} & \textbf{84.8} & 73.3 & \underline{52.7} & \textbf{76.0} \\
+ & \textbf{Qwen3-32B} & 70.0 & \underline{90.2} & 80.2 & \underline{76.7} & 47.7 & 73.0 \\
+ & \textbf{Qwen3-30B-A3B} & 66.2 & 88.2 & 79.9 & 73.3 & 47.4 & 71.0 \\
+ & \textbf{Qwen3-14B} & 68.8 & 88.2 & 79.4 & 66.7 & 45.7 & 69.8 \\
+ & \textbf{Qwen3-8B} & 71.2 & 86.3 & 74.9 & 73.3 & 44.7 & 70.1 \\
+ & \textbf{Qwen3-4B} & 63.7 & 80.4 & 72.5 & 53.3 & 40.7 & 62.1 \\
+ & \textbf{Qwen3-1.7B} & 53.8 & 74.5 & 61.8 & 36.7 & 28.5 & 51.1 \\
+ & \textbf{Qwen3-0.6B} & 47.5 & 47.1 & 45.1 & 13.3 & 14.5 & 33.5 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 60.0 & \underline{92.2} & \textbf{81.9} & 10.0 & 12.5 & 51.3 \\
+ & Gemma-3-27b-IT & \underline{66.2} & 86.3 & 76.5 & 20.0 & 17.3 & 53.3 \\
+ & Qwen2.5-72B-Instruct & 55.0 & \textbf{94.1} & 77.7 & 16.7 & 17.7 & 52.2 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{67.5} & \underline{92.2} & \underline{80.9} & 26.7 & \textbf{26.9} & \textbf{58.8} \\
+ & \textbf{Qwen3-32B} & 58.8 & \underline{92.2} & 78.0 & 20.0 & 20.5 & \underline{53.9} \\
+ & \textbf{Qwen3-30B-A3B} & 51.2 & 82.4 & 74.9 & \underline{30.0} & \underline{20.6} & 51.8 \\
+ & \textbf{Qwen3-14B} & 55.0 & 84.3 & 73.8 & \textbf{33.3} & 19.8 & 53.2 \\
+ & \textbf{Qwen3-8B} & 47.5 & 82.4 & 69.9 & 20.0 & 18.5 & 47.7 \\
+ & \textbf{Qwen3-4B} & 46.2 & 76.5 & 64.8 & 13.3 & 15.1 & 43.2 \\
+ & \textbf{Qwen3-1.7B} & 40.0 & 68.6 & 46.3 & 3.3 & 11.6 & 34.0 \\
+ & \textbf{Qwen3-0.6B} & 37.5 & 37.3 & 37.9 & 3.3 & 3.7 & 23.9 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Korean (ko)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_ko}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clcccccc}
+\toprule
+ & Model & MLogiQA & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \underline{75.0} & \textbf{88.0} & \textbf{85.9} & \underline{76.7} & \underline{50.0} & \textbf{75.1} \\
+ & QwQ-32B & \textbf{76.2} & 72.0 & 81.8 & 60.0 & 40.0 & 66.0 \\
+ & \textbf{Qwen3-235B-A22B} & 71.2 & \underline{80.0} & \underline{84.7} & \textbf{80.0} & \textbf{55.7} & \underline{74.3} \\
+ & \textbf{Qwen3-32B} & 71.2 & 74.0 & 79.2 & \textbf{80.0} & 48.5 & 70.6 \\
+ & \textbf{Qwen3-30B-A3B} & 68.8 & 72.0 & 78.6 & \underline{76.7} & 46.6 & 68.5 \\
+ & \textbf{Qwen3-14B} & 67.5 & 74.0 & 79.6 & \underline{76.7} & 46.0 & 68.8 \\
+ & \textbf{Qwen3-8B} & 60.0 & \underline{80.0} & 74.7 & \underline{76.7} & 42.3 & 66.7 \\
+ & \textbf{Qwen3-4B} & 66.2 & 74.0 & 68.8 & 70.0 & 40.6 & 63.9 \\
+ & \textbf{Qwen3-1.7B} & 53.8 & 66.0 & 57.8 & 43.3 & 25.2 & 49.2 \\
+ & \textbf{Qwen3-0.6B} & 33.8 & 52.0 & 41.5 & 13.3 & 11.8 & 30.5 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & \textbf{63.7} & \textbf{80.0} & \textbf{80.5} & 13.3 & 12.9 & 50.1 \\
+ & Gemma-3-27b-IT & 58.8 & \underline{76.0} & 75.9 & 20.0 & 18.3 & 49.8 \\
+ & Qwen2.5-72B-Instruct & 58.8 & 68.0 & 76.7 & 6.7 & 17.7 & 45.6 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{63.7} & \underline{76.0} & \underline{79.8} & \textbf{33.3} & \textbf{27.9} & \textbf{56.1} \\
+ & \textbf{Qwen3-32B} & \underline{60.0} & 74.0 & 77.2 & \underline{26.7} & \underline{21.2} & \underline{51.8} \\
+ & \textbf{Qwen3-30B-A3B} & 52.5 & 72.0 & 72.5 & 16.7 & 20.7 & 46.9 \\
+ & \textbf{Qwen3-14B} & 52.5 & 68.0 & 73.3 & 20.0 & 18.7 & 46.5 \\
+ & \textbf{Qwen3-8B} & 52.5 & \underline{76.0} & 66.5 & 23.3 & 16.3 & 46.9 \\
+ & \textbf{Qwen3-4B} & 46.2 & 74.0 & 59.9 & 13.3 & 16.6 & 42.0 \\
+ & \textbf{Qwen3-1.7B} & 48.8 & 58.0 & 46.0 & 6.7 & 9.0 & 33.7 \\
+ & \textbf{Qwen3-0.6B} & 40.0 & 52.0 & 36.9 & 0.0 & 5.5 & 26.9 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Indonesian (id)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_id}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccc}
+\toprule
+ & Model & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \underline{80.0} & \underline{86.3} & \textbf{83.3} & \underline{51.3} & \textbf{75.2} \\
+ & QwQ-32B & 76.4 & 83.7 & 73.3 & 47.3 & 70.2 \\
+ & \textbf{Qwen3-235B-A22B} & \underline{80.0} & \textbf{87.2} & \underline{80.0} & \textbf{53.5} & \textbf{75.2} \\
+ & \textbf{Qwen3-32B} & \underline{80.0} & 82.0 & 76.7 & 45.6 & 71.1 \\
+ & \textbf{Qwen3-30B-A3B} & \textbf{81.8} & 80.4 & \underline{80.0} & 44.9 & \underline{71.8} \\
+ & \textbf{Qwen3-14B} & 78.2 & 79.6 & 70.0 & 45.3 & 68.3 \\
+ & \textbf{Qwen3-8B} & 72.7 & 77.7 & 70.0 & 43.8 & 66.0 \\
+ & \textbf{Qwen3-4B} & 70.9 & 72.3 & 66.7 & 41.2 & 62.8 \\
+ & \textbf{Qwen3-1.7B} & 63.6 & 61.2 & 36.7 & 26.8 & 47.1 \\
+ & \textbf{Qwen3-0.6B} & 36.4 & 46.6 & 10.0 & 12.6 & 26.4 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & \underline{80.0} & \underline{81.1} & 10.0 & 14.7 & 46.4 \\
+ & Gemma-3-27b-IT & 76.4 & 75.9 & 13.3 & 22.6 & 47.0 \\
+ & Qwen2.5-72B-Instruct & 74.5 & 78.8 & 10.0 & 16.6 & 45.0 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{81.8} & \textbf{81.9} & \textbf{33.3} & \textbf{27.5} & \textbf{56.1} \\
+ & \textbf{Qwen3-32B} & \textbf{81.8} & 77.2 & 23.3 & 24.3 & \underline{51.6} \\
+ & \textbf{Qwen3-30B-A3B} & 70.9 & 76.4 & \underline{30.0} & \underline{25.9} & 50.8 \\
+ & \textbf{Qwen3-14B} & 70.9 & 74.1 & 26.7 & 24.6 & 49.1 \\
+ & \textbf{Qwen3-8B} & 78.2 & 69.6 & 20.0 & 21.6 & 47.4 \\
+ & \textbf{Qwen3-4B} & 67.3 & 66.5 & 13.3 & 19.0 & 41.5 \\
+ & \textbf{Qwen3-1.7B} & 52.7 & 49.0 & 3.3 & 10.8 & 29.0 \\
+ & \textbf{Qwen3-0.6B} & 52.7 & 40.0 & 3.3 & 5.1 & 25.3 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Russian (ru)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_ru}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccc}
+\toprule
+ & Model & Multi-IF & INCLUDE & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \textbf{68.1} & \textbf{80.4} & 70.0 & \underline{52.3} & \underline{67.7} \\
+ & QwQ-32B & 61.2 & 73.2 & \underline{76.7} & 43.6 & 63.7 \\
+ & \textbf{Qwen3-235B-A22B} & 62.2 & \textbf{80.4} & \textbf{80.0} & \textbf{53.1} & \textbf{68.9} \\
+ & \textbf{Qwen3-32B} & 62.5 & 73.2 & 63.3 & 46.5 & 61.4 \\
+ & \textbf{Qwen3-30B-A3B} & 60.7 & \underline{76.8} & 73.3 & 45.4 & 64.0 \\
+ & \textbf{Qwen3-14B} & \underline{63.6} & \textbf{80.4} & 66.7 & 46.4 & 64.3 \\
+ & \textbf{Qwen3-8B} & 62.9 & 69.6 & 63.3 & 37.7 & 58.4 \\
+ & \textbf{Qwen3-4B} & 52.8 & 69.6 & 56.7 & 36.6 & 53.9 \\
+ & \textbf{Qwen3-1.7B} & 37.8 & 46.4 & 20.0 & 22.8 & 31.8 \\
+ & \textbf{Qwen3-0.6B} & 26.4 & 46.4 & 3.3 & 7.0 & 20.8 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 52.0 & \textbf{80.4} & 20.0 & 13.7 & 41.5 \\
+ & Gemma-3-27b-IT & 57.3 & 71.4 & 23.3 & 21.6 & 43.4 \\
+ & Qwen2.5-72B-Instruct & 54.1 & 67.9 & 20.0 & 13.3 & 38.8 \\
+ & \textbf{Qwen3-235B-A22B} & 56.7 & \underline{75.0} & \textbf{40.0} & \textbf{26.1} & \textbf{49.4} \\
+ & \textbf{Qwen3-32B} & 58.6 & 71.4 & \underline{30.0} & 23.3 & \underline{45.8} \\
+ & \textbf{Qwen3-30B-A3B} & 58.0 & 73.2 & \underline{30.0} & 21.1 & 45.6 \\
+ & \textbf{Qwen3-14B} & \textbf{60.3} & 71.4 & 26.7 & \underline{24.2} & 45.6 \\
+ & \textbf{Qwen3-8B} & \underline{59.3} & 58.9 & 20.0 & 22.8 & 40.2 \\
+ & \textbf{Qwen3-4B} & 46.1 & 58.9 & 13.3 & 17.8 & 34.0 \\
+ & \textbf{Qwen3-1.7B} & 34.8 & 41.1 & 3.3 & 13.2 & 23.1 \\
+ & \textbf{Qwen3-0.6B} & 25.5 & 46.4 & 0.0 & 5.8 & 19.4 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Vietnamese (vi)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_vi}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccc}
+\toprule
+ & Model & MLogiQA & INCLUDE & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \underline{72.5} & \textbf{89.1} & 70.0 & \underline{52.1} & \underline{70.9} \\
+ & QwQ-32B & 71.2 & 69.1 & 70.0 & 49.2 & 64.9 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{75.0} & \underline{87.3} & \textbf{83.3} & \textbf{55.1} & \textbf{75.2} \\
+ & \textbf{Qwen3-32B} & 67.5 & 81.8 & \textbf{83.3} & 44.0 & 69.2 \\
+ & \textbf{Qwen3-30B-A3B} & 68.8 & 78.2 & \underline{76.7} & 46.1 & 67.4 \\
+ & \textbf{Qwen3-14B} & \underline{72.5} & 72.7 & 73.3 & 45.8 & 66.1 \\
+ & \textbf{Qwen3-8B} & 65.0 & 72.7 & 73.3 & 42.9 & 63.5 \\
+ & \textbf{Qwen3-4B} & 68.8 & 63.6 & 60.0 & 42.2 & 58.6 \\
+ & \textbf{Qwen3-1.7B} & 52.5 & 61.8 & 30.0 & 26.9 & 42.8 \\
+ & \textbf{Qwen3-0.6B} & 33.8 & 38.2 & 6.7 & 9.8 & 22.1 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 57.5 & \underline{81.8} & 10.0 & 13.0 & 40.6 \\
+ & Gemma-3-27b-IT & 52.5 & 74.5 & \underline{33.3} & 20.6 & 45.2 \\
+ & Qwen2.5-72B-Instruct & 61.3 & 72.7 & 26.7 & 18.6 & 44.8 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{70.0} & \textbf{83.6} & \textbf{36.7} & \textbf{27.1} & \textbf{54.4} \\
+ & \textbf{Qwen3-32B} & 60.0 & \underline{81.8} & 23.3 & 21.8 & \underline{46.7} \\
+ & \textbf{Qwen3-30B-A3B} & 52.5 & \underline{81.8} & 20.0 & \underline{24.7} & 44.8 \\
+ & \textbf{Qwen3-14B} & \underline{63.7} & 67.3 & 20.0 & 21.6 & 43.2 \\
+ & \textbf{Qwen3-8B} & 48.8 & 65.5 & 20.0 & 19.1 & 38.4 \\
+ & \textbf{Qwen3-4B} & 48.8 & 65.5 & 20.0 & 19.0 & 38.3 \\
+ & \textbf{Qwen3-1.7B} & 36.2 & 60.0 & 3.3 & 10.9 & 27.6 \\
+ & \textbf{Qwen3-0.6B} & 30.0 & 36.4 & 3.3 & 3.9 & 18.4 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: German (de)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_de}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clccccc}
+\toprule
+ & Model & INCLUDE & MMMLU & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & 50.0 & \underline{85.6} & \textbf{86.7} & \underline{53.8} & 69.0 \\
+ & QwQ-32B & 57.1 & 83.8 & 76.7 & 51.0 & 67.2 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{71.4} & \textbf{86.0} & \underline{83.3} & \textbf{55.4} & \textbf{74.0} \\
+ & \textbf{Qwen3-32B} & \underline{64.3} & 81.9 & \textbf{86.7} & 48.1 & \underline{70.2} \\
+ & \textbf{Qwen3-30B-A3B} & \underline{64.3} & 81.9 & 80.0 & 46.6 & 68.2 \\
+ & \textbf{Qwen3-14B} & 57.1 & 80.9 & 70.0 & 48.1 & 64.0 \\
+ & \textbf{Qwen3-8B} & \underline{64.3} & 78.1 & 66.7 & 43.6 & 63.2 \\
+ & \textbf{Qwen3-4B} & 57.1 & 74.0 & 73.3 & 43.1 & 61.9 \\
+ & \textbf{Qwen3-1.7B} & \underline{64.3} & 63.4 & 36.7 & 26.8 & 47.8 \\
+ & \textbf{Qwen3-0.6B} & 57.1 & 47.6 & 10.0 & 13.7 & 32.1 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 57.1 & \underline{80.4} & 10.0 & 13.5 & 40.2 \\
+ & Gemma-3-27b-IT & 57.1 & 76.1 & 26.7 & 20.2 & 45.0 \\
+ & Qwen2.5-72B-Instruct & \underline{64.3} & 79.9 & 16.7 & 19.3 & 45.0 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{71.4} & \textbf{81.7} & \textbf{40.0} & \textbf{25.9} & \textbf{54.8} \\
+ & \textbf{Qwen3-32B} & 57.1 & 77.2 & \underline{30.0} & 21.9 & 46.6 \\
+ & \textbf{Qwen3-30B-A3B} & 57.1 & 77.7 & 23.3 & \underline{25.2} & 45.8 \\
+ & \textbf{Qwen3-14B} & 57.1 & 76.0 & \underline{30.0} & 24.5 & \underline{46.9} \\
+ & \textbf{Qwen3-8B} & \underline{64.3} & 70.8 & 20.0 & 19.9 & 43.8 \\
+ & \textbf{Qwen3-4B} & \underline{64.3} & 66.0 & 26.7 & 16.4 & 43.4 \\
+ & \textbf{Qwen3-1.7B} & 42.9 & 53.2 & 10.0 & 10.6 & 29.2 \\
+ & \textbf{Qwen3-0.6B} & 42.9 & 37.8 & 3.3 & 5.7 & 22.4 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Benchmark scores for language: Thai (th)}. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}
+\label{tab:scores_th}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{clcccc}
+\toprule
+ & Model & MLogiQA & MT-AIME24 & PolyMath & Average \\
+\midrule
+\multirow{10}{*}{\tabincell{c}{\textit{Thinking}\\\textit{Mode}}} & Gemini2.5-Pro & \underline{73.8} & \underline{80.0} & \underline{50.7} & \underline{68.2} \\
+ & QwQ-32B & \textbf{75.0} & 60.0 & 41.3 & 58.8 \\
+ & \textbf{Qwen3-235B-A22B} & \underline{73.8} & \textbf{86.7} & \textbf{53.6} & \textbf{71.4} \\
+ & \textbf{Qwen3-32B} & \underline{73.8} & 76.7 & 46.9 & 65.8 \\
+ & \textbf{Qwen3-30B-A3B} & 63.7 & \underline{80.0} & 45.2 & 63.0 \\
+ & \textbf{Qwen3-14B} & 65.0 & 76.7 & 44.4 & 62.0 \\
+ & \textbf{Qwen3-8B} & 68.8 & 70.0 & 41.3 & 60.0 \\
+ & \textbf{Qwen3-4B} & 60.0 & 60.0 & 39.4 & 53.1 \\
+ & \textbf{Qwen3-1.7B} & 48.8 & 33.3 & 23.7 & 35.3 \\
+ & \textbf{Qwen3-0.6B} & 33.8 & 13.3 & 11.4 & 19.5 \\
+\midrule
+\multirow{11}{*}{\tabincell{c}{\textit{Non-thinking}\\\textit{Mode}}} & GPT-4o-2024-1120 & 52.5 & 10.0 & 11.9 & 24.8 \\
+ & Gemma-3-27b-IT & 50.0 & 16.7 & 19.0 & 28.6 \\
+ & Qwen2.5-72B-Instruct & \underline{58.8} & 6.7 & 17.4 & 27.6 \\
+ & \textbf{Qwen3-235B-A22B} & \textbf{61.3} & \underline{23.3} & \textbf{27.6} & \textbf{37.4} \\
+ & \textbf{Qwen3-32B} & \textbf{61.3} & 13.3 & 22.2 & 32.3 \\
+ & \textbf{Qwen3-30B-A3B} & 50.0 & \textbf{30.0} & \underline{22.3} & \underline{34.1} \\
+ & \textbf{Qwen3-14B} & 47.5 & \underline{23.3} & 22.1 & 31.0 \\
+ & \textbf{Qwen3-8B} & 42.5 & 10.0 & 17.2 & 23.2 \\
+ & \textbf{Qwen3-4B} & 43.8 & 13.3 & 16.1 & 24.4 \\
+ & \textbf{Qwen3-1.7B} & 42.5 & 6.7 & 9.5 & 19.6 \\
+ & \textbf{Qwen3-0.6B} & 37.5 & 0.0 & 3.6 & 13.7 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+
+
+
+
+\begin{table}[tbp]
+\caption{Language families and language codes supported by Qwen3 in Belebele Benchmark}
+\label{tab:Belebele_language_codes}
+\setlength\tabcolsep{2.5pt}
+\adjustbox{center=\textwidth}{
+\small
+%\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lcl@{}}
+\toprule
+Language family & \# Langs & Language code (ISO 639-3\_ISO 15924)                                                                                                                                                                                                                                                                               \\
+\midrule
+Indo-European   & 40       & \begin{tabular}[c]{@{}l@{}}por\_Latn, deu\_Latn, tgk\_Cyrl, ces\_Latn, nob\_Latn, dan\_Latn, snd\_Arab, spa\_Latn, \\ isl\_Latn, slv\_Latn, eng\_Latn, ory\_Orya, hrv\_Latn, ell\_Grek, ukr\_Cyrl, pan\_Guru, \\ srp\_Cyrl, npi\_Deva, mkd\_Cyrl, guj\_Gujr, nld\_Latn, swe\_Latn, hin\_Deva, rus\_Cyrl, \\ asm\_Beng, cat\_Latn, als\_Latn, sin\_Sinh, urd\_Arab, mar\_Deva, lit\_Latn, slk\_Latn, \\ ita\_Latn, pol\_Latn, bul\_Cyrl, afr\_Latn, ron\_Latn, fra\_Latn, ben\_Beng, hye\_Armn\end{tabular} \\
+Sino-Tibetan    & 3        & zho\_Hans, mya\_Mymr, zho\_Hant                                                                                                                                                                                                                                                                       \\
+Afro-Asiatic    & 8        & heb\_Hebr, apc\_Arab, acm\_Arab, ary\_Arab, ars\_Arab, arb\_Arab, mlt\_Latn, erz\_Arab                                                                                                                                                                                                                           \\
+Austronesian    & 7        & ilo\_Latn, ceb\_Latn, tgl\_Latn, sun\_Latn, jav\_Latn, war\_Latn, ind\_Latn                                                                                                                                                                                                                                      \\
+Dravidian       & 4        & mal\_Mlym, kan\_Knda, tel\_Telu, tam\_Taml                                                                                                                                                                                                                                                                       \\
+Turkic          & 4        & kaz\_Cyrl, azj\_Latn, tur\_Latn, uzn\_Latn                                                                                                                                                                                                                                                                        \\
+Tai-Kadai       & 2        & tha\_Thai, lao\_Laoo                                                                                                                                                                                                                                                                                               \\
+Uralic          & 3        & fin\_Latn, hun\_Latn, est\_Latn                                                                                                                                                                                                                                                                                  \\
+Austroasiatic   & 2        & vie\_Latn, khm\_Khmr                                                                                                                                                                                                                                                                                                \\
+Other           & 7        & eus\_Latn, kor\_Hang, hat\_Latn, swh\_Latn, kea\_Latn, jpn\_Jpan, kat\_Geor  \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+
+\begin{table}[tbp]
+\caption{\textbf{Comparison of Belebele Benchmark performance between Qwen3 and other baseline models.} Scores are highlighted with the highest in \textbf{bold} and the second-best \underline{underlined}.}
+\vspace{-1mm}
+\label{tab:belebele}
+\adjustbox{center=\textwidth}{
+\small
+\setlength{\tabcolsep}{2.5pt}
+%\resizebox{\linewidth}{!}{
+\scalebox{0.9}{
+\begin{tabular}{@{}lcccccccccc@{}}
+\toprule
+Model                             & \tabincell{c}{\bf Indo-\\\bf European} & \tabincell{c}{\bf Sino- \\ \bf Tibetan} & \tabincell{c}{\bf Afro- \\ \bf Asiatic} & \textbf{Austronesian} & \textbf{Dravidian} & \textbf{Turkic} & \tabincell{c}{\bf Tai- \\ \bf Kadai} & \textbf{Uralic} & \textbf{Austroasiatic} & \textbf{Other}  \\
+\midrule
+Gemma-3-27B-IT                     & {\ul 89.2}           & 86.3                & \textbf{85.9}       & {\ul 84.1}          & 83.5             & {\ul 86.8}    & 81.0             & {\ul 91.0}    & 86.5                 & \textbf{87.0} \\
+Qwen2.5-32B-Instruct               & 85.5                 & 82.3                & 80.4                & 70.6                & 67.8             & 80.8          & 74.5             & 87.0          & 79.0                 & 72.6          \\
+QwQ-32B                            & 86.1                 & 83.7                & 81.9                & 71.3                & 69.3             & 80.3          & 77.0             & 88.0          & 83.0                 & 74.0          \\
+\textbf{Qwen3-32B (Thinking)}      & \textbf{90.7}        & \textbf{89.7}       & {\ul 84.8}          & \textbf{86.7}       & \textbf{84.5}    & \textbf{89.3} & {\ul 83.5}       & \textbf{91.3} & \textbf{88.0}        & {\ul 83.1}    \\
+\textbf{Qwen3-32B (Non-thinking)}  & 89.1                 & {\ul 88.0}          & 82.3                & 83.7                & {\ul 84.0}       & 85.0          & \textbf{85.0}    & 88.7          & \textbf{88.0}        & 81.3          \\ \midrule
+Gemma-3-12B-IT                     & 85.8                 & {\ul 83.3}          & \textbf{83.4}       & 79.3                & {\ul 79.0}       & {\ul 82.8}    & 77.5             & {\ul 89.0}    & \textbf{83.0}        & {\ul 81.6}    \\
+Qwen2.5-14B-Instruct               & 82.7                 & 78.9                & 80.4                & 69.1                & 66.2             & 74.2          & 72.2             & 83.9          & 77.9                 & 70.4          \\
+\textbf{Qwen3-14B (Thinking)}      & \textbf{88.6}        & \textbf{87.3}       & {\ul 82.4}          & \textbf{82.4}       & \textbf{81.0}    & \textbf{83.8} & \textbf{83.5}    & \textbf{91.0} & {\ul 82.5}           & \textbf{81.7} \\
+\textbf{Qwen3-14B (Non-thinking)}  & {\ul 87.4}           & 82.7                & 80.1                & {\ul 80.7}          & 78.0             & 81.8          & {\ul 80.5}       & 87.7          & 81.5                 & 77.0          \\ \midrule
+Gemma-3-4B-IT                      & 71.8                 & 72.0                & 63.5                & 61.7                & 64.8             & {\ul 64.0}    & {\ul 61.5}       & 70.7          & 71.0                 & {\ul 62.6}    \\
+Qwen2.5-3B-Instruct                & 58.0                 & 62.3                & 57.2                & 47.9                & 36.9             & 45.1          & 49.8             & 50.6          & 56.8                 & 48.4          \\
+\textbf{Qwen3-4B (Thinking)}       & \textbf{82.2}        & \textbf{77.7}       & \textbf{74.1}       & \textbf{73.0}       & \textbf{74.3}    & \textbf{76.3} & \textbf{68.5}    & \textbf{83.0} & \textbf{74.5}        & \textbf{67.9} \\
+\textbf{Qwen3-4B (Non-thinking)}   & {\ul 76.0}           & {\ul 77.0}          & {\ul 65.6}          & {\ul 65.6}          & {\ul 65.5}       & {\ul 64.0}    & 60.5             & {\ul 74.0}    & {\ul 74.0}           & 61.0          \\\midrule
+Gemma-3-1B-IT                      & 36.5                 & 36.0                & 30.0                & 29.1                & 28.8             & 27.3          & 28.0             & 32.7          & 33.0                 & 30.9          \\
+Qwen2.5-1.5B-Instruct              & 41.5                 & 43.0                & 39.6                & 34.8                & 28.6             & 29.7          & 39.4             & 33.8          & 42.0                 & 36.0          \\
+\textbf{Qwen3-1.7B (Thinking)}     & \textbf{69.7}        & \textbf{66.0}       & \textbf{59.4}       & \textbf{58.6}       & \textbf{52.8}    & \textbf{57.8} & \textbf{53.5}    & \textbf{70.3} & \textbf{63.5}        & \textbf{53.4} \\
+\textbf{Qwen3-1.7B (Non-thinking)} & {\ul 58.8}           & {\ul 62.7}          & {\ul 50.8}          & {\ul 53.0}          & {\ul 43.3}       & {\ul 48.0}    & {\ul 46.0}       & {\ul 54.3}    & {\ul 54.0}           & {\ul 43.9}    \\ 
+\bottomrule
+\end{tabular}
+}
+}
+\end{table}

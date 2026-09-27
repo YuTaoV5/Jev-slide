@@ -1,0 +1,117 @@
+{
+  "mode": "offline-artificial-logprobs",
+  "model": null,
+  "api_calls": 0,
+  "request": {
+    "context": "合成工单：重复扣款，请协助退款。",
+    "schema": {
+      "route": {
+        "type": "enum",
+        "description": "Select a support queue",
+        "choices": [
+          "billing",
+          "technical",
+          "unknown"
+        ]
+      }
+    },
+    "strategy": "auto",
+    "score_temperature": 1.0,
+    "min_probability": 0.7,
+    "cache_salt": null
+  },
+  "records": [
+    {
+      "artificial_scores": [
+        0.82,
+        0.12,
+        0.06
+      ],
+      "raw_fixture": {
+        "logprobs": {
+          "top_logprobs": [
+            {
+              "token_id:11": -0.19845093872383832,
+              "token_id:12": -2.120263536200091,
+              "token_id:13": -2.8134107167600364
+            }
+          ]
+        }
+      },
+      "decision": {
+        "value": "billing",
+        "selected_value": "billing",
+        "probability": 0.8200000000000001,
+        "abstained": false,
+        "candidate_probability_mass": 1.0,
+        "candidates": [
+          {
+            "value": "billing",
+            "label": "A",
+            "probability": 0.8200000000000001,
+            "logprob": -0.19845093872383832
+          },
+          {
+            "value": "technical",
+            "label": "B",
+            "probability": 0.12,
+            "logprob": -2.120263536200091
+          },
+          {
+            "value": "unknown",
+            "label": "C",
+            "probability": 0.06000000000000001,
+            "logprob": -2.8134107167600364
+          }
+        ]
+      }
+    },
+    {
+      "artificial_scores": [
+        0.36,
+        0.34,
+        0.3
+      ],
+      "raw_fixture": {
+        "logprobs": {
+          "top_logprobs": [
+            {
+              "token_id:11": -1.0216512475319814,
+              "token_id:12": -1.0788096613719298,
+              "token_id:13": -1.2039728043259361
+            }
+          ]
+        }
+      },
+      "decision": {
+        "value": null,
+        "selected_value": "billing",
+        "probability": 0.36,
+        "abstained": true,
+        "candidate_probability_mass": 1.0,
+        "candidates": [
+          {
+            "value": "billing",
+            "label": "A",
+            "probability": 0.36,
+            "logprob": -1.0216512475319814
+          },
+          {
+            "value": "technical",
+            "label": "B",
+            "probability": 0.3400000000000001,
+            "logprob": -1.0788096613719298
+          },
+          {
+            "value": "unknown",
+            "label": "C",
+            "probability": 0.3,
+            "logprob": -1.2039728043259361
+          }
+        ]
+      }
+    }
+  ],
+  "missing_score_rejected": true,
+  "limitation": "Exercises upstream decoder, not tokenizer, GPU, model quality or calibration."
+}

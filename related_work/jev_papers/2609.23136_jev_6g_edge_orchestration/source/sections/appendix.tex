@@ -1,0 +1,35 @@
+\section{Implementation and Reproduction Details}
+\label{app:implementation}
+\subsection{Models and Interfaces}
+Measurements were collected on September 19, 2026. The hosted endpoints are TypeSafe Jev 1.13, DeepSeek V4.1 Flash through Together, and Gemini 3.1 Flash Lite through Google AI Studio, accessed through OpenRouter with provider fallback disabled. Jev uses native Choice questions. DeepSeek and Gemini return strict JavaScript Object Notation (JSON) schemas at temperature zero, with token limits of 128 and 256, respectively. DeepSeek reasoning is disabled; Gemini reasoning is minimal. Responses are checked for identity, termination, supported values, and expected fields.
+
+Qwen3.5-4B runs through vLLM~\cite{kwon2023efficient} version 0.29.0 on one NVIDIA L40 graphics processing unit (GPU), using 16-bit brain floating-point precision, a 32,768-token context limit, and at most four sequences. Thinking is disabled. Its two interfaces share weights and serving configuration. Profile output selects among 18 combinations of location, deadline, and priority; direct attributes are normalized to that representation without evaluation labels. The direct interface has a 256-token limit. Client timing includes the access path; server time is recorded separately. API fees use returned usage records.
+
+\subsection{Radio and Modeled Service}
+The implementation uses ns-3.48 and 5G-LENA v5.1~\cite{patriciello2019nr}, seed 42 and run 1. Two base stations are 500 m apart. Three user equipment (UE) instances include two moving in opposite directions and one stationary. The carrier is 2.8 GHz with 10 MHz bandwidth, Friis propagation, isotropic antennas, and proportional-fair scheduling. Handover uses an A3 received-power event, 1.5 dB hysteresis, and a 128 ms trigger interval. Modeled-service traces use actual Radio Resource Control (RRC) signaling; image-service traces use ideal RRC.
+
+The native 3GPP pose/control generator supplies 250 packets per second per UE for 30 seconds. Each packet creates one edge task: 22,500 are submitted and 22,463 delivered per trace. Per-user processing work is 1.2, 1.0, and 0.8 ms at full capacity. Local/remote transport takes 2/20 ms; placement changes buffer new work for 200 ms. Available capacity changes at 8, 18, and 26 seconds. Deadlines are 100, 250, or 500 ms; priorities are 1 or 3. The transfer scenarios update at 12, 20, or 24 seconds, or remain stable. Texts are fixed before model calls, and invalid decisions do not install a new contract.
+
+Let $e$ index a worker. The shared placement heuristic uses per-task processor work $w_u$, a common per-user arrival rate $\lambda>0$, remaining active and queued work $Q_e$, and available processing rate $\mu_e>0$. A joint placement $\mathbf e=(e_u)_u$ assigns worker $e_u$ to user $u$. Its offered work rate at worker $e$ is $\rho_e(\mathbf e)=\sum_{u:e_u=e}\lambda w_u$. With anticipation interval $H=1$ s, define estimated queue and service delay $\widehat q_{u,e}(\mathbf e)$ by
+\begin{equation}
+\widehat q_{u,e}(\mathbf e)=
+\frac{Q_e+w_u+H\max\{0,\rho_e(\mathbf e)-\mu_e\}}{\mu_e}.
+\end{equation}
+Let $\ell_{u,e}$ be transport delay and $m_{u,e}$ placement-change delay, with $m_{u,e}=0$ for an unchanged placement. Using the interpreted priorities and deadlines from Section~\ref{sec:system}, the scheduler minimizes
+\begin{equation}
+\sum_u \frac{\widehat p_{u,v}}{\widehat d_{u,v}}
+\left(\widehat q_{u,e_u}(\mathbf e)+\ell_{u,e_u}
++\frac{m_{u,e_u}}{\lambda H}\right)
+\end{equation}
+over permitted joint placements. Parenthesized terms have units of time: the heuristic anticipates one second of overload and amortizes placement changes over one second of arrivals.
+
+\subsection{Real Image Execution}
+A fixed, seed-42 sample of 96 IIIT5K test images~\cite{mishra2012scene} is used throughout the application comparison. Each UE sends three images per second for 30 seconds. Original image sizes determine the number of 1,200-byte radio fragments; all fragments must arrive for reconstruction. The two traces reconstruct 234/270 and 235/270 images, with two handovers each. The first UE moves at 15 or 25 m/s, the second in the opposite direction at three quarters of that speed.
+
+The radio uses explicit time-division duplexing (TDD) and a 1 MiB Radio Link Control (RLC) unacknowledged-mode transmit buffer. A preliminary 10 KiB configuration truncated large images. We corrected it and reran the complete fixed matrix; the preliminary results are excluded here.
+
+Contracts start at one second and update at 8, 16, and 24 seconds, with 250/500 ms deadlines. Requests wait for their version for at most the largest supported deadline, then check the interpreted deadline before dispatch. Update windows last 1.5 seconds. Background work arrives at four requests per second at worker A during seconds 9--15 in one trace and at B during seconds 18--24 in the other.
+
+Two logical workers share a host and execute Tesseract~\cite{smith2007overview} on images transferred through Hypertext Transfer Protocol (HTTP). Eight training-image requests calibrate service estimates before evaluation. The scheduler selects the allowed worker with the earliest predicted finish, considering active work and queued work ahead of the request. Expired work is removed before service. Exact text comparison uses Unicode Normalization Form C and trims boundary whitespace, retaining case.
+
+All 3,580 foreground and 384 background OCR executions match service logs by request identity, image digest, worker, and parameters. Maximum request-release lag is 16.06 ms. Raw model responses, contract checks, timestamps, radio identities, and source snapshots are retained. The fixed randomized condition order uses seed 42. Timing repeats share inputs; waiting interventions are post-measurement modeled replays, separate from actual API and OCR observations.

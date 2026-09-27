@@ -1,0 +1,72 @@
+\section{Introduction}
+% P1: service-level problem and why interpretation belongs in the latency budget.
+\IEEEPARstart{N}{atural-language} interfaces let users describe an edge service
+and its execution requirements together: read the text in an image, keep the
+image at its originating site, and return the result before a deadline.
+Turning that request into an executable job requires both semantic
+interpretation and a placement decision. In edge computing, communication,
+resource availability, and placement jointly determine whether the service
+responds in time~\cite{shi2016edge,mao2017survey,santos2021lowlatency}.
+An interpreter on the admission path consumes part of that same response
+budget, delaying execution and leaving less time to complete the service.
+
+% P2: bounded output motivates substitution; completion is the acceptance criterion.
+For a bounded service catalog, interpretation often requires only a small
+set of decisions, such as service type, placement permission, quality tier,
+and urgency. A large language model (LLM) can express these decisions through
+a short structured response, but the downstream scheduler needs the selected
+values rather than a generated explanation. A decision-oriented model could
+reduce this overhead even relative to a generative model configured for
+concise output. At the service level, the goal is to reduce this decision
+overhead while preserving correct, on-time completion under the request's
+execution requirements.
+
+% P3: established work and the concrete comparison examined here.
+Intent-based networking already separates desired outcomes from their
+implementation~\cite{clemm2022intentbased}. Language-driven network systems
+and service prototypes connect interpretation to configuration and
+orchestration~\cite{jacobs2021hey,wang2024netconfeval,angi2025llnet,miyaoka2025chatdriven,nisiotis2026prompt}.
+Small models and discriminative extraction offer further ways to specialize
+bounded language tasks~\cite{belcak2025small,zaratiana2025gliner2}.
+We examine Jev, a decision-oriented service accessed through an application
+programming interface (API)~\cite{friedman2026jev}, as the interpreter in an
+edge-service admission path. Queueing, communication, and execution all
+contribute to response time; their interaction with interpretation determines
+how much a faster decision benefits the service.
+
+% P4: three answerable questions, aligned with the evaluation and Results.
+We investigate three linked questions. How does Jev compare with a concise
+structured-output DeepSeek deployment in decision latency, semantic
+correctness, and billed API cost? Does the substitution lower full response
+time while retaining correct service completion? Under what workload
+conditions is faster interpretation most useful, and how does it interact
+with caching for repeated requests?
+
+% P5: methodological response and the distinct role of each evidence layer.
+We address these questions through live API measurements combined with
+modeled execution, followed by a real two-node optical character recognition
+(OCR) service. The real service transfers images, executes recognition, and
+checks the returned text against reference annotations. A fixed rule parser
+and self-hosted Qwen model extend the comparison beyond the two hosted APIs.
+
+% P6: concrete system contribution, measured service benefit, and deployment guidance.
+The contributions are as follows.
+\begin{enumerate}
+\item We integrate Jev into an edge-service admission system through a
+four-field intent contract and a shared validator and scheduler. The system
+accounts for interpretation, queueing, communication, and execution on one
+timeline, connecting the choice of interpreter to service deadlines and
+completion.
+\item We measure a latency and API-cost benefit from this substitution.
+Jev reduces median decision latency by 15.9--26.5\% across three blocks.
+In the real OCR service, it matches DeepSeek's correct-completion count in
+seven paired conditions and exceeds it in one. Without caching, median
+full response time on requests completed correctly by both systems is
+11.1--25.3\% lower; API fees per correct completion are 69.0--70.6\% lower
+across the eight conditions.
+\item We identify how request reuse changes the value of faster decisions.
+Applying the same cache policy to all backends shows that latency savings
+are concentrated in fresh interpretation, while repeated-request caching
+largely removes the difference. This comparison guides the use of fast
+decision models alongside caching in service orchestration.
+\end{enumerate}

@@ -1,0 +1,153 @@
+\documentclass[11pt]{article}
+\PassOptionsToPackage{hyperfootnotes=false}{hyperref}
+\usepackage[preprint]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx,array}
+
+\title{Jev for Scientific Decisions:\\Evaluating Semantic Choices and Their Consequences}
+
+% Author order follows the supplied template. Affiliations await author input.
+% Change preprint to review above for an anonymous submission PDF.
+\author{
+ \textbf{Boyuan Deng\textsuperscript{1}}\thanks{Corresponding author},
+ \textbf{Shuyi Fan\textsuperscript{2}},
+ \textbf{Hongyang Zhang\textsuperscript{3}},
+ \textbf{Xinhong Xie\textsuperscript{4}}\\
+ \textsuperscript{1}Johns Hopkins University, \textsuperscript{2}Columbia University\\
+ \textsuperscript{3}The Hong Kong Polytechnic University, \textsuperscript{4}The Pennsylvania State University
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    Scientific workflows often require choosing among known relations before a deterministic calculation can proceed. Whether observations share a culture, treatment or reference standard can change the scientific meaning of the resulting count or comparison. We evaluate Jev as a semantic decision component using a harness that follows its documented guidance and assigns arithmetic to code. The study compares twelve model configurations on twenty source-grounded Choices across ten scientific cases, each repeated five times. We measure semantic selections, downstream outputs and final claim labels separately. Jev matched five other configurations at complete semantic correctness and achieved the lowest observed median latency among successful responses. Across three comparison models, seven wrong selections on one culture-history question changed downstream counts while preserving the correct final label. These results identify a useful role for Jev in prepared scientific decision tasks and show why evaluating that role requires checking the relations and quantities that a workflow will reuse.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Scientific workflows often turn on small decisions about what an observation represents. Ten measurements may describe independently grown cultures or repeated samples from a single culture. That distinction determines what a program should count and which claims the evidence supports. Similar decisions arise when identifying shared calibration standards, paired simulations or experimental assignments. Their answer spaces can be finite even when selecting the appropriate relation requires interpreting scientific language.
+
+This interface between language and computation is a natural setting for Jev, a model designed to answer typed questions about supplied state \citep{typesafe2026introduction}. Its Choice interface selects from explicit candidates \citep{typesafe2026choice}. The documented division of labor assigns numerical operations to code and semantic judgments to the model \citep{typesafe2026jaggedness}. For scientific applications, the practical question is whether these judgments remain correct at useful request cost and latency, and whether their downstream consequences are captured by evaluation.
+
+Scientific question answering and claim verification already provide relevant evaluation settings. PubMedQA pairs research questions with abstract context \citep{jin2019pubmedqa}, and Jevals uses a binary version to evaluate Jev \citep{jevals2026methodology}. SciFact evaluates scientific claims together with supporting evidence \citep{wadden2020fact}. More recently, \citet{ho2025table} showed that correct scientific claim labels can coexist with incorrect cell-level rationales. We examine executable relations: a selected relation controls a specified calculation, exposing whether a correct label accompanies a correct scientific output.
+
+We contribute source-grounded scientific decision materials, a shared harness implementing the documented code--model division, and a comparison of Jev with eleven other configurations. Our analysis connects semantic correctness to derived outputs and final labels, and compares request latency and response cost. This provides concrete evidence for choosing a model at a bounded decision point within a scientific workflow.
+
+\section{Scientific Decisions and Evaluation}
+\label{sec:evaluation}
+
+\subsection{Cases and the shared harness}
+\label{sec:cases}
+
+The model comparison uses twenty scientific Choices in ten cases, with two questions per case. The questions concern experimental units, shared histories, dependence and protocol applicability. Sources span manufacturing and materials, physical simulations, climate, metrology and biological experiments. These cases belong to a development collection of forty scientific Choices in twenty case groups, plus one engineering control. Passage-specific code rules resolve the other twenty scientific Choices without a model call. Appendix~\ref{app:cases} explains the question types, scientific cases and reference interpretations.
+
+Each model receives the same prepared evidence passages, structured records, question instructions and candidate meanings. The packets contain source-grounded adaptations and transcriptions; reference answers and the constructed claims being assessed are kept outside model inputs.
+
+Following Jev's guidance, the harness asks atomic questions, points each question to the supplied evidence and keeps counting, filtering, arithmetic and label composition in code. Jev uses its native Choice interface; the other models return candidate identifiers through a constrained JSON schema. Both questions are submitted together. This shared contract holds the evidence and downstream program fixed across models.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.95\textwidth]{jev4sci.pdf}
+  \caption{Evaluation at a scientific decision point. The model selects relations from supplied evidence; shared code derives scientific outputs and composes a claim label. We score the selected relations, declared outputs and final label against separate references. The code-only branch bypasses the model.}
+  \label{fig:workflow}
+\end{figure*}
+
+\subsection{Three levels of correctness}
+\label{sec:metrics}
+
+Let $e$ denote the supplied evidence and records, and $Q$ the questions with their candidate relations. The model $f$ selects a relation for each Choice, yielding $\hat{\mathbf r}$. The shared deterministic program $g$ applies the case's computation and claim-assessment rules to produce scientific outputs $\hat{\mathbf z}$ and a final label $\hat y$:
+\begin{equation}
+ \hat{\mathbf r}=f(e,Q),\qquad
+ (\hat{\mathbf z},\hat y)=g(e,\hat{\mathbf r}).
+ \label{eq:workflow}
+\end{equation}
+Figure~\ref{fig:workflow} shows this division. The reference relations, outputs and label are $\mathbf r^*$, $\mathbf z^*$ and $y^*$.
+
+\textbf{Semantic correctness} requires the selected candidate for Choice $k$ to match its reference exactly: $\hat r_k=r_k^*$. \textbf{Downstream exactness} requires agreement on every declared scientific output for a case, including counts, Boolean relations, symbolic expressions and unknown values. These fields exclude claim assessments and labels. \textbf{Label correctness} requires $\hat y=y^*$ for the canonical final label. We also report \textbf{joint correctness}, requiring all semantic selections and downstream outputs to agree. Appendix~\ref{app:metrics} specifies the output fields and scoring procedure.
+
+These checks answer different questions. The program in Equation~\ref{eq:workflow} can map distinct relations to the same quantities or final label. Conversely, it can execute a wrong relation exactly and produce a wrong scientific result. All ten model-routed reference cases have the final label \texttt{inconsistent}; an always-\texttt{inconsistent} baseline therefore solves the label task. Semantic and joint correctness provide the substantive quality comparison.
+
+\subsection{Experimental comparison}
+\label{sec:setup}
+
+We compared twelve configurations on all ten cases, each repeated five times. Each configuration therefore had fifty planned requests and one hundred semantic answers. Configurations were evaluated in three groups, with serial requests, shuffled case order and rotating model order within each group. Repetitions measure variation on the same inputs; the scientific sample remains ten cases containing twenty Choices.
+
+The primary scores use the planned denominators, with no replacement of missing responses. An absent response earns no correctness credit and is distinguished from a wrong selection. We also report correctness conditional on receiving an answer (Appendix~\ref{app:observed}). Each request was evaluated once, without retries or provider substitution. Model versions and inference settings are specified in the accompanying code and results.
+
+Latency measures elapsed client request time; we report its median and nearest-rank 95th percentile among successful responses. Cost is the known mean charge per successful response, using provider-reported charges or estimates from token usage and the applicable prices. These measurements describe the evaluated configurations under their respective service conditions.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrrr@{}}
+\toprule
+ & \multicolumn{4}{c}{Correctness and availability} & \multicolumn{3}{c}{Successful-request resources} \\
+\cmidrule(lr){2-5}\cmidrule(l){6-8}
+Model & Returned & Semantic & Downstream & Label & Median & p95 & Cost \\
+ & /50 & /100 & $=$ Joint /50 & /50 & (s) & (s) & (\$/1,000) \\
+\midrule
+\csname @@input\endcsname analysis/main_table_rows.tex
+\bottomrule
+\end{tabular*}
+\caption{Comparison on twenty Choices in ten cases, repeated five times per configuration. Returned counts complete responses; correctness uses planned denominators and gives no credit for missing responses. Downstream and joint counts coincide in these results. Cost is the known mean successful-response cost per 1,000 requests; $r$ denotes reported charges and $e$ usage-based estimates. Preparation costs and unmeasured charges are excluded.}
+\label{tab:main}
+\end{table*}
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Decision quality}
+
+Jev answered all one hundred planned semantic questions correctly and obtained all fifty downstream results (Table~\ref{tab:main}). GPT-5.6 Sol \citep{openai2026gpt56}, GPT-6 Astra \citep{openai2026gpt6astra}, Claude Sonnet 5 \citep{anthropic2026sonnet5}, Claude Opus 5 \citep{anthropic2026opus5} and Kimi K3 \citep{moonshot2026kimik3} achieved the same scores. Luna made one wrong selection, Qwen Flash \citep{qwen2026flash} one and Qwen Max \citep{alibaba2026qwen38max} five. All seven concerned the same culture-history question. Downstream and joint correctness coincided for the observed responses.
+
+Response coverage and answer quality differed for several configurations. Terra and DeepSeek configurations \citep{deepseek2026v41flash,deepseek2026v4pro0813} answered every received question correctly, but missing responses reduced their planned-denominator scores. Conditional scores in Appendix~\ref{app:observed} distinguish these coverage differences from semantic errors.
+
+\subsection{Correct labels can conceal wrong quantities}
+\label{sec:errors}
+
+The culture-history case uses the experiments of \citet{luria1943mutations}. Ten samples in column 11a come from one culture; ten in column 11 come from separately grown cultures. Their growth-history counts are $(1,10)$. The question asks whether samples within each series share a culture history.
+
+The seven wrong selections produced $(10,1)$ four times, $(1,1)$ twice and $(10,10)$ once. In every response, the second Choice correctly identified colonies as clonal descendants. This rejected the claim that each colony represented an independent mutation origin. The final label remained \texttt{inconsistent} despite the wrong growth-history counts.
+
+Across the 588 received results, all final labels were correct, while 581 downstream outputs were exact. This difference represents seven responses on one scientific question. It exposes a concrete failure that a label-only comparison would miss: the workflow can return the expected verdict while passing an incorrect quantity to subsequent analysis.
+
+\subsection{Request latency and cost}
+
+Jev had the lowest observed successful-request median latency, 0.335\,s, with a p95 of 0.442\,s. Its known mean cost was approximately \$0.000060 per successful response. Among configurations with complete semantic correctness and response coverage, the next lowest median was Sol's 1.385\,s; Sol also had the next lowest cost, \$0.003047 per successful response. Thus Jev combined the same observed correctness with lower request resource use in this collection.
+
+\section{Implications for Scientific Workflows}
+\label{sec:discussion}
+
+The comparison supports Jev as a candidate component where evidence has been prepared, candidate relations are explicit and downstream operations are specified. Its observed request economy is useful for this recurring interface between scientific text and executable rules. Preserving the semantic selections also makes it possible to inspect which relation caused a downstream discrepancy.
+
+The culture case extends the rationale--label distinction studied by \citet{ho2025table} to quantities that a scientific workflow could reuse. A final verdict compresses multiple clause judgments; one correctly rejected clause can conceal an error elsewhere. Evaluations of fixed-choice scientific components should therefore retain both relation-level references and the declared downstream outputs. Joint scoring checks whether the component supplies the correct relations as well as the expected result.
+
+\section{Conclusion}
+
+We evaluated Jev on prepared scientific decisions using shared deterministic computation and a twelve-configuration comparison. Jev combined complete observed semantic correctness with the lowest recorded successful-request median latency and known mean response cost. Separating semantic selections, downstream outputs and final labels revealed errors hidden by the final verdict, yielding a practical evaluation contract for scientific decision components.
+
+\section*{Limitations}
+
+The comparison uses a development collection of twenty model-routed Choices in ten cases. The same curated English packets recur across repetitions, and six configurations achieve complete correctness. All observed semantic errors concern one Choice. This design characterizes the supplied decisions; evaluating transfer requires new, source-separated cases and broader relation coverage.
+
+Every model-routed reference label is \texttt{inconsistent}, and none of its reference Choices is \texttt{not\_stated}, \texttt{other} or \texttt{conflicting}. The collection therefore measures relation selection and its consequences within these cases. Balanced claim decisions and uncertain-evidence cases are needed to assess label discrimination and abstention. Declared downstream outputs summarize selected scientific consequences; semantic scoring remains necessary when different relations yield identical outputs.
+
+The evaluation begins with supplied evidence passages and structured records. The harness comparison uses one implemented configuration per model; its component effects would require a separate ablation study.
+
+Latency and cost depend on services, execution windows, reasoning settings and cache states. The resource comparison covers successful model requests. Charges for missing responses, data preparation costs and local computation costs are unmeasured, leaving total workflow expenditure undetermined.
+
+\bibliography{references_verified,case_sources}
+
+\appendix
+\input{appendix_material.tex}
+\input{analysis/metrics_appendix.tex}
+
+\end{document}

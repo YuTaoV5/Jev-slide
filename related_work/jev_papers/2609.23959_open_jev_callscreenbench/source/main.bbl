@@ -1,0 +1,467 @@
+\begin{thebibliography}{52}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Ahuja et~al.(2026)Ahuja, Prateek, and Singh}]{icfd2026}
+Rishi Ahuja, Kumar Prateek, and Simranjit Singh. 2026.
+\newblock \href {https://doi.org/10.24963/ijcai.2026/786} {{ICFD-31k}: A
+  large-scale dataset and benchmark for real-time conversational fraud
+  detection}.
+\newblock In \emph{Proceedings of the Thirty-Fifth International Joint
+  Conference on Artificial Intelligence, {IJCAI-26}}, pages 7065--7073.
+\newblock AI and Social Good track.
+
+\bibitem[{Almeida(2026)}]{typesafe2026jev}
+Diogo Almeida. 2026.
+\newblock \href
+  {https://typesafe.ai/blog/introducing-system-one-models-and-jev} {Introducing
+  system one models \& {Jev}}.
+\newblock TypeSafe AI Blog.
+\newblock September 15, 2026. Accessed 2026-09-19.
+
+\bibitem[{Bani-Harouni et~al.(2026)Bani-Harouni, Pellegrini, Stangel,
+  {\"O}zsoy, Zaripova, Navab, and Keicher}]{stangel2025rewardingdoubt}
+David Bani-Harouni, Chantal Pellegrini, Paul Stangel, Ege {\"O}zsoy, Kamilia
+  Zaripova, Nassir Navab, and Matthias Keicher. 2026.
+\newblock \href {https://arxiv.org/abs/2503.02623} {Rewarding doubt: A
+  reinforcement learning approach to calibrated confidence expression of large
+  language models}.
+\newblock In \emph{The Fourteenth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{{Bespoke Labs}(2026)}]{nimble2026}
+{Bespoke Labs}. 2026.
+\newblock \href {https://github.com/bespokelabsai/nimble} {Bespoke {Nimble}:
+  Data, model, recipe for an open {Jev}}.
+\newblock GitHub repository.
+\newblock Accessed 2026-09-19, commit 35fe1f4.
+
+\bibitem[{Brier(1950)}]{brier1950}
+Glenn~W. Brier. 1950.
+\newblock \href
+  {https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2}
+  {Verification of forecasts expressed in terms of probability}.
+\newblock \emph{Monthly Weather Review}, 78(1):1--3.
+
+\bibitem[{Brown et~al.(2020)Brown, Mann, Ryder, Subbiah, Kaplan, Dhariwal,
+  Neelakantan, Shyam, Sastry, Askell, Agarwal, Herbert-Voss, Krueger, Henighan,
+  Child, Ramesh, Ziegler, Wu, Winter, Hesse, Chen, Sigler, Litwin, Gray, Chess,
+  Clark, Berner, McCandlish, Radford, Sutskever, and Amodei}]{brown2020gpt3}
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared~D. Kaplan,
+  Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+  Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan,
+  Rewon Child, Aditya Ramesh, Daniel Ziegler, Jeffrey Wu, Clemens Winter, and
+  12 others. 2020.
+\newblock \href {https://arxiv.org/abs/2005.14165} {Language models are
+  few-shot learners}.
+\newblock In \emph{Advances in Neural Information Processing Systems 33
+  (NeurIPS 2020)}, pages 1877--1901. Curran Associates, Inc.
+
+\bibitem[{Cruz et~al.(2024)Cruz, Hardt, and
+  Mendler-D{\"u}nner}]{cruz2024letters}
+Andr{\'e}~F. Cruz, Moritz Hardt, and Celestine Mendler-D{\"u}nner. 2024.
+\newblock \href {https://doi.org/10.52202/079017-3089} {Evaluating language
+  models as risk scores}.
+\newblock In \emph{Advances in Neural Information Processing Systems 37
+  (NeurIPS 2024), Datasets and Benchmarks Track}.
+
+\bibitem[{Fang et~al.(2024)Fang, Bowman, and Kang}]{fang2024voiceagents}
+Richard Fang, Dylan Bowman, and Daniel Kang. 2024.
+\newblock \href {https://arxiv.org/abs/2410.15650} {Voice-enabled {AI} agents
+  can perform common scams}.
+\newblock \emph{arXiv preprint arXiv:2410.15650}.
+
+\bibitem[{Gan et~al.(2026)Gan, Tang, Liang, Chen, Raj, Zewde, Zhou, Zhang, and
+  Ren}]{callscreenbench2026}
+Jiaqi Gan, Haoyuan Tang, Jamey~Z. Liang, Siying Chen, Ankit Raj, Kidus Zewde,
+  Yuchen Zhou, Yuxin Zhang, and Simiao Ren. 2026.
+\newblock \href {https://arxiv.org/abs/2608.01033} {{CallScreenBench}:
+  Benchmarking small language models as phone secretaries}.
+\newblock \emph{arXiv preprint arXiv:2608.01033}.
+
+\bibitem[{Geifman and El-Yaniv(2017)}]{geifman2017selective}
+Yonatan Geifman and Ran El-Yaniv. 2017.
+\newblock \href {https://arxiv.org/abs/1705.08500} {Selective classification
+  for deep neural networks}.
+\newblock In \emph{Advances in Neural Information Processing Systems 30
+  (NeurIPS 2017)}. Curran Associates, Inc.
+
+\bibitem[{Ghafariasl et~al.(2026)Ghafariasl, Fu, Guo, and
+  Chang}]{ghafariasl2026elder}
+Parviz Ghafariasl, Weimin Fu, Xiaolong Guo, and Shing~I. Chang. 2026.
+\newblock \href {https://arxiv.org/abs/2609.00005} {Incremental risk assessment
+  of progressive elder financial scams via instruction-tuned small language
+  models}.
+\newblock \emph{arXiv preprint arXiv:2609.00005}.
+
+\bibitem[{Gneiting and Raftery(2007)}]{gneiting2007proper}
+Tilmann Gneiting and Adrian~E. Raftery. 2007.
+\newblock \href {https://doi.org/10.1198/016214506000001437} {Strictly proper
+  scoring rules, prediction, and estimation}.
+\newblock \emph{Journal of the American Statistical Association},
+  102(477):359--378.
+
+\bibitem[{Guo et~al.(2017)Guo, Pleiss, Sun, and
+  Weinberger}]{guo2017calibration}
+Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger. 2017.
+\newblock \href {https://arxiv.org/abs/1706.04599} {On calibration of modern
+  neural networks}.
+\newblock In \emph{Proceedings of the 34th International Conference on Machine
+  Learning}, volume~70 of \emph{Proceedings of Machine Learning Research},
+  pages 1321--1330. PMLR.
+
+\bibitem[{Holtzman et~al.(2021)Holtzman, West, Shwartz, Choi, and
+  Zettlemoyer}]{holtzman2021surface}
+Ari Holtzman, Peter West, Vered Shwartz, Yejin Choi, and Luke Zettlemoyer.
+  2021.
+\newblock \href {https://doi.org/10.18653/v1/2021.emnlp-main.564} {Surface form
+  competition: Why the highest probability answer isn't always right}.
+\newblock In \emph{Proceedings of the 2021 Conference on Empirical Methods in
+  Natural Language Processing}, pages 7038--7051, Online and Punta Cana,
+  Dominican Republic. Association for Computational Linguistics.
+
+\bibitem[{Hsieh et~al.(2023)Hsieh, Li, Yeh, Nakhost, Fujii, Ratner, Krishna,
+  Lee, and Pfister}]{hsieh2023distilling}
+Cheng-Yu Hsieh, Chun-Liang Li, Chih-kuan Yeh, Hootan Nakhost, Yasuhisa Fujii,
+  Alex Ratner, Ranjay Krishna, Chen-Yu Lee, and Tomas Pfister. 2023.
+\newblock \href {https://doi.org/10.18653/v1/2023.findings-acl.507} {Distilling
+  step-by-step! outperforming larger language models with less training data
+  and smaller model sizes}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  ACL 2023}, pages 8003--8017, Toronto, Canada. Association for Computational
+  Linguistics.
+
+\bibitem[{Hu et~al.(2022)Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang, and
+  Chen}]{hu2022lora}
+Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean
+  Wang, Lu~Wang, and Weizhu Chen. 2022.
+\newblock \href {https://arxiv.org/abs/2106.09685} {{LoRA}: Low-rank adaptation
+  of large language models}.
+\newblock In \emph{The Tenth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Inan et~al.(2023)Inan, Upasani, Chi, Rungta, Iyer, Mao, Tontchev, Hu,
+  Fuller, Testuggine, and Khabsa}]{inan2023llamaguard}
+Hakan Inan, Kartikeya Upasani, Jianfeng Chi, Rashi Rungta, Krithika Iyer,
+  Yuning Mao, Michael Tontchev, Qing Hu, Brian Fuller, Davide Testuggine, and
+  Madian Khabsa. 2023.
+\newblock \href {https://arxiv.org/abs/2312.06674} {Llama guard: {LLM}-based
+  input-output safeguard for human-{AI} conversations}.
+\newblock \emph{arXiv preprint arXiv:2312.06674}.
+
+\bibitem[{Kadavath et~al.(2022)Kadavath, Conerly, Askell, Henighan, Drain,
+  Perez, Schiefer, Hatfield-Dodds, DasSarma, Tran-Johnson, Johnston, El-Showk,
+  Jones, Elhage, Hume, Chen, Bai, Bowman, Fort, Ganguli, Hernandez, Jacobson,
+  Kernion, Kravec, Lovitt, Ndousse, Olsson, Ringer, Amodei, Brown, Clark,
+  Joseph, Mann, McCandlish, Olah, and Kaplan}]{kadavath2022}
+Saurav Kadavath, Tom Conerly, Amanda Askell, Tom Henighan, Dawn Drain, Ethan
+  Perez, Nicholas Schiefer, Zac Hatfield-Dodds, Nova DasSarma, Eli
+  Tran-Johnson, Scott Johnston, Sheer El-Showk, Andy Jones, Nelson Elhage,
+  Tristan Hume, Anna Chen, Yuntao Bai, Sam Bowman, Stanislav Fort, and 17
+  others. 2022.
+\newblock \href {https://arxiv.org/abs/2207.05221} {Language models (mostly)
+  know what they know}.
+\newblock \emph{arXiv preprint arXiv:2207.05221}.
+
+\bibitem[{Kim et~al.(2024)Kim, Shin, Cho, Jang, Longpre, Lee, Yun, Shin, Kim,
+  Thorne, and Seo}]{kim2024prometheus}
+Seungone Kim, Jamin Shin, Yejin Cho, Joel Jang, Shayne Longpre, Hwaran Lee,
+  Sangdoo Yun, Seongjin Shin, Sungdong Kim, James Thorne, and Minjoon Seo.
+  2024.
+\newblock \href {https://arxiv.org/abs/2310.08491} {Prometheus: Inducing
+  fine-grained evaluation capability in language models}.
+\newblock In \emph{The Twelfth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Lee et~al.(2026)Lee, Sul, Yun, and Huang}]{vishingtactics2026}
+Jeongmin Lee, Dongmyung Sul, Seung Yun, and Jinxia Huang. 2026.
+\newblock \href {https://arxiv.org/abs/2609.07151} {{Vishing-Tactics-Bench}:
+  Forecasting exploitation trajectories in voice phishing calls}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  EMNLP 2026}.
+\newblock To appear.
+
+\bibitem[{Lee(2026)}]{semif2026}
+Theodore Lee. 2026.
+\newblock \href {https://github.com/TheoLeeCJ/SemIf} {{SemIf} (formerly
+  {OpenJev}): Semantic ifs from open models, on a 3090 at home}.
+\newblock GitHub repository.
+\newblock Accessed 2026-09-19, commit ca3ba65.
+
+\bibitem[{Li et~al.(2025{\natexlab{a}})Li, Manickam, Chong, and
+  Karuppayah}]{li2025phisher}
+Wenhao Li, Selvakumar Manickam, Yung-Wey Chong, and Shankar Karuppayah.
+  2025{\natexlab{a}}.
+\newblock \href {https://doi.org/10.1007/978-3-032-22542-9_30} {Talking like a
+  phisher: {LLM}-based attacks on voice phishing classifiers}.
+\newblock In \emph{Digital Forensics and Cyber Crime ({EAI} {ICDF2C} 2025)},
+  Lecture Notes of the Institute for Computer Sciences, Social Informatics and
+  Telecommunications Engineering, pages 503--521. Springer Nature Switzerland.
+
+\bibitem[{Li et~al.(2025{\natexlab{b}})Li, Xiong, Wu, and Hooi}]{conftuner2025}
+Yibo Li, Miao Xiong, Jiaying Wu, and Bryan Hooi. 2025{\natexlab{b}}.
+\newblock \href {https://arxiv.org/abs/2508.18847} {{ConfTuner}: Training large
+  language models to express their confidence verbally}.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}.
+
+\bibitem[{Lin et~al.(2022)Lin, Hilton, and Evans}]{lin2022words}
+Stephanie Lin, Jacob Hilton, and Owain Evans. 2022.
+\newblock \href {https://arxiv.org/abs/2205.14334} {Teaching models to express
+  their uncertainty in words}.
+\newblock \emph{Transactions on Machine Learning Research}.
+
+\bibitem[{Losada and Crestani(2016)}]{losada2016erisk}
+David~E. Losada and Fabio Crestani. 2016.
+\newblock \href {https://doi.org/10.1007/978-3-319-44564-9_3} {A test
+  collection for research on depression and language use}.
+\newblock In \emph{Experimental IR Meets Multilinguality, Multimodality, and
+  Interaction: 7th International Conference of the CLEF Association, CLEF
+  2016}, volume 9822 of \emph{Lecture Notes in Computer Science}, pages 28--39.
+  Springer.
+
+\bibitem[{Ma et~al.(2025)Ma, Wang, Huang, Wang, Wu, Lv, Pang, Yang, Tang, and
+  Kang}]{teleantifraud2025}
+Zhiming Ma, Peidong Wang, Minhua Huang, Jinpeng Wang, Kai Wu, Xiangzhao Lv,
+  Yachun Pang, Yin Yang, Wenjie Tang, and Yuchen Kang. 2025.
+\newblock \href {https://doi.org/10.1145/3746027.3755835} {{TeleAntiFraud-28k}:
+  An audio-text slow-thinking dataset for telecom fraud detection}.
+\newblock In \emph{Proceedings of the 33rd ACM International Conference on
+  Multimedia (MM '25)}, pages 5853--5862, Dublin, Ireland. Association for
+  Computing Machinery.
+
+\bibitem[{Mastracci(2026)}]{vllm57250}
+Matt Mastracci. 2026.
+\newblock \href {https://github.com/vllm-project/vllm/pull/57250} {[{Core}]
+  structured generation mode for {DiffusionGemma} model ({Jev}-like)}.
+\newblock vLLM pull request \#57250.
+\newblock Unmerged pull request, opened 2026-09-16. Accessed 2026-09-19.
+
+\bibitem[{Mukkunnoth(2026)}]{laya2026}
+Nandakishor Mukkunnoth. 2026.
+\newblock \href {https://github.com/NandhaKishorM/laya} {Laya: Multilingual,
+  non-autoregressive system 1 decision engine}.
+\newblock GitHub repository.
+\newblock Accessed 2026-09-19, commit d113dca.
+
+\bibitem[{Naeini et~al.(2015)Naeini, Cooper, and Hauskrecht}]{naeini2015ece}
+Mahdi~Pakdaman Naeini, Gregory~F. Cooper, and Milos Hauskrecht. 2015.
+\newblock \href {https://doi.org/10.1609/aaai.v29i1.9602} {Obtaining well
+  calibrated probabilities using {Bayesian} binning}.
+\newblock In \emph{Proceedings of the Twenty-Ninth {AAAI} Conference on
+  Artificial Intelligence}. AAAI Press.
+
+\bibitem[{Nixon et~al.(2019)Nixon, Dusenberry, Zhang, Jerfel, and
+  Tran}]{nixon2019measuring}
+Jeremy Nixon, Michael~W. Dusenberry, Linchuan Zhang, Ghassen Jerfel, and Dustin
+  Tran. 2019.
+\newblock \href {https://arxiv.org/abs/1904.01685} {Measuring calibration in
+  deep learning}.
+\newblock In \emph{Proceedings of the {IEEE/CVF} Conference on Computer Vision
+  and Pattern Recognition ({CVPR}) Workshops}, pages 38--41.
+
+\bibitem[{Pandit et~al.(2023)Pandit, Sarker, Perdisci, Ahamad, and
+  Yang}]{pandit2023robocall}
+Sharbani Pandit, Krishanu Sarker, Roberto Perdisci, Mustaque Ahamad, and Diyi
+  Yang. 2023.
+\newblock \href
+  {https://www.usenix.org/conference/usenixsecurity23/presentation/pandit}
+  {Combating robocalls with phone virtual assistant mediated interaction}.
+\newblock In \emph{32nd USENIX Security Symposium (USENIX Security 23)}, pages
+  463--479, Anaheim, CA. USENIX Association.
+
+\bibitem[{Pezeshkpour and Hruschka(2024)}]{pezeshkpour2024order}
+Pouya Pezeshkpour and Estevam Hruschka. 2024.
+\newblock \href {https://doi.org/10.18653/v1/2024.findings-naacl.130} {Large
+  language models sensitivity to the order of options in multiple-choice
+  questions}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  NAACL 2024}, pages 2006--2017, Mexico City, Mexico. Association for
+  Computational Linguistics.
+
+\bibitem[{Rakutko(2026)}]{minijev2026}
+Mikhail Rakutko. 2026.
+\newblock \href {https://github.com/r-ms/mini-jev} {mini-{Jev}: Read the
+  letter}.
+\newblock GitHub repository.
+\newblock Accessed 2026-09-19, commit ca61219.
+
+\bibitem[{Robinson et~al.(2023)Robinson, Rytting, and
+  Wingate}]{robinson2023mcq}
+Joshua Robinson, Christopher~Michael Rytting, and David Wingate. 2023.
+\newblock \href {https://arxiv.org/abs/2210.12353} {Leveraging large language
+  models for multiple choice question answering}.
+\newblock In \emph{The Eleventh International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Schick and Sch{\"u}tze(2021)}]{schick2021pet}
+Timo Schick and Hinrich Sch{\"u}tze. 2021.
+\newblock \href {https://doi.org/10.18653/v1/2021.eacl-main.20} {Exploiting
+  cloze-questions for few-shot text classification and natural language
+  inference}.
+\newblock In \emph{Proceedings of the 16th Conference of the European Chapter
+  of the Association for Computational Linguistics: Main Volume}, pages
+  255--269, Online. Association for Computational Linguistics.
+
+\bibitem[{Shen et~al.(2026)Shen, Duong, Xu, An, Gan, Tang, Liang, Zhang, Zhang,
+  Traister, and Ren}]{own_machines2026}
+Xingyu Shen, Tommy Duong, Muduo Xu, Xiaodong An, Jiaqi Gan, Haoyuan Tang,
+  Jamey~Z. Liang, Siyu Zhang, Yan Zhang, Ethan Traister, and Simiao Ren. 2026.
+\newblock \href {https://arxiv.org/abs/2609.11137} {The machines are calling:
+  Measuring automated and synthetic voices in unwanted inbound calls}.
+\newblock \emph{arXiv preprint arXiv:2609.11137}.
+
+\bibitem[{Shen et~al.(2024)Shen, Wang, Zhang, Ngai, and Fu}]{shen2024combating}
+Zitong Shen, Kangzhong Wang, Youqian Zhang, Grace Ngai, and Eugene~Y. Fu. 2024.
+\newblock \href {https://arxiv.org/abs/2409.11643} {Combating phone scams with
+  {LLM}-based detection: Where do we stand?}
+\newblock \emph{arXiv preprint arXiv:2409.11643}.
+
+\bibitem[{Shen et~al.(2025)Shen, Yan, Zhang, Luo, Ngai, and
+  Fu}]{shen2025warned}
+Zitong Shen, Sineng Yan, Youqian Zhang, Xiapu Luo, Grace Ngai, and Eugene~Yujun
+  Fu. 2025.
+\newblock \href {https://arxiv.org/abs/2502.03964} {``it warned me just at the
+  right moment'': Exploring {LLM}-based real-time detection of phone scams}.
+\newblock \emph{arXiv preprint arXiv:2502.03964}.
+
+\bibitem[{Tian et~al.(2023)Tian, Mitchell, Zhou, Sharma, Rafailov, Yao, Finn,
+  and Manning}]{tian2023justask}
+Katherine Tian, Eric Mitchell, Allan Zhou, Archit Sharma, Rafael Rafailov,
+  Huaxiu Yao, Chelsea Finn, and Christopher Manning. 2023.
+\newblock \href {https://doi.org/10.18653/v1/2023.emnlp-main.330} {Just ask for
+  calibration: Strategies for eliciting calibrated confidence scores from
+  language models fine-tuned with human feedback}.
+\newblock In \emph{Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, pages 5433--5442, Singapore. Association for
+  Computational Linguistics.
+
+\bibitem[{Traister et~al.(2026)Traister, Raj, Gan, Shen, Wu, Zhou, Duong,
+  Zewde, Chen, and Ren}]{anatomy2026}
+Ethan Traister, Ankit Raj, Jiaqi Gan, Xingyu Shen, Tyler Wu, Yuchen Zhou, Tommy
+  Duong, Kidus Zewde, Siying Chen, and Simiao Ren. 2026.
+\newblock \href {https://arxiv.org/abs/2608.24127} {Anatomy of a scam call:
+  What 10,000 real scam and spam calls reveal about how phone scammers
+  operate}.
+\newblock \emph{arXiv preprint arXiv:2608.24127}.
+
+\bibitem[{{TypeSafe AI}(2026)}]{typesafe_adapter}
+{TypeSafe AI}. 2026.
+\newblock \href {https://github.com/typesafe-ai/system-one-adapter-python}
+  {system-one-adapter-python: Drop-in {TypeSafeClient} replacement backed by
+  {LLM} {APIs}}.
+\newblock GitHub repository.
+\newblock Official TypeSafe adapter for the System One / {Jev} interface.
+  Accessed 2026-09-19, commit adffc2e.
+
+\bibitem[{Wang et~al.(2026)Wang, Ma, Dai, Liu, Feng, Yang, Hu, Wang, Pan, Yuan,
+  and Wang}]{wang2026safeqaq}
+Peidong Wang, Zhiming Ma, Xin Dai, YongKang Liu, Shi Feng, Xiaocui Yang,
+  Wenxing Hu, Zhihao Wang, Mingjun Pan, Li~Yuan, and Daling Wang. 2026.
+\newblock \href {https://doi.org/10.18653/v1/2026.acl-long.1201} {{SAFE}-{QAQ}:
+  End-to-end slow-thinking audio-text fraud detection via reinforcement
+  learning}.
+\newblock In \emph{Proceedings of the 64th Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 26138--26157,
+  San Diego, California, United States. Association for Computational
+  Linguistics.
+
+\bibitem[{Wang et~al.(2024)Wang, Ma, Hu, Weber-Genzel, R{\"o}ttger, Kreuter,
+  Hovy, and Plank}]{wang2024myanswerisc}
+Xinpeng Wang, Bolei Ma, Chengzhi Hu, Leon Weber-Genzel, Paul R{\"o}ttger,
+  Frauke Kreuter, Dirk Hovy, and Barbara Plank. 2024.
+\newblock \href {https://doi.org/10.18653/v1/2024.findings-acl.441} {``my
+  answer is {C}'': First-token probabilities do not match text answers in
+  instruction-tuned language models}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  ACL 2024}, pages 7407--7416, Bangkok, Thailand. Association for Computational
+  Linguistics.
+
+\bibitem[{Warner et~al.(2025)Warner, Chaffin, Clavi{\'e}, Weller,
+  Hallstr{\"o}m, Taghadouini, Gallagher, Biswas, Ladhak, Aarsen, Adams, Howard,
+  and Poli}]{warner2024modernbert}
+Benjamin Warner, Antoine Chaffin, Benjamin Clavi{\'e}, Orion Weller, Oskar
+  Hallstr{\"o}m, Said Taghadouini, Alexis Gallagher, Raja Biswas, Faisal
+  Ladhak, Tom Aarsen, Griffin~Thomas Adams, Jeremy Howard, and Iacopo Poli.
+  2025.
+\newblock \href {https://doi.org/10.18653/v1/2025.acl-long.127} {Smarter,
+  better, faster, longer: A modern bidirectional encoder for fast, memory
+  efficient, and long context finetuning and inference}.
+\newblock In \emph{Proceedings of the 63rd Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 2526--2547,
+  Vienna, Austria. Association for Computational Linguistics.
+
+\bibitem[{Weller et~al.(2026)Weller, Ricci, Marone, Chaffin, Lawrie, and
+  Van~Durme}]{ettin2025}
+Orion Weller, Kathryn Ricci, Marc Marone, Antoine Chaffin, Dawn Lawrie, and
+  Benjamin Van~Durme. 2026.
+\newblock \href {https://arxiv.org/abs/2507.11412} {Seq vs seq: An open suite
+  of paired encoders and decoders}.
+\newblock In \emph{The Fourteenth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Xiong et~al.(2024)Xiong, Hu, Lu, Li, Fu, He, and
+  Hooi}]{xiong2024uncertainty}
+Miao Xiong, Zhiyuan Hu, Xinyang Lu, Yifei Li, Jie Fu, Junxian He, and Bryan
+  Hooi. 2024.
+\newblock \href {https://arxiv.org/abs/2306.13063} {Can {LLMs} express their
+  uncertainty? an empirical evaluation of confidence elicitation in {LLMs}}.
+\newblock In \emph{The Twelfth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Yang et~al.(2025)Yang, Li, Yang, Zhang, Hui, Zheng, Yu, Gao, Huang,
+  Lv, Zheng, Liu, Zhou, Huang, Hu, Ge, Wei, Lin, Tang, Yang, Tu, Zhang, Yang,
+  Yang, Zhou, Zhou, Lin, Dang, Bao, Yang, Yu, Deng, Li, Xue, Li, Zhang, Wang,
+  Zhu, Men, Gao, Liu, Luo, Li, Tang, Yin, Ren, Wang, Zhang, Ren, Fan, Su,
+  Zhang, Zhang, Wan, Liu, Wang, Cui, Zhang, Zhou, and Qiu}]{qwen3}
+An~Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo~Zheng, Bowen
+  Yu, Chang Gao, Chengen Huang, Chenxu Lv, Chujie Zheng, Dayiheng Liu, Fan
+  Zhou, Fei Huang, Feng Hu, Hao Ge, Haoran Wei, Huan Lin, Jialong Tang, and 41
+  others. 2025.
+\newblock \href {https://arxiv.org/abs/2505.09388} {Qwen3 technical report}.
+\newblock \emph{arXiv preprint arXiv:2505.09388}.
+
+\bibitem[{Zeng et~al.(2024)Zeng, Liu, Mullins, Peran, Fernandez, Harkous,
+  Narasimhan, Proud, Kumar, Radharapu, Sturman, and
+  Wahltinez}]{zeng2024shieldgemma}
+Wenjun Zeng, Yuchi Liu, Ryan Mullins, Ludovic Peran, Joe Fernandez, Hamza
+  Harkous, Karthik Narasimhan, Drew Proud, Piyush Kumar, Bhaktipriya Radharapu,
+  Olivia Sturman, and Oscar Wahltinez. 2024.
+\newblock \href {https://arxiv.org/abs/2407.21772} {{ShieldGemma}: Generative
+  {AI} content moderation based on {Gemma}}.
+\newblock \emph{arXiv preprint arXiv:2407.21772}.
+
+\bibitem[{Zhang(2026)}]{openjevsglang2026}
+Eric Zhang. 2026.
+\newblock \href {https://github.com/ekzhang/openjev-sglang} {openjev-sglang:
+  {Jev}-compatible {API} endpoint based on open models (prefill-only)}.
+\newblock GitHub repository.
+\newblock Accessed 2026-09-19, commit 604664a.
+
+\bibitem[{Zhao et~al.(2021)Zhao, Wallace, Feng, Klein, and
+  Singh}]{zhao2021calibrate}
+Zihao Zhao, Eric Wallace, Shi Feng, Dan Klein, and Sameer Singh. 2021.
+\newblock \href {https://arxiv.org/abs/2102.09690} {Calibrate before use:
+  Improving few-shot performance of language models}.
+\newblock In \emph{Proceedings of the 38th International Conference on Machine
+  Learning}, volume 139 of \emph{Proceedings of Machine Learning Research},
+  pages 12697--12706. PMLR.
+
+\bibitem[{Zheng et~al.(2024)Zheng, Zhou, Meng, Zhou, and Huang}]{zheng2024mcq}
+Chujie Zheng, Hao Zhou, Fandong Meng, Jie Zhou, and Minlie Huang. 2024.
+\newblock \href {https://arxiv.org/abs/2309.03882} {Large language models are
+  not robust multiple choice selectors}.
+\newblock In \emph{The Twelfth International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[{Zheng et~al.(2023)Zheng, Chiang, Sheng, Zhuang, Wu, Zhuang, Lin, Li,
+  Li, Xing, Zhang, Gonzalez, and Stoica}]{zheng2023judge}
+Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao
+  Zhuang, Zi~Lin, Zhuohan Li, Dacheng Li, Eric Xing, Hao Zhang, Joseph~E.
+  Gonzalez, and Ion Stoica. 2023.
+\newblock \href {https://doi.org/10.52202/075280-2020} {Judging
+  {LLM}-as-a-judge with {MT-Bench} and {Chatbot Arena}}.
+\newblock In \emph{Advances in Neural Information Processing Systems 36
+  (NeurIPS 2023), Datasets and Benchmarks Track}, pages 46595--46623. Curran
+  Associates, Inc.
+
+\end{thebibliography}

@@ -1,0 +1,28 @@
+\section{Mobile Edge Evaluation Design}
+\label{sec:study}
+The four measurement blocks connect integration choice, quality-matched timing, interface sensitivity, and application outcomes. Table~\ref{tab:design} summarizes their scale. Jev, DeepSeek, and Gemini are accessed through OpenRouter; Qwen is self-hosted. Generative comparators return compact structured responses. Model versions, output settings, radio parameters, and implementation details are in the appendix.
+
+The common network setting combines mobile access, handovers between cells, competing edge workloads, and changing service contracts. Contract updates are specified independently of mobility events. Each comparison uses the same NR delivery and handover traces, so an interpreter's waiting time changes the service state encountered after its response without changing the radio input. Edge actions do not feed back into the radio simulation. This isolates the service-orchestration stage within the communication and computation path.
+
+\begin{table}[t]
+\centering
+\caption{Study size by measurement block. Requests are counted per trajectory.}
+\label{tab:design}
+\footnotesize\setlength{\tabcolsep}{6pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrr@{}}\toprule
+\rowcolor{TableHeaderShade}
+Block & Trajectories & Requests\\\midrule
+Integration & 14 & 22,500\\
+Cloud & 60 & 22,500\\
+Local interface & 36 & 22,500\\
+Image service & 16 & 270\\\bottomrule
+\end{tabular}
+\end{table}
+
+The integration block compares direct placement with cached interpretation and numerical scheduling under stable and updated contracts. It includes Jev, DeepSeek, Gemini, and the structured-input reference; both responsibility assignment and contract reuse change between the two model configurations. The subsequent cloud and local blocks use cached interpretation with a common scheduler. Their four scenarios are a stable contract, withdrawal of a location restriction, changed location permissions, and reversal of priorities. Each update scenario also specifies its current deadline values. The transitions differ in contract content and update time. The cloud block uses 21 distinct contract descriptions, each scored in three timing repeats. Each invocation interprets a batch of three user contracts, giving 21 calls and 63 contract checks per model. The local block reuses that text set and measures a new Jev reference alongside the two Qwen interfaces.
+
+The cloud block includes Jev, DeepSeek, Gemini, profile-output Qwen, and the structured-input reference. The principal comparison uses the three cloud models, which interpret all evaluated contracts correctly. The local block compares Jev with two interfaces to the same Qwen deployment: profile selection and direct attributes. The latter matches Jev's observed correctness and becomes the principal local comparator. This baseline selection follows the exploratory measurements; both Qwen interfaces remain in the reported results.
+
+The image block tests the integration on 96 public scene-text images. Twelve contract descriptions govern three users over four versions. Each trajectory submits 270 image requests, and each method executes four trajectories, for 1,080 requests per method. Two mobility and background-load traces are shared across methods. All radio fragments of an image must arrive before it is released to the real service. Model invocation, transfer, and OCR then share a wall-clock timeline; the deadline starts at the image's original send time. We check the full trajectory and the fixed 1.5-second windows following contract updates.
+
+Conditions are interleaved using a fixed randomized order. We report all timing repeats and retain long responses. Means, quantiles, and observed ranges are descriptive summaries of these timing measurements. Requests within a trajectory share contracts, queues, and radio conditions, so their count is not a count of independent experimental replicates. Response latency uses all interpretation calls in its block, whereas the updated-scenario completion aggregate excludes the stable scenario. Within each block, a relative latency reduction is one minus Jev's median divided by the comparator's median. Completion differences subtract the comparator's mean percentage from Jev's; they are reported in percentage points. Exact configuration and validation details are collected in the appendix.

@@ -1,0 +1,31 @@
+\begin{table*}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{llc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}c}\toprule
+            &  & \multicolumn{4}{c}{Evidence} & \multicolumn{6}{c}{NLI} \\\cmidrule(lr){3-6}\cmidrule(lr){7-12}
+            Backbone Model & Fine-tuning Method & \multicolumn{2}{c}{mAP} & \multicolumn{2}{c}{P@R80} & \multicolumn{2}{c}{Acc.} & \multicolumn{2}{c}{F1 (C)} & \multicolumn{2}{c}{F1 (E)} \\\midrule
+            BERT\textsubscript{\textit{base}} & None & .885 & \textsubscript{.025} & .663 & \textsubscript{.093} & .838 & \textsubscript{.020} & .287 & \textsubscript{.022} & .765 & \textsubscript{.035} \\
+            BERT\textsubscript{\textit{large}} & None & .922 & \textsubscript{.006} & .793 & \textsubscript{.018} & .875 & \textsubscript{.006} & .357 & \textsubscript{.039} & .834 & \textsubscript{.002} \\
+            DeBERTa v2\textsubscript{\textit{xlarge}} & None & .933 & \textsubscript{.002} & .859 & \textsubscript{.008} & .885 & \textsubscript{.001} & .360 & \textsubscript{.027} & .855 & \textsubscript{.002} \\
+            \midrule
+            BERT\textsubscript{\textit{base}} & Pretrained from scratch using a case law corpus \cite{zheng_when_2021} & .870 & \textsubscript{.015} & .578 & \textsubscript{.052} & .831 & \textsubscript{.032} & .289 & \textsubscript{.026} & .783 & \textsubscript{.040} \\
+            BERT\textsubscript{\textit{base}} & Fine-tuned on case law and contract corpora \cite{chalkidis_legal-bert_2020} & .925 & \textsubscript{.004} & .811 & \textsubscript{.002} & .794 & \textsubscript{.008} & .272 & \textsubscript{.008} & .746 & \textsubscript{.018} \\
+            DeBERTa v2\textsubscript{\textit{xlarge}} & Fine-tuned on span identification \cite{hendrycks_cuad_2021} & .936 & \textsubscript{.002} & .860 & \textsubscript{.003} & .892 & \textsubscript{.001} & .405 & \textsubscript{.016} & .859 & \textsubscript{.005} \\
+            \midrule
+            BERT\textsubscript{\textit{base}} & Fine-tuned on NDAs & .892 & \textsubscript{.002} & .690 & \textsubscript{.014} & .864 & \textsubscript{.004} & .326 & \textsubscript{.014} & .820 & \textsubscript{.010} \\
+            BERT\textsubscript{\textit{large}} & Fine-tuned on NDAs & .922 & \textsubscript{.003} & .837 & \textsubscript{.008} & .875 & \textsubscript{.000} & .389 & \textsubscript{.009} & .839 & \textsubscript{.003} \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            Refer to \cref{sec:experiment-settings} for the details on the metrics.
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{Results for different backbone and pretrained models}\label{tab:results-pretrained}
+\end{table*}

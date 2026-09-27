@@ -1,0 +1,53 @@
+\section{Development Visibility and Output Controls}
+\label{sec:planned}
+\subsection{Controlled comparison}
+The follow-up comparison fixes the sample and experimental conditions before inference. Ten contracts are sampled from the 31 development documents outside the pilot, with seed 20260921. Three distinct hypotheses per contract are selected uniformly with document-specific seeds, independently of gold labels and model predictions. The 30 anchors contain 12 entailments, three contradictions, and 15 not-mentioned labels. The follow-up and pilot samples are disjoint within this study; their possible inclusion in model training data is unknown.
+
+Jev, Qwen3.5-4B, and Flash-Lite each have valid predictions for 360/360 observations. Astra's high-reasoning condition covers 293/360 observations under the prespecified spending rule; the remaining 67 are unobserved, and none of the collected responses failed. Appendix~\ref{app:astra} analyzes this unequal coverage separately. A subsequent evaluation adds Qwen9B with 360 valid responses (Appendix~\ref{sec:qwen9extension}). Each anchor--arm pair is evaluated three times, with request order randomized within each contract and concurrency one per model. The catalog prompt differs from the pilot, so comparisons between phases also reflect that change. Both Qwen models use a 2,048 output-token cap in every arm, with thinking disabled and temperature zero. Unqualified Qwen results in this development section refer to Qwen4B.
+
+The four arms retain the contract and original anchor label:
+\begin{description}
+\item[A.] Only the anchor is visible; only its label is requested.
+\item[B.] All 17 hypotheses are visible in their original order; only the anchor label is requested.
+\item[C.] The same catalog is visible; all 17 labels are requested, anchor first.
+\item[D.] The same catalog is visible; all 17 labels are requested, anchor last.
+\end{description}
+The contract and visible catalog are identical across B/C/D; only the required outputs differ. A--B varies visible hypotheses with the requested label set fixed; B--C varies output workload and structure at fixed visible content; C--D varies requested output order and structure. These interventions separate observable prompt factors, while the models' internal decision processes remain unobserved.
+
+Jev represents hypotheses through shared state and native Choice questions, so C/D changes the order of its question keys. For autoregressive models, the same contrast changes the requested sequence of generated answers. Both Qwen models and Flash-Lite follow the required order in every valid response, as assessed from the original output sequence. Restricting their valid paired predictions to responses with the required order therefore leaves the label-change rates unchanged. This observed output order need not correspond to internal reasoning order.
+
+Primary scoring evaluates the preselected anchor in each response, yielding 90 observations per arm from 30 anchors evaluated three times. Transitions pair observations by contract, anchor, and replicate, while repeat disagreement compares all three replicate pairs per anchor. A stable-correct anchor matches its fixed gold label in all four conditions and all three repeats: all twelve predictions must be correct. The stable-correct rate divides the number of such anchors by all 30 selected anchors. Strict stability instead requires a valid, identical label across all twelve observations. It therefore also includes stable-wrong anchors, whose identical predictions are incorrect. Intervals resample whole contracts (5,000 draws, seed 20260921), preserving the ten document clusters underlying the 360 repeated observations.
+
+The development anchor tables include seven complete evaluations: Jev, Flash-Lite, both Qwen models, Terra, Sonnet, and Haiku. The last three models are added after inspection of the earlier results, using the same contracts, anchors, prompts, four conditions, and three repetitions. Appendix~\ref{app:development-protocol} describes their inference settings. All models share the same targets and scoring rules. Attempted requests without valid predictions count as incorrect in accuracy and prevent the affected anchor from satisfying strict stability; they are neither removed nor repeated. Paired label-change rates use only jointly valid predictions, with coverage reported separately.
+
+\input{tables/development_extension/anchor_conditions}
+\input{tables/development_extension/anchor_transitions}
+
+\subsection{Fixed accuracy, changed targets and class balance}
+Expanding the visible catalog changes Qwen's decisions even when the requested hypothesis and aggregate accuracy stay fixed. A and B each produce 69/90 correct predictions (76.67\%), but 24/90 paired labels change: 12 correct-to-wrong and 12 wrong-to-correct. Every anchor receives the same label across repeats within each arm, so the transitions affect eight distinct anchors, four improved and four damaged. The descriptive contract-bootstrap 95\% interval is 10.00--46.67\% for the change rate and $[-10.00,10.00]$ percentage points for the accuracy difference. All four Qwen arms show zero repeat disagreement. Figure~\ref{fig:example} illustrates one regression. In this A/B comparison, the contract, output requirements, temperature, and token cap are fixed; only the visible hypothesis catalog varies.
+
+The unchanged accuracy also conceals a shift in class-level performance. Qwen's Macro-F1 falls from 71.90\% in A to 55.14\% in B. Contradiction recall falls from 6/9 repeated predictions to 0/9, while entailment and not-mentioned recall improve. Those nine contradiction observations come from only three distinct anchors, leaving the magnitude of this class-specific change particularly uncertain.
+
+Jev's A--B comparison changes 15/90 labels, including eight regressions, five corrections, and two switches between wrong labels. Flash-Lite changes 4/90, all regressions. This relative sensitivity differs from the pilot's grouping comparison, indicating that the pattern depends on which aspect of the request changes.
+
+\textbf{Finding 4: A single requested judgment can depend on other visible questions.} Qwen's A--B changes occur with a fixed requested answer set and agreement across unchanged repeats. This establishes catalog sensitivity within the ten-contract sample; its prevalence beyond that sample requires broader evaluation.
+
+\subsection{Output composition and stable errors}
+Some judgments also change with output workload or requested order at fixed catalog visibility. Qwen changes 3/90 labels for B--C and 15/90 for C--D; the latter comprises three regressions, nine corrections, and three wrong-to-wrong changes. Jev changes four labels in each contrast, alongside 4/90 repeat disagreements in both C and D. Its 4/90 difference between conditions is therefore comparable to the observed repeat variability. Flash-Lite changes 7/90 for B--C and 5/90 for C--D, with 6/90 and 9/90 within-arm disagreements in C and D.
+
+Jev and Flash-Lite each keep 21/30 anchors correct across all twelve responses (Table~\ref{tab:anchorrobustness}). Their strict-stable counts are higher, at 24/30 and 25/30, because they also retain three and four stable errors. Qwen has 17 stable-correct and two stable-wrong anchors. These counts show why agreement must be assessed against gold labels: persistent errors contribute to label consistency without contributing to persistent correctness.
+
+\textbf{Finding 5: Stability and reliability are distinct even under repeated controls.} Separating stable-correct, stable-wrong, and unstable outcomes reveals a distinction that neither a single accuracy nor an undifferentiated agreement rate captures.
+
+\input{tables/development_extension/anchor_robustness}
+
+\subsection{Exploratory Qwen9B comparison}
+\label{sec:qwen9extension}
+We add Qwen3.5-9B after examining the initial anchor results, using the same contracts, anchors, conditions, and scoring rules. All 360 responses are valid and follow the requested output order. Its A/B/C/D accuracies are 83.33/76.67/66.67/70.00\%, with agreement across repeats within each arm. A--B, B--C, and C--D nevertheless change 6/90, 24/90, and 21/90 paired predictions, corresponding to two, eight, and seven distinct anchors respectively.
+
+Sixteen of 30 anchors remain correct across all twelve observations (descriptive contract-bootstrap 95\% interval: 33.33--73.33\%). Twenty remain label-consistent, including four stable errors. Alongside Qwen4B, this provides a second case in which agreement under unchanged requests coexists with sensitivity to request configuration. The size comparison remains exploratory, with ten document clusters and specific inference settings. Appendix~\ref{app:extension} reports coverage, output length, and latency.
+
+\subsection{Additional API comparators}
+The later API evaluations further distinguish baseline accuracy from correctness across all twelve responses. Sonnet keeps 23/30 anchors correct throughout, Haiku keeps 22/30, and Terra keeps 19/30, compared with 21/30 for Jev and Flash-Lite. Their descriptive 95\% intervals are 56.67--93.33\% for Sonnet, 60.00--86.67\% for Haiku, and 43.33--83.33\% for Terra. Terra has slightly higher baseline accuracy than Sonnet, but fewer anchors remain correct throughout. The baseline and anchor panels contain different contracts and judgments, so this ranking difference alone does not isolate request sensitivity. These counts describe ten contract clusters and do not establish a general stability ranking.
+
+The added models also show decision changes that a single aggregate score would miss. Sonnet has 74/90 correct judgments in both B and C, with one correction and one regression. Haiku changes 15/90 judgments between A and B, comprising twelve regressions and three corrections; its accuracy falls from 87.78\% to 77.78\%. The requested target and answer set remain fixed in this contrast. Catalog sensitivity and compensating changes therefore also occur beyond the original development model set.

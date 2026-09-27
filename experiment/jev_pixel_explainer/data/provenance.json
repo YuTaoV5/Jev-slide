@@ -1,0 +1,27 @@
+{
+  "source": "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\jevfire.json",
+  "source_sha256": "121d1eac97d18df2cba1966078c00d17813560fb7e64901df6b9a3ceee15f7f1",
+  "mode": "offline-artificial-fixture",
+  "model_run": false,
+  "api_calls": 0,
+  "source_field": "records[*].artificial_scores",
+  "scores": [
+    [
+      0.82,
+      0.12,
+      0.06
+    ],
+    [
+      0.36,
+      0.34,
+      0.3
+    ]
+  ],
+  "threshold": 0.7,
+  "rule": "max(probabilities) >= threshold",
+  "outcomes": [
+    "billing",
+    "human_review"
+  ],
+  "caveat": "max probability is not the TypeSafe confidence field"
+}

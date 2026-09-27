@@ -1,0 +1,68 @@
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Controlled Experiments}\label{sec:discussion-additional_experiments}
+
+In order to identify what is and what is not capable by the models, we carried out controlled experiments where we modified the input of the models.
+
+\paragraph{Is Hypothesis Information Useful?}
+
+It is non-trivial that hypotheses surface tokens which were merely used as an instruction to the annotators can be useful in evidence identification.
+The fact that Span TF-IDF+Cosine performed significantly better than the random baseline (\cref{tab:results}) implies that hypothesis surface tokens do convey useful information.
+Furthermore, we also experimented with a condition where we used a randomly initialized special token for each hypothesis instead of the hypothesis' surface tokens.
+Removing the hypothesis surface tokens resulted in consistent decrease of performance for both evidence identification and NLI (\cref{tab:results-symbolic}).
+This implies that the hypothesis surface tokens are somewhat meaningful, but these narrow differences suggest that there could be a better way to utilize the hypothesis surface tokens.
+
+\input{tab/results-nli_only}
+
+\paragraph{Can Better Evidence Identification Lead to Better NLI?}
+
+In ContractNLI, evidence identification and NLI are dependent on each other.
+We experimented whether good evidence identification can benefit NLI by feeding models with oracle evidence spans for NLI.
+For the oracle model (Oracle NLI), we concatenated a hypothesis and ground truth evidence spans as an input and predicted a binary label of \textsc{Entailment} or \textsc{Contradiction}.
+We can observe in \cref{tab:results-nli_only} that giving models oracle spans substantially improves NLI performance, notably the F1 score of \textsc{Contradiction}.
+This suggests that there is still much room for improvement on NLI just by improving evidence identification.
+
+\input{tab/experiment-exception}
+
+\subsection{Challenges of ContractNLI}\label{sec:discussion-observations}
+
+Our task is challenging from a machine learning perspective.
+The label distribution is imbalanced and it is naturally multi-task, all the while training data being scarce.
+Furthermore, we argue that there exist multiple linguistic characteristics of contracts that make the task challenging.
+
+We annotated the development dataset on whether each document-hypothesis pair exhibits certain characteristics and evaluated impact of each characteristic on the performance of the best Span NLI BERT (BERT\textsubscript{\textit{large}}) from \cref{tab:results}.
+Since evidence spans are only available when the NLI label is either \textsc{Entailment} or \textsc{Contradiction}, document-hypothesis pairs with \textsc{NotMentioned} label are excluded from the evaluations in this section.
+
+\paragraph{Negation by Exception}
+
+Contracts often state a general condition and subsequently add exceptions to the general condition.
+For example, in ``Recipient shall not disclose Confidential Information to any person or entity, except its employees or partners ...'', the first half clearly forbids sharing confidential information to an employee, but the latter part flips this decision and it is actually permitting the party to share confidential information.
+This phenomenon can occur both locally (i.e., within a single span) or non-locally, sometimes pages away from each other.
+In our dataset, the local case happens in 12\% of document-hypothesis pairs, which corresponds to 59\% of documents with at least one of such hypotheses.
+The non-local case happens in 7\% of document-hypothesis pairs and 44\% of documents.
+By comparing document-hypothesis pairs with and without such phenomena, we can see that local and non-local negation by exception is hurting the model's NLI accuracy (\cref{tab:experiment-exception}).
+
+\input{tab/experiment-discontinous}
+
+\paragraph{Discontinous Spans}
+
+As sketched in \cref{fig:task_overview}, evidence spans can be discontinous and may even be pages apart.
+Such discontinous spans occur in 28\% of document-hypothesis pairs, which corresponds to 81\% of documents with at least one of such hypotheses.
+
+Contrary to our expectation, discontinuous setting did not have a negative effect on overall evidence identification mAP score (\cref{tab:experiment-discontinous}).
+This can be attributed to the fact finding a single span was easier in the discontinuous setting, which is evident from ``the number of spans read before finding one span''.
+``Number of spans read before finding all spans'' is nevertheless affected by discontinous spans, especially when the model's minimum number of surrounding tokens $n$ is small\footnote{This is the best BERT\textsubscript{large} with $n=64$ and the fifth best model overall.}.
+Furthermore, there was a positive correlation between the gap between the discontinuous spans and ``number of spans read before finding all spans'' (a Spearman correlation of $\rho=0.205$, $p=0.015$).
+This is because many hypothesis-distinctive spans (e.g., a span starting with ``(ii)'' in the second hypothesis of \cref{fig:task_overview}) can be inferred without access to its context, but finding the accompanying spans (e.g., the first span in \cref{fig:task_overview}) is impossible when they do not fit onto a single context window.
+Nevertheless, the effect of discontinous spans is very small and Span NLI BERT can overcome this with a larger number of surrounding tokens.
+
+\paragraph{Reference to Definition}
+
+\input{tab/experiment-reference}
+
+Contracts often have references to definitions.
+In our dataset, hypotheses \#5 and 6 ``Sharing with employees/third-parties'' tend to have such references.
+For example, if a contract says ``The Receiving Party undertakes to permit access to the Confidential Information only to its Representatives ....'', the hypothesis \#5 ``Sharing with employees'' is entailed by such span but the hypothesis \#6 ``Sharing with third-parties'' is not.
+Only when the contract includes a definition such as ``\,``Representatives'' shall mean directors, employees, professional advisors or anyone involved with the Party in a professional or business capacity.'', hypothesis \#6 is also entailed by the contract.
+We speculated that this could make NLI more difficult because the model has to refer to both spans in order to get NLI right.
+However, our observation discovered that examples with references are no more difficult than those without them (\cref{tab:experiment-reference}).

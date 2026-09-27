@@ -1,0 +1,14 @@
+\begin{table*}[t]
+\centering
+\caption{Local interface comparison over 21 calls and 63 contract checks per interface. Completion rates average three stable or nine updated trajectories. Tokens are medians; NC denotes non-comparable token accounting.}
+\label{tab:interface}
+\footnotesize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}llrrrrrr@{}}\toprule
+& & \multicolumn{2}{c}{Interpretation} & \multicolumn{2}{c}{Response (ms)} & \multicolumn{2}{c}{Completion (\%)}\\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(l){7-8}
+\rowcolor{TableHeaderShade}
+Model & Interface & Correct & Tokens & Median & [25th, 75th] & Stable & Updated\\\midrule
+Jev & Choice & 63/63 & NC & 356.2 & [341.9, 421.2] & 98.68 & 96.62\\
+Qwen & Profiles & 33/63 & 28 & 447.9 & [422.1, 466.1] & 87.31 & 85.17\\
+Qwen & Attributes & 63/63 & 56 & 757.1 & [750.8, 791.2] & 96.55 & 91.84\\
+\bottomrule\end{tabular}\end{table*}

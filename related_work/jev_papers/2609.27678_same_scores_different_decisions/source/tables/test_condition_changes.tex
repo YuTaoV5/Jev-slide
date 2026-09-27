@@ -1,0 +1,47 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xlrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Contrast & Valid pairs & Changed & C$\to$W & W$\to$C & W$\to$W \\
+\midrule
+\multirow[c]{3}{*}{\modelicon{jev}Jev 1.13.0} & A$\to$B & 90/90 & 4 & 0 & 4 & 0 \\
+ & B$\to$C & 90/90 & 1 & 1 & 0 & 0 \\
+ & C$\to$D & 90/90 & 0 & 0 & 0 & 0 \\
+\addlinespace[3pt]
+\multirow[c]{3}{*}{\modelicon{gemini}Gemini 3.5 Flash-Lite} & A$\to$B & 90/90 & 7 & 3 & 4 & 0 \\
+ & B$\to$C & 90/90 & 3 & 1 & 2 & 0 \\
+ & C$\to$D & 90/90 & 6 & 5 & 1 & 0 \\
+\multirow[c]{3}{*}{\modelicon{gemini}Gemini 3.1 Pro Preview} & A$\to$B & 89/90 & 7 & 4 & 3 & 0 \\
+ & B$\to$C & 90/90 & 7 & 3 & 4 & 0 \\
+ & C$\to$D & 90/90 & 3 & 3 & 0 & 0 \\
+\addlinespace[3pt]
+\multirow[c]{3}{*}{\modelicon{openai}GPT-5.6 Luna} & A$\to$B & 90/90 & 8 & 3 & 5 & 0 \\
+ & B$\to$C & 90/90 & 8 & 3 & 5 & 0 \\
+ & C$\to$D & 90/90 & 11 & 6 & 3 & 2 \\
+\multirow[c]{3}{*}{\modelicon{openai}GPT-5.6 Terra} & A$\to$B & 90/90 & 7 & 0 & 6 & 1 \\
+ & B$\to$C & 90/90 & 7 & 3 & 3 & 1 \\
+ & C$\to$D & 90/90 & 10 & 6 & 2 & 2 \\
+\multirow[c]{3}{*}{\modelicon{openai}GPT-6 Astra} & A$\to$B & 90/90 & 4 & 3 & 1 & 0 \\
+ & B$\to$C & 90/90 & 3 & 1 & 2 & 0 \\
+ & C$\to$D & 90/90 & 3 & 0 & 3 & 0 \\
+\addlinespace[3pt]
+\multirow[c]{3}{*}{\modelicon{claude}Claude Haiku 4.5} & A$\to$B & 90/90 & 8 & 1 & 6 & 1 \\
+ & B$\to$C & 90/90 & 6 & 0 & 3 & 3 \\
+ & C$\to$D & 90/90 & 14 & 12 & 2 & 0 \\
+\multirow[c]{3}{*}{\modelicon{claude}Claude Sonnet 5} & A$\to$B & 90/90 & 5 & 2 & 3 & 0 \\
+ & B$\to$C & 90/90 & 6 & 1 & 5 & 0 \\
+ & C$\to$D & 90/90 & 3 & 0 & 1 & 2 \\
+\addlinespace[3pt]
+\multirow[c]{3}{*}{\modelicon{qwen}Qwen3.5-4B} & A$\to$B & 90/90 & 9 & 4 & 4 & 1 \\
+ & B$\to$C & 88/90 & 9 & 1 & 7 & 1 \\
+ & C$\to$D & 87/90 & 14 & 8 & 5 & 1 \\
+\multirow[c]{3}{*}{\modelicon{qwen}Qwen3.5-9B} & A$\to$B & 90/90 & 15 & 7 & 8 & 0 \\
+ & B$\to$C & 90/90 & 7 & 4 & 3 & 0 \\
+ & C$\to$D & 88/90 & 12 & 5 & 7 & 0 \\
+\bottomrule
+\end{tabularx}
+\caption{Directions of answer changes on the test stability panel. Each contrast matches the same anchor and repeat across two conditions, yielding 90 planned pairs per model. Changed counts only pairs with two valid but different answers; C and W mean correct and wrong. The final column counts changes between two different wrong labels, not repeated wrong answers. Directional counts sum to Changed. Invalid pairs are excluded from these change counts but remain incorrect in accuracy estimates. Paired whole-contract bootstrap intervals and contract-level counts accompany the analysis artifact.}
+\label{tab:testchanges}
+\end{table*}

@@ -1,0 +1,25 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & $\Delta$ accuracy & 95\% interval & $\Delta$ All 12 correct & 95\% interval \\
+\midrule
+\modelicon{gemini}Gemini 3.5 Flash-Lite & +5.16 & [+3.49, +6.98] & -6.67 & [-16.67, +0.00] \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & +5.83 & [+4.11, +7.65] & -3.33 & [-16.67, +10.00] \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & +1.58 & [-0.05, +3.11] & -3.33 & [-10.00, +0.00] \\
+\modelicon{openai}GPT-5.6 Terra & +5.21 & [+3.73, +6.70] & -10.00 & [-20.00, +0.00] \\
+\modelicon{openai}GPT-6 Astra & +4.45 & [+2.92, +5.93] & -3.33 & [-16.67, +10.00] \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & +2.06 & [+0.43, +3.73] & -13.33 & [-26.67, -3.33] \\
+\modelicon{claude}Claude Sonnet 5 & +5.02 & [+3.25, +6.79] & +3.33 & [-10.00, +16.67] \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & -3.16 & [-6.70, +0.00] & -20.00 & [-36.67, -3.33] \\
+\modelicon{qwen}Qwen3.5-9B & +1.77 & [-0.43, +3.73] & -16.67 & [-33.33, +0.00] \\
+\bottomrule
+\end{tabularx}
+\caption{Paired differences from Jev in percentage points (comparison model minus Jev). The baseline resamples 123 contracts and All 12 correct resamples 30 contracts, using 5,000 paired whole-contract bootstrap draws. All ten models have complete evaluations. Intervals are exploratory, descriptive, and unadjusted for multiple comparisons.}
+\label{tab:testpaired}
+\end{table*}

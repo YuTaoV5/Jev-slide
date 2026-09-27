@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Serial s & Concurrent s & Ratio & Flips \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 20.266 & 6.016 & 0.297 & 5 \\
+\modelicon{qwen}Qwen3.5-4B & 2.502 & 0.942 & 0.376 & 2 \\
+\modelicon{qwen}Qwen3.5-9B & 6.164 & 2.091 & 0.339 & 2 \\
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 17.821 & 4.914 & 0.276 & 15 \\
+\modelicon{openai}GPT-5.6 Luna & 17.978 & 4.950 & 0.275 & 18 \\
+\bottomrule
+\end{tabular}
+\caption{Development-set effect of request concurrency on latency and predictions for 30 contracts ($K1,c1\to K1,c4$). Ratio divides concurrent by serial median document latency; it is not the mean of per-document ratios. Latencies apply to the evaluated deployments.}
+\label{tab:concurrency}
+\end{table*}

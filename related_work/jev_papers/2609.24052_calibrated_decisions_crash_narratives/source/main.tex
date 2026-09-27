@@ -1,0 +1,290 @@
+\documentclass[a4paper,fleqn]{cas-sc}
+
+\usepackage[authoryear]{natbib}
+
+%% Packages the body needs (the class already loads graphicx, amsmath, booktabs and xcolor).
+\usepackage{threeparttable}
+\usepackage{siunitx}
+\sisetup{group-separator={,},group-minimum-digits=4}
+\usepackage{xurl}
+\usepackage{longtable}
+\usepackage{rotating}
+% keeps an appendix's floats inside that appendix without forcing a page break
+\usepackage{placeins}
+
+%% Table styling macros used by the generated tables (colored header text, a flagged value,
+%% a bold leader, and an inline data bar). No font family or size is changed by them.
+\definecolor{jevink}{HTML}{16324F}
+\definecolor{jevfill}{HTML}{4C7FB8}
+\definecolor{jevtrack}{HTML}{E4EAF1}
+\definecolor{jevwarn}{HTML}{A8322A}
+\newlength{\jevbarw}
+\setlength{\jevbarw}{12pt}
+\newcommand{\jevbar}[2]{%
+  \leavevmode
+  {\color{jevfill}\rule[-0.3pt]{#1\jevbarw}{4.2pt}}%
+  {\color{jevtrack}\rule[-0.3pt]{#2\jevbarw}{4.2pt}}}
+% A header cell may need two lines, and an l/r column is an hbox in which \newline does
+% nothing, so the header is set in its own centered tabular and \jevbr breaks its rows.
+\newcommand{\jevbr}{\tabularnewline}
+\newcommand{\jevhead}[1]{\textcolor{jevink}{\bfseries
+  \begin{tabular}[b]{@{}c@{}}#1\end{tabular}}}
+% The same header inside a p{} column, where the mini-tabular above cannot shrink to the
+% column and so pushes the row past the right rule. Here the header simply wraps, and a
+% \newline in the header text is honoured because a p{} column is a paragraph box.
+\newcommand{\jevheadp}[1]{\textcolor{jevink}{\bfseries #1}}
+\newcommand{\jevflag}[1]{\textcolor{jevwarn}{#1}}
+\newcommand{\jevbest}[1]{\textbf{#1}}
+
+% A longtable cannot use the class's table caption, because the class installs that caption
+% inside the table environment and a longtable is not one. Without this the schema table came
+% left-aligned caption. Restyling longtable's own caption, rather than writing the caption
+% before the environment, also keeps the caption with the table: written outside it, the
+% caption stayed at the foot of the previous page while the table began on the next.
+% The same for a figure caption, which the class also sets in its sans-serif face. This is
+% the class's own macro with that one face changed, so a caption short enough to centre is
+% still centred and a longer one is still set flush left.
+\ExplSyntaxOn
+\cs_set:Npn \__make_fig_caption:nn #1#2
+{
+  \l_fig_align_tl
+  \skip_vertical:N \l_fig_abovecap_skip
+  \setbox\cascaptionbox=\hbox{%
+     \rmfamily\small\textbf{\color{scolor}#1:}~#2}
+  \ifdim\the\wd\cascaptionbox<\dim_use:N \l_fig_width_dim\relax
+    \parbox{ \l_fig_width_dim }
+      {\unskip\ignorespaces\hfil\rmfamily\small
+       \textbf{\color{scolor}#1:}~#2\hfil\par }
+  \else
+    \parbox{ \l_fig_width_dim }
+      {\rightskip=0pt\unskip\ignorespaces\rmfamily
+       \small\textbf{\color{scolor}#1:}~#2\par }
+  \fi
+  \skip_vertical:N \l_fig_belowcap_skip
+}
+\ExplSyntaxOff
+% The class sets a table caption in its sans-serif face while the body of the table is the
+% document serif. This redefinition is the class's own macro with that one face changed, so
+% a caption now matches the table it belongs to. Figure captions are left as the class has
+% them, because nothing was asked of them.
+\ExplSyntaxOn
+\cs_set:Npn \__make_tbl_caption:nn #1#2
+{
+  \l_tbl_align_tl
+  \skip_vertical:N \l_tbl_abovecap_skip
+  {\parbox{ \dimexpr(\l_tbl_width_dim)}
+    {\rightskip=0pt\rmfamily\small\textbf{\color{scolor}#1}\par#2\par\vskip4pt }}
+  \skip_vertical:N \l_tbl_belowcap_skip
+}
+\ExplSyntaxOff
+\makeatletter
+\setlength{\LTcapwidth}{\linewidth}
+\renewcommand{\LT@makecaption}[3]{%
+  \LT@mcol\LT@cols l{\parbox[t]{\LTcapwidth}{%
+    \rightskip=0pt\rmfamily\small\textbf{\color{scolor}#2}\par #3\par\vskip2pt}}}
+\makeatother
+
+% A rotated table bypasses the class's table environment, and so also bypasses the
+% two-row left-aligned caption the class installs there. Rebinding the caption maker
+% for the duration of the float gives it the same caption as every upright table,
+% through the ordinary caption machinery rather than a hand-built block.
+\makeatletter
+\long\def\jev@rotmakecaption#1#2{%
+  \vskip\abovecaptionskip
+  \parbox[t]{\linewidth}{\rightskip=0pt\rmfamily\small
+    \textbf{\color{scolor}#1}\par #2\par}%
+  \vskip4pt}
+\newcommand{\jevrotcaption}[2]{%
+  \let\@makecaption\jev@rotmakecaption
+  \caption{#2}\label{#1}}
+\makeatother
+
+%% Theorem-like environments, using the class's own commands.
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newproof{proofprop}{Proof of Proposition~\ref{prop:floor}}
+\newproof{prooflem}{Proof of Lemma~\ref{lem:noise}}
+\newproof{pf}{Proof}
+%% Appendix statements are numbered by appendix letter, as the floats are.
+\newcommand{\appendixtheorems}{\renewcommand{\theproposition}{\thesection.\arabic{proposition}}\setcounter{proposition}{0}}
+
+% Float placement. LaTeX's defaults reserve so much of a page for text that a page carrying a
+% float often carries little else, which left a band of white under almost every table. These
+% are the usual relaxed values: a float may fill more of the top or bottom of a page, a page
+% needs less text on it to be allowed a float, and a float-only page must be well filled before
+% LaTeX will make one. The effect is that a table now appears at the next opening after the
+% sentence that cites it and the rest of the page carries text, which is the ordinary journal
+% behaviour.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.80}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+
+\newcommand{\limitationsparagraph}{}   % no-op marker read by src/style_lint.py
+
+\input{numbers.tex}
+
+\begin{document}
+\let\WriteBookmarks\relax
+
+\shorttitle{Calibrated decisions at scale}
+\shortauthors{A. Rafe and S. Das}
+
+\title[mode=title]{Calibrated Decisions at Scale: Converting Police Crash Narratives into
+Probabilistic Crash Variables with a System One Model (Jev)}
+
+\author[1]{Amir Rafe}
+\cormark[1]
+\ead{amir.rafe@txstate.edu}
+\credit{Conceptualization, Methodology, Software, Formal analysis, Data curation, Validation,
+Visualization, Writing - original draft, Writing - review \& editing}
+
+\author[1]{Subasish Das}
+\credit{Conceptualization, Methodology, Supervision, Writing - review \& editing}
+
+\affiliation[1]{organization={Ingram School of Engineering, Texas State University},
+  city={San Marcos},
+  state={TX},
+  country={USA}}
+
+\cortext[1]{Corresponding author.}
+
+\begin{abstract}
+Crash datasets that carry an investigator narrative hold information the coded fields omit.
+Coding those narratives at scale has been blocked by three obstacles. Frontier large language
+models are costly at that scale, their generated text cannot be verified, and no rule says how
+much output a human must check. This paper formulates narrative coding as gated, typed
+decisions answered by Jev, a System One model that returns probabilities over analyst-defined
+options and generates no text. A screen covered \StageOneCoded{} Texas narratives and
+\NstageTwo{} were coded with a \NQuestions{}-question schema. Cost is governed by schema size
+rather than narrative length. The probabilities are audited against
+coded fields and against \GoldNUsable{} blinded human judgments drawn under a stated sampling
+design. Two frontier large language models are benchmarked on the same records. Against human
+labels the typed model attains an $F_1$ of \GoldFone{}. One frontier model gains
+\DiffJevFable{} and the other is indistinguishable from it. Calibration varies by model rather
+than by paradigm, so each model must be audited. Recalibration on the same labels reduces
+calibration error by a factor of \RecalIsoGain{}. Agreement with coded fields understates
+fidelity to the narrative by a median of \KappaGapMedian{} in kappa. A resolution-floor bound
+covers any model that reports probabilities on a discrete grid. A review budget over flagged
+records gives the records a human must read per variable and per year. Adding the calibrated
+variables to the coded fields raises the injury and fatal crashes attributed to nine factors by
+\DownAddedTotal{} per year.
+\end{abstract}
+
+\begin{highlights}
+\item A typed decision model codes crash narratives at scale with a measured cost model
+\item Its probabilities rank well but overstate prevalence until recalibrated on labels
+\item A two-decimal output grid puts a floor on calibration error for rare variables
+\item The human-review budget must be defined over flagged records rather than all records
+\item Adding calibrated narrative variables changes which factors a safety diagnosis ranks
+\end{highlights}
+
+\begin{keywords}
+crash narratives \sep probability calibration \sep selective prediction \sep automated coding
+\sep crash data quality \sep human-in-the-loop review
+\end{keywords}
+
+\maketitle
+
+\input{body}
+
+\input{appendices}
+
+%% ---------------------------------------------------------------------------------
+%% Ethics and data statement, withheld from this submission at the authors' request.
+%% Kept here in full rather than deleted, so it can be restored verbatim if a reviewer
+%% or the editor asks for it. Uncomment the block below to reinstate it; it needs no
+%% other change, and the governance facts the corresponding author must supply are
+%% marked inside it. The Data and code availability statement below is unaffected.
+%% ---------------------------------------------------------------------------------
+% \clearpage
+% \section*{Ethics and data statement}
+% The analysis uses the Texas Crash Records Information System extract held under the
+% authors' data agreement with the Texas Department of Transportation, and is limited to
+% secondary analysis of records collected for administrative purposes. Names and telephone
+% numbers were replaced with placeholders by the data owner before transfer. A second-pass
+% regular-expression redaction and a model-based residual-identifier screen were applied to
+% every narrative shown to a human coder or sent to either frontier vendor, in the sequence set
+% out in Section~\ref{sec:corpus}, and the rates at which identifiers survive the owner's pass
+% are reported there. No narrative is reproduced in this paper, every example is synthetic text
+% written to illustrate structure, and no individual is identifiable in any quoted text. The
+% narratives are not redistributable and are not released.
+%
+% Record-level processing and record-level publication are different things, and the distinction
+% is stated rather than elided. The pipeline computes a probability for every narrative it
+% processes, so individual-level quantities exist during processing and are held in the working
+% files that carry crash identifiers. Nothing at that level is published. Every quantity reported
+% in this paper is an aggregate over a variable, a stratum or the corpus, the released files
+% carry no crash identifier and no narrative text, and the pipeline produces no output that
+% attaches a factor to a named person.
+%
+% The coders worked in a browser interface reached through a single-use access code, which
+% displayed one narrative at a time, offered no download or copy affordance, held no crash
+% identifier in the interface, and was revoked when labeling finished. Coders saw only the
+% redacted and screened narratives of the reference frame.
+%
+% \medskip\noindent\textit{The following governance facts are supplied by the corresponding
+% author and are pending at the time of this draft.} The institutional review determination for
+% this secondary analysis, with the institution and the determination or exemption identifier, or
+% the reason none was required. Whether the data agreement with the Texas Department of
+% Transportation permits processing of narrative text by an external application programming
+% interface. The retention period, the training-use setting and the processing region in force at
+% run time for the typed-model service and for each of the two frontier vendors. Whether the
+% human coders were covered by the data agreement and the terms under which their access was
+% granted and revoked.
+
+\section*{Data and code availability}
+The question schema, the asynchronous runner, the metric implementations with their unit
+tests, the figure and table generators, the dependency file and a release manifest naming what
+is public and what is not, and all aggregated outputs behind every figure and table are
+released at \url{https://github.com/pozapas/jev-calibrated-narrative-coding}. All runs use a
+pinned model identifier, recorded per call, and every script resolves its paths from the
+repository root.
+
+The underlying narratives and the record-level files that carry crash identifiers are not
+redistributable under the data agreement, and the reference frame is among them, so it is not
+released. A de-identified pair-level audit table has been prepared instead, carrying an
+anonymous narrative identifier, the variable, the model probability, the consensus label, the
+dispute status, the calibration cell, the draw route, the narrative weight, the assignment
+probability, the pair weight and both frontier arms' predictions, with no crash identifier and
+no narrative text. It is the file from which the human-reference results of
+Section~\ref{sec:res-accuracy}, the recalibration of Section~\ref{sec:res-calibration} and the
+frontier comparison of Section~\ref{sec:res-frontier} can be recomputed in full. It will be
+made available on request once the data owner has confirmed that the agreement permits it. The
+population-scale results of Section~\ref{sec:res-population} and the downstream counts of
+Section~\ref{sec:res-downstream} depend on the Stage-2 outputs joined to coded fields at crash
+level and cannot be recomputed from any releasable file, so the aggregated result files behind
+them are released in place of the inputs, and a controlled-access route through the data owner
+is the only way to reproduce them from source.
+
+% \section*{Declaration of competing interest}
+% The authors declare that they have no known competing financial interests or personal
+% relationships that could have appeared to influence the work reported in this paper. The
+% authors have no relationship with the developer of the model audited here, and the model
+% was accessed at published list prices.
+
+% ---------------------------------------------------------------------------
+% REMOVED AT THE OWNER'S REQUEST, 2026-09-20. To restore, delete this banner
+% and the leading %% on each line of the block below.
+%% \section*{Funding}
+%% This research did not receive any specific grant from funding agencies in the public,
+%% commercial, or not-for-profit sectors.
+
+% ---------------------------------------------------------------------------
+% REMOVED AT THE OWNER'S REQUEST, 2026-09-20. To restore, delete this banner
+% and the leading %% on each line of the block below.
+%% \section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+%% During the preparation of this work the authors used Claude (Anthropic) in order to edit the
+%% manuscript for structure and style and to check the consistency of reported numbers against
+%% the generated analysis files. After using this tool, the authors reviewed and edited the
+%% content as needed and take full responsibility for the content of the publication.
+
+\printcredits
+
+\bibliographystyle{cas-model2-names}
+\bibliography{refs}
+
+\end{document}

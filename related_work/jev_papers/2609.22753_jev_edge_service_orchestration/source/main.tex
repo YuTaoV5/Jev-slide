@@ -1,0 +1,66 @@
+% Project skeleton adapted from Michael Shell's bare_jrnl_compsoc.tex
+% (V1.4b, 2015/08/26, LPPL 1.3). Original retained in template/.
+% Project modifications: evidence-grounded exploratory manuscript, 2026-09-19.
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage[nocompress]{cite}
+\usepackage{amsmath,amssymb}
+\interdisplaylinepenalty=2500
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Replacing Large Language Models with Jev Decision Models for Low-Latency Edge Service Orchestration},
+pdfauthor={Delong Li, Xu Wang, Haochen Gong, Rui Lang, Guangsheng Yu}}
+
+\begin{document}
+\title{Replacing Large Language Models with Jev Decision Models for Low-Latency Edge Service Orchestration}
+\author{Delong Li, Xu Wang, Haochen Gong, Rui Lang, Guangsheng Yu\textsuperscript{*}%
+\thanks{The authors are with the School of Electrical, Mechanical and Biomedical
+Engineering, University of Technology Sydney, Sydney, Australia.
+\textsuperscript{*}Corresponding author: Guangsheng Yu
+(e-mail: \href{mailto:Guangsheng.Yu@uts.edu.au}{Guangsheng.Yu@uts.edu.au}).}}
+
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+Natural-language service requests can require a language-model decision before
+execution starts, consuming part of the request's latency budget. We integrate
+Jev's decision-oriented application programming interface (API) into edge
+service orchestration to reduce this overhead while retaining service
+completion. The integration extracts four bounded intent fields and applies
+a shared validator, admission policy, and scheduler, accounting for decision
+waiting throughout the request timeline. We compare Jev with a short,
+structured-output DeepSeek deployment
+using live API measurements followed by modeled execution, and then a real
+two-node optical character recognition (OCR) service with self-hosted Qwen
+and rule-based references. Across
+three consecutive measurement blocks, Jev reduces median client decision
+latency by 15.9--26.5\%. In eight
+paired OCR conditions, Jev matches DeepSeek's correct, on-time completion
+count in seven and exceeds it in one. Without caching, median end-to-end
+latency on requests completed correctly by both systems is 11.1--25.3\%
+lower; API fees per correct completion are 69.0--70.6\% lower. Repeated-request
+caching largely removes the latency difference. The results demonstrate
+that decision-model substitution can lower both response latency and API
+fees in the tested service path, and identify fresh interpretation as the
+main opportunity for latency savings.
+\end{abstract}
+\begin{IEEEkeywords}
+Large language models, decision models, service orchestration, edge computing,
+service admission, quality of service.
+\end{IEEEkeywords}}
+
+\maketitle
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+
+\input{sections/introduction}
+\input{sections/related-work}
+\input{sections/system}
+\input{sections/experimental-design}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\input{sections/appendix}
+\end{document}

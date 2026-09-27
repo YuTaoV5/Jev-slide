@@ -1,0 +1,5 @@
+pxv check scene.py:RLVR  lang=en  32s  sampled every 0.25s
+  ! nothing moves for ≥3 s from 0.00s (dead air?)
+  ! nothing moves for ≥3 s from 0.00s (dead air?)
+  ! nothing moves for ≥3 s from 0.00s (dead air?)
+  ! nothing moves for ≥3 s from 0.00s (dead air?)

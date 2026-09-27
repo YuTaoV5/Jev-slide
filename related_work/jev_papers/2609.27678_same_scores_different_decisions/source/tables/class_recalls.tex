@@ -1,0 +1,27 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & $K$ & E recall & C recall & N recall & Macro-F1 \\
+\midrule
+\multirow[c]{2}{*}{\modelicon{jev}Jev 1.13.0} & 17 & 88.57 & 81.25 & 58.24 & 70.72 \\
+ & 1 & 87.86 & 81.25 & 57.69 & 70.11 \\
+\addlinespace[2pt]
+\multirow[c]{2}{*}{\modelicon{qwen}Qwen3.5-4B} & 17 & 90.00 & 33.33 & 71.98 & 66.39 \\
+ & 1 & 86.79 & 58.33 & 68.13 & 70.96 \\
+\addlinespace[2pt]
+\multirow[c]{2}{*}{\modelicon{qwen}Qwen3.5-9B} & 17 & 90.00 & 87.50 & 58.79 & 73.15 \\
+ & 1 & 83.57 & 83.33 & 60.99 & 70.14 \\
+\addlinespace[2pt]
+\multirow[c]{2}{*}{\modelicon{gemini}Gemini 3.5 Flash-Lite} & 17 & 92.50 & 68.75 & 66.48 & 74.06 \\
+ & 1 & 86.43 & 81.25 & 69.78 & 75.42 \\
+\addlinespace[2pt]
+\multirow[c]{2}{*}{\modelicon{openai}GPT-5.6 Luna} & 17 & 93.21 & 70.83 & 58.24 & 71.39 \\
+ & 1 & 84.64 & 85.42 & 68.13 & 73.66 \\
+\bottomrule
+\end{tabular}
+\caption{Development-set class-level performance on 30 contracts (percent). Class counts are E=280, C=48, and N=182, where E, C, and N denote entailment, contradiction, and not mentioned. Macro-F1 assigns equal weight to the three classes.}
+\label{tab:recalls}
+\end{table*}

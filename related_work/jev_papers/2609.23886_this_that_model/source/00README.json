@@ -1,0 +1,37 @@
+{
+   "sources" : [
+      {
+         "usage" : "toplevel",
+         "filename" : "main.tex"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "frozen_rows.tex"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "logo/flock.pdf"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "logo/oxford.pdf"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "refs.bib"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "sim_rows.tex"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "spatial_rows.tex"
+      }
+   ],
+   "spec_version" : 1,
+   "texlive_version" : "2025",
+   "process" : {
+      "compiler" : "pdflatex"
+   }
+}

@@ -1,0 +1,48 @@
+\section{Architecture}
+
+The Qwen3 series includes 6 dense models, namely Qwen3-0.6B, Qwen3-1.7B, Qwen3-4B, Qwen3-8B, Qwen3-14B, and Qwen3-32B, and 2 MoE models, Qwen3-30B-A3B and Qwen3-235B-A22B. The flagship model, Qwen3-235B-A22B, has a total of 235B parameters with 22B activated ones. Below, we elaborate on the architecture of the Qwen3 models.
+
+The architecture of the Qwen3 dense models is similar to Qwen2.5~\citep{qwen2.5}, including using Grouped Query Attention (GQA, \citealp{gqa}), SwiGLU~\citep{glu}, Rotary Positional Embeddings (RoPE, \citealp{rope}), and RMSNorm~\citep{rmsnorm} with pre-normalization. Besides, we remove QKV-bias used in Qwen2~\citep{qwen2} and introduce QK-Norm~\citep{pmlr-v202-dehghani23a} to the attention mechanism to ensure stable training for Qwen3. Key information on model architecture is provided in Table~\ref{tab:arch-dense}.
+
+The Qwen3 MoE models share the same fundamental architecture as the Qwen3 dense models. 
+Key information on model architecture is provided in Table~\ref{tab:arch-moe}. 
+We follow Qwen2.5-MoE~\citep{qwen2.5} and implement fine-grained expert segmentation~\citep{deepseekmoe}. 
+The Qwen3 MoE models have 128 total experts with 8 activated experts per token.
+Unlike Qwen2.5-MoE, the Qwen3-MoE design excludes shared experts.
+Furthermore, we adopt the global-batch load balancing loss~\citep{global_balance} to encourage expert specialization.
+These architectural and training innovations have yielded substantial improvements in model performance across downstream tasks. 
+
+
+Qwen3 models utilize Qwen's tokenizer~\citep{qwen}, which implements byte-level byte-pair encoding (BBPE,~\citealp{gpt3,wang2020neural,sennirch2016neural}) with a vocabulary size of 151,669.
+
+\begin{table}[htbp]
+\caption{Model architecture of Qwen3 dense models.\label{tab:arch-dense}}
+\small
+\centering
+\begin{tabular}{@{}lcccc@{}} 
+\toprule
+Models  & Layers & Heads (Q / KV) & Tie Embedding & Context Length  \\
+\midrule
+Qwen3-0.6B  & 28 & 16 / 8 & Yes & 32K   \\
+Qwen3-1.7B  & 28 & 16 / 8 & Yes & 32K   \\
+Qwen3-4B  & 36 & 32 / 8 & Yes & 128K  \\
+Qwen3-8B  & 36 & 32 / 8 & No & 128K  \\
+Qwen3-14B & 40 & 40 / 8 & No & 128K  \\
+Qwen3-32B & 64 & 64 / 8 & No & 128K  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\caption{Model architecture of Qwen3 MoE models.\label{tab:arch-moe}}
+\small
+\centering
+\begin{tabular}{@{}lcccc@{}} 
+\toprule
+Models  & Layers & Heads (Q / KV) & \# Experts (Total / Activated) & Context Length  \\
+\midrule
+Qwen3-30B-A3B  & 48 & 32 / 4 &128 / 8  & 128K   \\
+Qwen3-235B-A22B  & 94 & 64 / 4 &128 / 8  & 128K  \\
+\bottomrule
+\end{tabular}
+\end{table}

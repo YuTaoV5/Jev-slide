@@ -1,0 +1,27 @@
+\begin{table}[pos=!htbp]
+\centering
+\rmfamily\small
+\setlength{\tabcolsep}{4.0pt}
+\caption{Discrepancy taxonomy against coded fields (agreement).}
+\label{tab:discrepancy}
+\begin{threeparttable}
+\begin{tabular}{lrrrrrrr}
+\toprule
+\jevhead{variable} & \jevhead{$n$} & \jevhead{agreement \%} & \jevhead{$\kappa$} & \jevhead{both} & \jevhead{narr.\ only} & \jevhead{code only} & \jevhead{neither} \\
+\midrule
+alcohol\_involved & 150,000 & 97.92 & 0.702 & 3,882 & 1,571 & 1,556 & 142,991 \\
+drug\_involved & 150,000 & 99.45 & 0.484 & 391 & 452 & 374 & 148,783 \\
+fatigue & 150,000 & 99.26 & 0.707 & 1,369 & 729 & 387 & 147,515 \\
+animal\_involved & 150,000 & 99.67 & 0.910 & 2,565 & 459 & 37 & 146,939 \\
+phone\_use & 150,000 & 99.24 & 0.477 & 529 & 1,028 & 118 & 148,325 \\
+unbelted & 150,000 & 97.99 & 0.103 & 187 & 707 & 2,307 & 146,799 \\
+hydroplane$^{\dagger}$ & 150,000 & 98.93 & 0.753 & 2,536 & 992 & 619 & 145,853 \\
+wrong\_way & 150,000 & 98.77 & 0.371 & 554 & 1,587 & 256 & 147,603 \\
+medical\_episode & 150,000 & 99.28 & 0.534 & 629 & 953 & 131 & 148,287 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\small\rmfamily
+\item \textit{Note:}~Agreement against the incomplete coded fields rather than accuracy; see the note to Table~\ref{tab:calibration}. The dagger marks a coded field that is a proxy rather than a direct match. ``Narrative only'' is not an error rate, because a factor stated in the narrative and absent from the coded field is what this study sets out to find.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

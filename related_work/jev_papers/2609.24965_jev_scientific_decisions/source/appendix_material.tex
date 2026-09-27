@@ -1,0 +1,128 @@
+% Requires booktabs. Include after \appendix in the main manuscript.
+\section{Scientific questions and case construction}
+\label{app:cases}
+
+The collection contains 20 groups, 40 scientific Choices, and 25 claim outcomes.
+A group shares evidence across related questions and can support more than one claim.
+Ten groups, comprising 20 scientific Choices, follow deterministic rules developed on the prepared passages.
+The other ten groups each contain two model-routed Choices.
+Tables~\ref{tab:code-cases} and~\ref{tab:model-cases} list the complete collection and the resulting computations.
+One additional candidate-omission check accompanies D01 and is excluded from scientific scores.
+The 21 source records belong to 18 documented source families; related documents from the same experiment remain in one family.
+
+\subsection{Relations that determine scientific quantities}
+
+Several cases ask which scientific unit a recorded observation represents.
+Specimens can share a build or mixing operation, scans can repeat one wear event, and minute-level measurements can share one controller allocation.
+Likewise, a pooled library combines contributors, and a cosmological pair contributes one average despite requiring two simulation executions.
+These distinctions determine which observations can be counted separately for the stated calculation.
+
+Other cases ask how a unit's history or relationship to another unit affects interpretation.
+Examples include catalyst reuse, mixed powder histories, shared culture growth, outcome-adaptive stress selection, and complementary treatment allocation.
+Shared calibration uncertainty and bundled climate-model changes affect the interpretation of comparisons even when the number of reported results is unchanged.
+
+A further recurring question is what the evidence identifies at the selected scope.
+Exposure windows distinguish administration from developmental exposure, while allele diversity in mosaic founders leaves validated germline transmission unresolved.
+Incomplete provenance can establish a mixture while leaving its exact parent-lot count unknown.
+Each case links a relation judgment to the quantities supported by the evidence.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{0.06\textwidth}p{0.13\textwidth}p{0.28\textwidth}p{0.27\textwidth}p{0.18\textwidth}@{}}
+\toprule
+Group & Domain & Relation or unit & Derived scientific quantity & Source \\
+\midrule
+D01 & Concrete & Mixing operation and shared prism membership & One mixing operation, three prisms, six half-prisms & \citep{rezazadeh2026dataset} \\
+D02 & Additive manufacturing & Complete build versus specimens within it & One build for three selected specimens & \citep{SHANBHAG2021107613} \\
+D03 & Concrete curing & Bath-level control, run boundaries, specimen assignments & Curing-run count remains unknown & \citep{rezazadeh2026dataset} \\
+C01 & Electroplating & Whole-plot unit for temperature/concentration; strip for current & One whole plot per setting; two strips per current level & \citep{nistUndatedNested} \\
+H01 & Additive manufacturing & Column-level laser settings versus specimen-level heat treatment & Five selected columns; one heat-treated specimen & \citep{weaver2021demonstration} \\
+C02 & Measurement systems & Wear-scar generation versus repeated scans & Two wear events identified by cutter--scar keys & \citep{wigginsUndatedMeasurement} \\
+E001 & Semiconductor processing & Crossed implant/anneal memberships; wafer interaction unit & 64 setting combinations, one wafer each & \citep{nistUndatedNested} \\
+E002 & Wind energy & Hourly controller switch and transition exclusion & Minute records do not add allocations; campaign count unknown & \citep{simley2021results} \\
+E003 & Catalysis & Recovered catalyst carried between reaction cycles & Eight cycles in one documented reuse series & \citep{rafi2020copper} \\
+E008 & Chemical process design & Equality of all eight coded factor settings & 20 runs, 18 distinct settings, two pure-error degrees of freedom & \citep{stallrich2026powerful,nistUndatedFoldover} \\
+\bottomrule
+\end{tabular}
+\caption{Scientific relations and derived quantities for the ten groups resolved by deterministic rules developed on the prepared passages.}
+\label{tab:code-cases}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{0.06\textwidth}p{0.13\textwidth}p{0.28\textwidth}p{0.27\textwidth}p{0.18\textwidth}@{}}
+\toprule
+Group & Domain & Two model judgments & Reference downstream result & Source \\
+\midrule
+E004 & Powder recycling & Mixed reuse histories; partial provenance coverage & Exact parent-lot count unknown; assignment incomplete & \citep{koushik2023effective} \\
+E005 & Fatigue testing & Outcome-adaptive stress; next test uses a new specimen & Next stress 295 or 355\,MPa after failure or runout & \citep{magazzeni2023bayesian} \\
+E006 & Cosmology & Phase-reversed initial fields; pair-average statistic & 100 realizations, 200 executions, 100 ensemble values & \citep{villaescusa2018statistical} \\
+E007 & Climate simulation & Two forcing protocols; bundled implementation changes & 50 original and 50 SMBB members & \citep{ncarUndatedLens2} \\
+E009 & Electrical metrology & Shared reference contribution; bracketing average & Two laboratory results, three visits; covariance retained & \citep{galliana2015extensive} \\
+E010 & Cloud seeding & Complementary allocations; allocation versus exposure & 118 joint assignments, 236 range-level records & \citep{rasmussen2018evaluation,lawrence2014wyoming} \\
+B001 & Developmental exposure & Injected F0 dams; maternal, embryonic and germline exposure & 162 F3 pups; zero new F3 injections & \citep{manikkam2012transgenerational} \\
+B002 & Microbial genetics & Shared versus separate culture histories; clonal descendants & One versus ten growth histories; origins unknown & \citep{luria1943mutations} \\
+B003 & RNA sequencing & RNA pooled before libraries; aggregate expression profiles & Four libraries, 16 contributors, 32 appearances & \citep{rajkumar2015experimental} \\
+B004 & Genome editing & Within-founder mosaicism; inherited phenotype ambiguity & 23 founders, 57 reported alleles; validated line count unknown & \citep{yen2014somatic} \\
+\bottomrule
+\end{tabular}
+\caption{Ten groups in the model comparison. Each model receives both questions for a group in one request. All numeric, structural and label derivations use shared code. SMBB denotes smoothed biomass-burning forcing.}
+\label{tab:model-cases}
+\end{table*}
+
+\subsection{Evidence and reference construction}
+
+Each input supplies a target, an explicit scope, selected evidence passages, and structured records when the calculation requires them. The passages and records were prepared from articles, supplements, scientific project documentation, a methods handbook, and an industrial case report.
+
+Reference choices, downstream outputs, and constructed claim labels are withheld from model inputs. Source explanations remain part of the evidence, including explanations that directly establish a relation. Thus, the task evaluates decisions from supplied evidence with explicit candidates.
+
+\subsection{Scientific interpretation of the model-routed cases}
+
+The descriptions below give the two judgments, their substantive alternatives, and the reference interpretation for each model group. Questions also provide explicit missing-evidence and contradiction options, with an outside-candidate option where applicable. Missing or ambiguous evidence maps to \texttt{not\_stated}; unresolved incompatible evidence maps to \texttt{conflicting}. An established answer outside the listed alternatives maps to \texttt{other}. E004 additionally distinguishes partial identification from complete assignment and absent evidence. The 20 reference answers are substantive options, and every model-dependent reference outcome rejects at least one constructed claim clause.
+
+\paragraph{E004: powder reuse histories.}
+The build-8-and-later top-up regime combines mixed reuse histories with partial provenance. The history alternatives distinguish a common recycling history, mixed histories, virgin replacement, and separate unmixed histories. Provenance coverage concerns each portion's original lot, mixture fraction, and prior-build history. The reference interpretation is mixed histories with partial identification, yielding incomplete assignments and an unknown exact parent-lot count. A descriptive history label alone does not identify an original lot.
+
+\paragraph{E005: staircase fatigue testing.}
+Stress selection depends on the preceding outcome, and the next test uses a new specimen. The alternatives separate this adaptive rule from independent randomization, fixed stress, or a predetermined schedule. They also distinguish specimen replacement from further loading of the same specimen or testing a whole foil. The documented starting stress of 325\,MPa and step of 30\,MPa yield 295\,MPa after failure and 355\,MPa after runout. These values instantiate the regular-staircase rule; the observed fixed-stress replicate count remains unknown.
+
+\paragraph{E006: paired-fixed cosmological simulations.}
+Phase reversal couples the initial fields, and the pair average is the statistic entering the ensemble. The candidate relations include independent initial draws, identical fields, and output resampling. Alternative aggregation units are individual executions, pair differences, and one average over all runs. For the N1000 subset, the reference gives 100 paired realizations, 200 executions, and 100 ensemble values. These counts describe initial-field coupling and the source-defined aggregation unit; they do not specify an effective sample size for every evolved observable.
+
+\paragraph{E007: climate-ensemble protocol groups.}
+The ensemble contains two protocol groups, with 50 members using the original forcing and 50 using SMBB. The candidates contrast this division with a uniform original or SMBB protocol, and distinguish smoothing alone, bundled changes, and initialization alone. The reference identifies bundled changes, including documented emission and carbon-flux code corrections, so the comparison cannot isolate smoothing alone.
+
+\paragraph{E009: correlated calibration uncertainty.}
+The compared results share reference-calibration uncertainty, and two secondary-laboratory visits form a bracketing average.
+The alternatives distinguish the shared contribution from independent references or identical measurements, and the average from two laboratories or an adjustment contrast. The reference therefore gives two compared laboratory results from three visits, with $2u_B(\mathrm{std}_{\mathrm{DCV}})^2$ subtracted in the uncertainty expression. The exact effective replication count remains unknown.
+
+\paragraph{E010: paired mountain-range allocation.}
+Complementary allocation makes each treatment decision joint across the two ranges. The alternatives include independent assignments, seeding both ranges, and permanent range assignment. An assignment label identifies treatment allocation; it establishes neither zero exposure nor confirmed exposure everywhere. Using the authors' reported totals, $154-27-9=118$, the reference gives 118 joint assignments and 236 range-level records. The published monthly generator-exclusion cells sum to eight, whereas the margins and prose report nine; the missing event is unresolved.
+
+\paragraph{B001: administration and developmental exposure.}
+Injection of pregnant F0 dams exposes the mother, embryo, and fetal germline within the source's defined window.
+The administration alternatives include separate treatment of every generation, F3 animals alone, and isolated germ cells.
+The exposure alternatives distinguish the full window from maternal-only exposure, mother plus embryo, or exposure of every later descendant generation. The selected dioxin rows contain 162 F3 pups in 14 weaned litters, with zero newly injected F3 animals. Under the source's exposure-window definition, F3 is the first generation beyond that window. The number of distinct F0 ancestors remains unknown.
+
+\paragraph{B002: cultures and mutation origins.}
+Experiments 11a and 11 contrast shared and separate culture growth histories, respectively. The ten plating records in each series therefore correspond to one and ten growth histories. The candidate history patterns also include the reverse assignment, separate histories in both experiments, and shared histories in both. The selected columns contain 514 and 624 colonies, but clonal descendants leave the number of mutation origins unknown. The origin alternatives are one origin per cell, new origins created only at selection, and repeated images of one colony. The records are the complete selected columns of Tables 1 and 2.
+
+\paragraph{B003: pooling and biological attribution.}
+Physical RNA pooling before library preparation produces aggregate expression profiles. The candidates distinguish this operation from indexed-library pooling, numerical averaging, and tissue pooling before extraction. The attribution alternatives include complete or partial individual profiles and a newly sampled animal. The four selected eight-animal libraries contain 16 distinct contributors and 32 contributor appearances, with zero separately observed contributor profiles.
+The source's separate individual-library arm remains in the evidence but lies outside the selected pooled-arm claim.
+
+\paragraph{B004: mosaic founders and transmission.}
+Within-founder mosaicism and an inherited albino allele limit the attribution of alleles and transmission from founder counts and phenotype. The mosaicism alternatives are one uniform allele pair, one founder per allele, and no detected edit. The marker alternatives contrast the pre-existing allele with a unique new-allele marker, absent germ cells, and complete allele-specific transmission verification. The reported aggregate is 23 sequenced hybrid founders and 57 mutant alleles; the number of validated new germline lines remains unknown. For founder 30, manuscript prose reports five alleles whereas publisher Figure 3C lists six entries. Both establish allele diversity, so the reference uses mosaicism without assigning an exact founder-30 allele total.
+
+\subsection{Deterministic derivation and claim composition}
+
+Deterministic rules match complete prepared evidence passages and resolve the ten groups in Table~\ref{tab:code-cases} within their stated scope. The model route supplies the remaining semantic selections.
+All selections feed the same operations for arithmetic, filtering, deduplication, covariance substitution, and claim composition. Missing answers and invalid options remain response failures. Unknown scientific quantities remain explicitly unknown rather than becoming zero.
+
+For E001--E010 and B001--B004, an unresolved contradiction takes precedence over an outside-candidate answer, which takes precedence over missing evidence. These alternatives remain distinct and stop label composition. A substantive partial-identification answer, as in E004, can still produce an output with unknown fields. For biological compound claims, an inconsistent clause determines the final inconsistent label even when another clause lacks sufficient evidence. This composition rule can preserve the final label after an intermediate semantic error.
+
+The code-only condition uses the same rules and leaves the residual questions unresolved. The reference-oracle condition supplies the reference Choices to the shared derivations for all 20 groups, checking implementation conditional on those references. E008 compares complete coded settings: its source's differing physical-temperature descriptions do not alter the specified equality calculation.

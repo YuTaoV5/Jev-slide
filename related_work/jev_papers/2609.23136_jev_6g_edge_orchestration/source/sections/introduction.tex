@@ -1,0 +1,25 @@
+\section{Introduction}
+% P1: service requirements and the communication-computing motivation.
+\IEEEPARstart{S}{ixth-generation} (6G) networks are envisioned to integrate communication and computation for intelligent services~\cite{letaief2019roadmap}. The International Mobile Telecommunications framework for 2030 and beyond (IMT-2030) identifies artificial intelligence (AI) and communication as a usage scenario and anticipates computing services within the network~\cite{itu2023imt}. Mobile edge computing brings services near wireless users, whose quality of service (QoS) depends on both data delivery and computing resources~\cite{shi2016edge,mao2017survey}. Intent-based orchestration expresses the desired outcomes independently of their implementation~\cite{clemm2022intentbased}.
+
+% P2: a concrete transition exposes the timing problem.
+Consider a mobile image-reading service. Mobility changes the serving cell, while competing workloads change edge queues. Separately, a new instruction may restrict processing to one location, withdraw a restriction, or tighten a deadline. The orchestrator must interpret it while wireless requests continue arriving. Delivered images governed by the new requirements wait for their contract to become available. Radio delivery and interpretation waiting thus consume the same response budget. The orchestration problem is to activate the correct requirements early enough for affected requests to finish on time.
+
+% P3: related approaches and the specific comparison needed here.
+Large language models (LLMs) and smaller language models translate intents into network configurations and service specifications~\cite{jacobs2021hey,angi2025llnet,wang2024netconfeval}, often alongside optimization, validation, or agent coordination~\cite{miyaoka2025chatdriven,martins2026intentdriven,parra-ullauri2026rolebased}. Mobile edge operation presents two distinct sources of change: network and computing state evolves during execution, while a new intent changes the requirements that execution must satisfy. A model can select requirements and placements together, or interpret requirements once and let numerical scheduling track evolving resources. Comparing these choices requires accounting for control waiting alongside wireless delivery and edge queues.
+
+% P4: why Jev fits this decision stage, and the research questions.
+Interpretation produces a bounded contract: permitted execution locations, a deadline, and priority. These attributes can be selected from a catalog or returned directly. Jev exposes bounded decisions through a structured application programming interface (API)~\cite{typesafe2026systemone}, making it a candidate for this stage. Three research questions (RQs) guide our evaluation. \emph{RQ1:} How does direct model-selected placement compare with cached interpretation and numerical scheduling? \emph{RQ2:} At matched interpretation quality, how fast is Jev, and can control waiting explain service-completion differences? \emph{RQ3:} How do output interfaces and actual application execution affect the comparison?
+
+% P5: the evidence sequence answering the questions.
+We compare live Jev, DeepSeek, Gemini, and self-hosted Qwen responses using packet-level New Radio (NR) traces and shared edge queues. Wireless arrivals, handovers, and control waits share a timeline. Integration comparisons address RQ1; matched-quality comparisons and waiting-time replays address RQ2. For RQ3, we compare two Qwen interfaces and execute a real optical character recognition (OCR) service after simulated NR delivery. Returned text, contract compliance, and deadlines connect interpretation to mobile service outcomes.
+
+% P6: three distinct contributions with their supporting observations.
+\begin{samepage}
+The paper makes three contributions:
+\begin{enumerate}
+\item \textbf{Integration benefit.} We show that cached intent interpretation with numerical scheduling improves mobile edge completion over direct model-selected placement. Jev's updated-contract completion rises from 43.24\% to 95.59\%; DeepSeek and Gemini also benefit.
+\item \textbf{Timing attribution.} At matched interpretation correctness, Jev reduces median decision latency by 22.4\% against DeepSeek and 61.9\% against Gemini and improves modeled completion. Replays reproduce the comparator completion summaries by exchanging recorded model and scheduling waits in both matched-quality comparisons.
+\item \textbf{Interface and application evidence.} Direct-attribute output brings Qwen to Jev's observed contract correctness, while Jev retains a 53.0\% latency reduction. In the real image service with simulated NR access, Jev remains faster, with completion close to DeepSeek and higher than Qwen.
+\end{enumerate}
+\end{samepage}

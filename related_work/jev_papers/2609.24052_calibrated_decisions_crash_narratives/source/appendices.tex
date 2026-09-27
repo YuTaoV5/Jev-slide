@@ -1,0 +1,279 @@
+%% Appendices: placed directly after the Conclusion and before the declarations and references.
+\appendix
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+
+% an unnumbered heading, so a reader can see where the appendices begin
+\section*{Appendices}
+
+\section{The question schema}
+\label{app:schema}
+\setcounter{table}{0}\setcounter{figure}{0}\setcounter{equation}{0}
+
+Table~\ref{tab:schema-full} reproduces every question in the schema as it was sent to the
+model, with its type, its gate where it has one, and the complete instruction and criteria
+text. The text is the entire specification of each variable, because the model sees nothing
+else, and the human coders of Section~\ref{sec:reference} and the frontier models of
+Section~\ref{sec:res-frontier} received the same text verbatim. The schema was produced in two steps that the released files record. A first version was written from the design rules of Section~\ref{sec:schema} and
+run on a development sample of \SchemaValidateCompared{} narratives, and the error analysis of
+that run produced the exclusion clause of the aggression question, whose effect is reported
+in Section~\ref{sec:schema}. The file reproduced here is the second version, which is the one
+used for the second-stage run, the reference set and the frontier arms, and it is released
+with the code together with the lean first-stage schema of \NLeanQuestions{} presence
+questions. Instructions refer to the narrative by its key in the state object, and criteria
+for a presence question name the boundary cases that count and do not count, which is where
+most of the design effort went. The residual-identifier question is included in the file
+because it ships with the schema, but it was run as a separate display screen and was not part
+of the population coding.
+
+\input{tables/TA1_schema_full.tex}
+
+\section{Keyword families and the coded-field mapping}
+\label{app:keywords}
+\setcounter{table}{0}\setcounter{figure}{0}\setcounter{equation}{0}
+
+The rule baseline of Section~\ref{sec:reference} is a set of case-insensitive regular
+expressions, one family per variable, and Table~\ref{tab:keywords} lists them as they appear
+in the scripts that apply them. The first ten families were written to over-find rather than
+to be precise, because their original purpose was to enrich the rare classes of the
+second-stage frame and to provide a population keyword rate over all \Ncorpus{} narratives.
+They were tuned only on the development sample and never on any evaluated narrative. The
+last three families, for alcohol involvement, phone use and restraint use, were added so that
+the baseline covers every variable that has a coded reference, since comparing a
+macro-averaged score over different variable sets would not be a comparison. Those three
+were scored on the working set of narratives only. The residual-identifier patterns of
+Section~\ref{sec:corpus} are of the same kind and are listed in the released code beside
+them. Table~\ref{tab:coded-map} gives the mapping from each narrative variable to the coded
+CRIS fields that define its reference, which is implemented in the released join script over
+the crash-unit-person extract. Each reference is true for a crash when the rule holds on any
+person or unit row of that crash, because a contributing factor is recorded per unit and a
+restraint or test result per person. The hydroplaning reference is a proxy built from the
+loss-of-control, surface and weather codes, because CRIS has no hydroplaning field. The
+final row is the opposite-direction collision type that the original plan proposed for
+wrong-way travel, retained only as a sensitivity check after it proved a factor of
+\WrongWayProxyRatio{} too broad.
+
+\input{tables/TB1_keyword_families.tex}
+\input{tables/TB2_coded_mapping.tex}
+
+\section{Coder protocol and additional reliability diagrams}
+\label{app:coders}
+\setcounter{table}{0}\setcounter{figure}{0}\setcounter{equation}{0}
+
+The human reference set of Section~\ref{sec:reference} was produced under a written protocol
+that this appendix summarizes, and Figures~\ref{fig:goldrel} and \ref{fig:goldprec} draw the
+two human-referenced diagrams that the main text refers to. The protocol defined the task as
+one narrow question repeated, whether the narrative states the factor, under the governing
+rule to label what the narrative states rather than what probably happened. A crash that an
+experienced analyst would read as alcohol-involved is therefore labeled negative if the
+officer did not write it down. That rule inverts the usual assumption that more domain
+expertise is better, because the dominant risk is over-inference. Coders who know crashes
+may fill in what the officer omitted, agree with each other, and produce a reference that is
+confidently wrong in the direction the model might also be wrong. The panel was therefore
+mixed by design, with one crash-data practitioner who reads officer shorthand, one
+transportation-safety researcher familiar with the constructs, and one careful non-specialist
+reader who cannot over-infer and who serves as the check on the other two. Coders were
+required to be independent of the modeling work, never to have seen the model's outputs or
+helped write the criteria, and not to discuss items while coding. All three first coded a
+shared calibration block, which was reviewed together once to catch inference, ambiguous
+criteria and shorthand the non-specialist could not read, after which no further discussion
+took place. Each coder then labeled an allocation of narratives determined by position in a
+fixed roster, with every narrative coded by two of the three and the calibration block by all
+three. The roster rule was deterministic and fixed before any narrative was seen. Narratives
+were held in the order the export produced, and the calibration block occupied the first
+positions and was assigned to every coder. Each later position went to the two coders whose
+index matched that position under a fixed rotation, so no coder chose a narrative and no
+narrative was reassigned after labeling began. Each judgment carried the coder identifier, the
+time taken and a yes, no or unclear verdict. Reliability was computed from the double- and
+triple-coded pairs as reported in Section~\ref{sec:reference}, majority labels were formed, and
+ties and unclear verdicts were recorded as disputed and excluded.
+
+The calibration weights of Section~\ref{sec:reference} are built from the frame rather than
+from the labels, and their construction is recorded here in full. The population is the
+second-stage random stratum. For each of the \FrontierNVars{} presence variables the population
+is divided into the cells \GoldBinsText{} and the labeled pairs falling in each cell are scaled
+so that their weights sum to the population count of that cell. \DesignNActivePairs{} of the
+pairs entered through the active route, with assignment probability one, and
+\DesignNControlPairs{} through the control route, with assignment probability
+\GoldNegControls{} divided by the narrative's count of low-probability variables. Cells holding
+fewer than \DesignMinCell{} labeled pairs were merged with an adjacent cell of the same
+variable before the scaling, which affected \DesignNCollapsed{} variables, and the merges are
+listed in the released design report. The weights span a factor of \DesignWeightRatio{} and
+give a design effect of \DesignDeff{}, with per-variable effective sample sizes running from
+\DesignNEffVarLo{} to \DesignNEffVarHi{}. The cluster bootstrap resamples narratives within the
+\DesignNStrata{} draw routes the frame records, which are the cells the greedy rule drew each
+narrative to fill.
+
+\input{tables/TC1_exclusions.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/FC1_gold_reliability.pdf}
+\caption{Reliability against the human reference set for the seven presence variables with no
+coded counterpart, which therefore do not appear in Figure~\ref{fig:calibration}. Each panel
+gives the observed positive rate among the human labels within each sampling stratum,
+weighted by the calibration weights of Section~\ref{sec:reference}, with approximate
+intervals on the Kish effective sample size, on logarithmic axes. The dotted diagonal marks
+calibration, the vertical guide the grid floor, open circles strata with no positive, and the
+number of judgments is printed.}
+\label{fig:goldrel}
+\end{figure}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/FC2_gold_precision.pdf}
+\caption{Precision among accepted records against the share of flagged records auto-accepted,
+measured on the human reference set with the same construction as
+Figure~\ref{fig:riskcoverage}b. (a) Each variable as a thin line, most holding
+\PrecTargetNinety\% precision until more than four fifths of their flags are accepted.
+(b) All variables pooled, crossing \PrecTargetNinetyFive\% near nine tenths of the range and
+\PrecTargetNinety\% only at its right-hand end. Both panels use the whole reference set, so
+they give the in-sample budgets \GoldBudgetNinetyFiveInSample\% and
+\GoldBudgetNinetyInSample\%; Section~\ref{sec:res-accuracy} reports the cross-fitted budgets
+\GoldBudgetNinetyFive\% and \GoldBudgetNinety\% instead.}
+\label{fig:goldprec}
+\end{figure}
+
+\FloatBarrier
+\section{Proofs and the implementation map}
+\label{app:proofs}
+\setcounter{table}{0}\setcounter{figure}{0}\setcounter{equation}{0}
+\appendixtheorems
+
+This appendix collects the mathematics on which the audit of Section~\ref{sec:evaluation}
+rests. It fixes the notation shared by every statement and proves that the Murphy
+decomposition of the Brier score is exact on the output grid. It then proves
+Proposition~\ref{prop:floor} and Lemma~\ref{lem:noise} together with a tightness statement
+for each, derives the closed form of the break-even fraction of Eq.~(\ref{eq:twostage}), and
+closes with the map from every numbered equation to the released code. Every statement is written for the weighted empirical
+distribution of a labeled sample, with weights $w_i$ that sum to $n$, and each holds verbatim
+for the population once weighted means are replaced by expectations.
+
+Throughout, $G \subset [0,1]$ is the finite output grid, $W_v = \sum_i w_i\,\mathbb{1}[p_i = v]$
+is the weight at grid value $v$, $r_v = \frac{1}{W_v}\sum_i w_i\,\mathbb{1}[p_i = v]\,y_i$ is the
+observed positive rate at $v$ whenever $W_v > 0$, $\bar{p} = \sum_v (W_v/n)\,v$ is the mean
+probability, and $\bar{y} = \sum_v (W_v/n)\,r_v = \frac{1}{n}\sum_i w_i y_i$ is the base rate,
+written $\rho$ in the main text. Grouping by grid value is exact rather than approximate,
+because every record at a value $v$ carries the same probability. Two identities follow
+directly from the definitions,
+\begin{equation}
+\sum_i w_i\,\mathbb{1}[p_i = v]\,(y_i - r_v) = 0 \quad\text{for every } v,\qquad
+\sum_{v \in G} \frac{W_v}{n}\,(v - r_v) = \bar{p} - \bar{y}.
+\label{eq:app-ident}
+\end{equation}
+A model is calibrated on the sample when $r_v = v$ at every grid value with $W_v > 0$, and
+$w_0 = W_0/n$ denotes the weight the model places on the value zero.
+
+\begin{lemma}[Exact Murphy decomposition on the grid]
+\label{lem:murphy}
+With $\mathrm{BS}$ as in Eq.~(\ref{eq:brier}) and the grouping by grid value,
+\begin{equation}
+\mathrm{BS} \;=\; \sum_{v \in G} \frac{W_v}{n}\,(v - r_v)^2
+\;-\; \sum_{v \in G} \frac{W_v}{n}\,(r_v - \bar{y})^2 \;+\; \bar{y}\,(1 - \bar{y}),
+\label{eq:app-murphy}
+\end{equation}
+with equality and no binning error, and the reliability term bounds the exact calibration
+error of Eq.~(\ref{eq:ecegrid}) through $\mathrm{ECE}_G^2 \le \sum_v (W_v/n)(v - r_v)^2$.
+\end{lemma}
+
+\begin{pf}
+Fix $v$ with $W_v > 0$. For every record at $v$,
+$(v - y_i)^2 = (v - r_v)^2 + 2(v - r_v)(r_v - y_i) + (r_v - y_i)^2$. Summing with the weights
+$w_i$ over the records at $v$, the middle term vanishes by the first identity of
+Eq.~(\ref{eq:app-ident}). Because $y_i \in \{0, 1\}$ gives $y_i^2 = y_i$, the last term sums to
+$W_v r_v - W_v r_v^2 = W_v\, r_v(1 - r_v)$. Summing over $v$ and dividing by $n$,
+$\mathrm{BS} = \sum_v (W_v/n)(v - r_v)^2 + \sum_v (W_v/n)\, r_v(1 - r_v)$. Expanding
+$\sum_v (W_v/n)(r_v - \bar{y})^2 = \sum_v (W_v/n)\, r_v^2 - \bar{y}^2$ and substituting gives
+$\sum_v (W_v/n)\, r_v(1 - r_v) = \bar{y}(1 - \bar{y}) - \sum_v (W_v/n)(r_v - \bar{y})^2$, which
+is Eq.~(\ref{eq:app-murphy}). The inequality is Jensen's inequality for the square applied to
+the probability weights $W_v/n$ and the values $|v - r_v|$.
+\end{pf}
+
+\begin{proofprop}
+Suppose first that the model is calibrated on the sample, so that $r_v = v$ wherever
+$W_v > 0$. Then $\rho = \bar{y} = \sum_v (W_v/n)\, r_v = \sum_v (W_v/n)\, v = \bar{p}$, and
+because every positive grid value is at least $\delta$,
+$\bar{p} \ge \delta \sum_{v > 0} W_v/n = \delta(1 - w_0)$. Rearranging $\rho \ge \delta(1 - w_0)$
+gives $w_0 \ge 1 - \rho/\delta$. The bound used only $v \ge \delta$, so it holds for every
+assignment of positive grid values, and the contrapositive is the first claim. If
+$\rho < \delta(1 - w_0)$, then $r_v = v$ fails at some grid value carrying weight, whatever
+values the model returns. For the second claim, the second identity of Eq.~(\ref{eq:app-ident})
+and the triangle inequality give
+$\mathrm{ECE}_G = \sum_v (W_v/n)\,|v - r_v| \ge \bigl|\sum_v (W_v/n)(v - r_v)\bigr|
+= |\bar{p} - \rho| \ge \bar{p} - \rho$. The inequality $\bar{p} \ge \delta(1 - w_0)$ holds
+whether or not the model is calibrated, so $\bar{p} - \rho \ge \delta(1 - w_0) - \rho > 0$,
+which is Eq.~(\ref{eq:floor}). Equality in the triangle inequality holds exactly when
+$v - r_v$ has one sign at every grid value carrying weight, so $\mathrm{ECE}_G = \bar{p} - \rho$
+for a model whose reliability curve lies on or above the diagonal everywhere, and the floor
+$\delta(1 - w_0) - \rho$ is attained when in addition all positive weight sits at $\delta$.
+Finally, let $g \colon G \to [0,1]$ be any recalibration map. If $g(p)$ is calibrated then
+$\sum_v (W_v/n)\, g(v) = \rho < \delta(1 - w_0)$, so $g$ must send some positive grid value
+carrying weight below $\delta$. The maps of Eq.~(\ref{eq:platt}) can do so and the model
+cannot, which is why the floor is a property of the grid and not of the ranking.
+\end{proofprop}
+
+\begin{prooflem}
+Write the coded field as $y' = y\,(1 - m)$, where $m$ is an omission indicator with
+$\Pr(m = 1 \mid y = 1, p = v) = f_v$, so that $y' = 1$ implies $y = 1$ and
+$r'_v = \Pr(y' = 1 \mid p = v) = (1 - f_v)\, r_v$. The weights $W_v$ depend on $p$ alone and are
+therefore the same under both references. Since $0 \le f_v \le 1$, $r'_v \le r_v$, which is
+the first claim. If $(1 - f_v)\, r_v \ge v$ then $v \le r'_v \le r_v$, so
+$|v - r'_v| = r'_v - v \le r_v - v = |v - r_v|$, which is the second claim, and summing with the
+weights $W_v/n$ over every grid value with $W_v > 0$ gives Eq.~(\ref{eq:noise}). Under that
+condition the gap is exact rather than an inequality,
+\begin{equation}
+\mathrm{ECE}_G(y) - \mathrm{ECE}_G(y') \;=\; \sum_{v \in G} \frac{W_v}{n}\,(r_v - r'_v)
+\;=\; \sum_{v \in G} \frac{W_v}{n}\, f_v\, r_v \;=\; \Pr(y = 1,\; y' = 0),
+\label{eq:app-gap}
+\end{equation}
+the share of records that the narrative reference marks positive and the coded field does
+not, which is the narrative-only cell measured in Section~\ref{sec:res-frontier}. Where the
+condition fails at some $v$, $r'_v < v$ and $|v - r'_v| = v - r'_v$. This exceeds $|v - r_v|$
+whenever $r_v < v$, and whenever $r_v \ge v$ with $2v > r_v + r'_v$, so omission then inflates
+the measured error and the bias reverses on that part of the grid. If the coded field also
+records factors the narrative does not state, $r'_v$ can exceed $r_v$ and the direction of the
+bias is no longer determined by the omission rate alone.
+\end{prooflem}
+
+\begin{lemma}[Break-even fraction]
+\label{lem:breakeven}
+Under the cost model of Eq.~(\ref{eq:cost}) with $k_f > k_s$, the break-even fraction of
+Eq.~(\ref{eq:twostage}) has the closed form
+\begin{equation}
+q^{*} \;=\; \frac{\beta\,(k_f - k_s)}{\alpha + \beta k_f + b\bar{\ell}},\qquad
+\frac{\partial q^{*}}{\partial \bar{\ell}} \;=\; -\,\frac{b\,\beta\,(k_f - k_s)}{(\alpha + \beta k_f + b\bar{\ell})^2},\qquad
+\frac{\partial \ln q^{*}}{\partial \ln \bar{\ell}} \;=\; -\,\frac{b\bar{\ell}}{\alpha + \beta k_f + b\bar{\ell}},
+\label{eq:app-breakeven}
+\end{equation}
+so $q^{*}$ decreases in narrative length, and its elasticity with respect to length equals
+minus the share of the full-schema token count that the text contributes.
+\end{lemma}
+
+\begin{pf}
+Screening costs less than coding everything once exactly when
+$T(k_s, \bar{\ell}) + q\,T(k_f, \bar{\ell}) < T(k_f, \bar{\ell})$, that is when
+$q < 1 - T(k_s, \bar{\ell})/T(k_f, \bar{\ell}) = [T(k_f, \bar{\ell}) - T(k_s, \bar{\ell})]/T(k_f, \bar{\ell})$.
+The intercept $\alpha$ and the text term $b\bar{\ell}$ cancel in the difference, which leaves
+$\beta(k_f - k_s)$ in the numerator. Differentiating the quotient in $\bar{\ell}$ gives the
+second expression, and multiplying it by $\bar{\ell}/q^{*}$ gives the third. When
+$\beta k_f$ dominates $b\bar{\ell}$ the elasticity is small, which is the claim of
+Section~\ref{sec:schema} that the schema rather than the text governs the two-stage design.
+\end{pf}
+
+The weighting of Eq.~(\ref{eq:ht}) is a calibration estimator rather than an inverse-probability
+one, and the distinction matters for what can be claimed about it. The classical result is that
+$\mathbb{E}\bigl[\sum_{i \in s} z_i/\pi_i\bigr] = \sum_{i \in U} z_i$ for any sample $s$ drawn
+from the frame $U$ with inclusion probabilities $\pi_i > 0$, because
+$\mathbb{E}\,\mathbb{1}[i \in s] = \pi_i$ \citep{horvitz1952generalization}. That result is
+background here rather than an assertion about this reference set, because the greedy draw and
+the identifier screen of Section~\ref{sec:reference} leave no $\pi_i$ that can be written down.
+The weights used instead satisfy the calibration equations exactly, so the weighted count of
+every cell reproduces its population count, and the resulting estimator is design-consistent
+under the condition that labeling is uninformative about the outcome within a cell
+\citep{deville1992calibration}. The ratio of two weighted sums is consistent but not unbiased,
+with a bias of order $1/n$ \citep{sarndal1992model}, which is why the percentile interval of
+Eq.~(\ref{eq:htvar}) is re-centered by the bootstrap estimate of that bias. Table~\ref{tab:eqmap} lists, for every numbered equation of
+Section~\ref{sec:methods}, the released script, the function and the result file that compute
+it, so that a reader can locate the implementation of each quantity without searching the
+repository.
+
+\input{tables/TD1_equation_map.tex}

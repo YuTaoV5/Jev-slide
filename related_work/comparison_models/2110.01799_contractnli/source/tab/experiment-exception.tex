@@ -1,0 +1,26 @@
+\begin{table}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{3pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{lcccc}\toprule
+             & \multicolumn{3}{c}{NLI Accuracy} & \\\cmidrule{2-4}
+            Condition & Majority & Minority & Weighted & \% minority label \\\midrule
+            w/o (local) & .91 & .77 & .84 & 21 \\
+            w/ (local) & .92 &  .40 & .66 & 7 \\
+            \midrule
+            w/o (non-local) & .98 & .72 & .85 & 19 \\
+            w/ (non-local) & .90 & .00 & .45 & 6  \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            Accuracy has been calculated for majority and minority ground-truth NLI labels separately in order to rule out the effect of the label distribution. ``Weighted'' denotes an average of the two accuracy scores that are weighted disproportionally to the number of occurances of each label. Only the hypotheses that exhibit negation by exception are used for this experiment (\#1, 4, 5, 6, 14, 16 and 17 for local, and \#4, 5, 6 and 17 for non-local).
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{NLI accuracy in instances with and without (non-)local negation by exception}\label{tab:experiment-exception}
+\end{table}

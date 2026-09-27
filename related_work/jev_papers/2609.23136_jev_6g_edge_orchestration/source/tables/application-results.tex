@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Real image service with simulated NR access. Response cells show median [25th, 75th percentiles] over 16 calls per interpreter. Execution columns retain all 1,080 arrivals per method; exact text is a subset of returned results, and correct on-time completion also imposes contract and deadline requirements. Update windows are fixed 1.5 s intervals after the three updates (180 requests per method). API fees are totals; N/A denotes no billed model API.}
+\label{tab:application}
+\footnotesize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrrrrrrr@{}}\toprule
+& \multicolumn{2}{c}{Contract interpretation} & \multicolumn{3}{c}{Execution / 1,080 arrivals} & \multicolumn{1}{c}{Updates} & \multicolumn{1}{c}{Cost}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-6}\cmidrule(lr){7-7}\cmidrule(l){8-8}
+\rowcolor{TableHeaderShade}
+Method & Correct & Response (ms) & Returned & Exact text & Correct on time & Correct / 180 & API (US\$)\\\midrule
+Jev & 48/48 & \shortstack{408.9\\{\scriptsize [341.4, 482.9]}} & 901 & 502 & \shortstack{459\\{\scriptsize (42.50\%)}} & \shortstack{64\\{\scriptsize (35.56\%)}} & 0.001616\\
+DeepSeek & 48/48 & \shortstack{497.0\\{\scriptsize [435.1, 566.4]}} & 889 & 498 & \shortstack{463\\{\scriptsize (42.87\%)}} & \shortstack{62\\{\scriptsize (34.44\%)}} & 0.000939\\
+Qwen attributes & 48/48 & \shortstack{759.9\\{\scriptsize [754.0, 791.1]}} & 858 & 480 & \shortstack{435\\{\scriptsize (40.28\%)}} & \shortstack{45\\{\scriptsize (25.00\%)}} & N/A\\
+Structured & Given & No call & 932 & 510 & \shortstack{473\\{\scriptsize (43.80\%)}} & \shortstack{71\\{\scriptsize (39.44\%)}} & N/A\\
+\bottomrule\end{tabular}\end{table*}

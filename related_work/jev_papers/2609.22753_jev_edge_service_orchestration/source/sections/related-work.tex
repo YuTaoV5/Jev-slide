@@ -1,0 +1,73 @@
+\section{Related Work}
+\subsection{Intent Interpretation and Service Orchestration}
+Intent-based networking separates desired outcomes from the mechanisms used to
+realize them~\cite{clemm2022intentbased}. Lumi translates natural-language
+network requirements through a learned interface and an intermediate
+representation~\cite{jacobs2021hey}. NetConfEval evaluates language models on
+network-configuration tasks spanning policy translation, API calls, and
+configuration generation~\cite{wang2024netconfeval}; work on fifth-generation (5G) mobile-network intent
+extraction likewise studies the interpretation stage~\cite{manias2024intentbased}.
+LLNet and fine-tuned small-model network configuration bring more specialized
+models into this setting~\cite{angi2025llnet,lira2025network}. These studies
+establish natural-language interpretation as a systems component whose
+accuracy and execution overhead both matter.
+
+Several systems extend interpretation into service orchestration.
+Chat-Driven Optimal Management of Virtual Network Services combines an
+interpreter with optimization~\cite{miyaoka2025chatdriven}. From Prompt to
+Service evaluates intent routing and real conversational service paths,
+including a fine-tuned small router~\cite{nisiotis2026prompt}. Intent Engine
+uses intent grounding and validation within a network
+orchestration architecture~\cite{islam2026intent}. Agentic infrastructure
+orchestration, zero-touch network pipelines, and DMO-GPT address broader
+automation workflows~\cite{brodimas2025intentbased,seo2026integrated,mekrache2026dmogpt}.
+JAUNT studies intent-aware network tool routing~\cite{li2025jaunt}, while
+grounded and role-based sixth-generation (6G) systems examine additional forms of orchestration
+and agent organization~\cite{martins2026intentdriven,parra-ullauri2026rolebased}.
+
+Building on this work on service routing, we compare Jev with a generative
+interpreter while holding the intent contract and downstream policy fixed.
+We measure completion against the returned service output, accounting for
+decision waiting, case-sensitive OCR correctness, and caching under the same
+policy for each backend. The decision unit is a user-issued service job,
+whose admission path can include hundreds of milliseconds of interpretation.
+
+\subsection{Bounded Decisions and Small Models}
+Efficient prediction need not require free-form generation. Sentence-BERT
+and SetFit support lightweight semantic representations and
+classification~\cite{reimers2019sentencebert,tunstall2022efficient}.
+GLiNER and GLiNER2 provide discriminative extraction approaches, with GLiNER2
+also addressing structured extraction and classification~\cite{zaratiana2024gliner,zaratiana2025gliner2}.
+The argument for small models in agentic systems further motivates assigning
+bounded tasks to specialized components~\cite{belcak2025small}.
+For networking decisions, NetLLM adapts language-model representations to
+networking tasks through task-specific components~\cite{wu2024netllm}.
+
+Alongside the hosted comparison, we include a fixed rule parser and an open
+generative model from the Qwen2.5 family~\cite{qwen2024qwen25}. Rules provide
+a low-overhead interpretation policy; Qwen provides a self-hosted generative
+alternative under the same service contract.
+
+\subsection{Serving, Structured Output, and Cost}
+Serving systems such as Clipper and InferLine address inference deployment
+under latency and resource constraints~\cite{crankshaw2016clipper,crankshaw2020inferline}.
+PagedAttention and SGLang improve important aspects of language-model
+serving~\cite{kwon2023efficient,zheng2023sglang}. Consequently, a measured
+self-hosted model latency is a property of its serving configuration as well
+as its weights.
+
+Structured-output validity also needs to be distinguished from task
+correctness. JSONSchemaBench evaluates efficiency, constraint coverage, and
+quality in structured generation~\cite{geng2025jsonschemabench}. A valid JavaScript Object Notation (JSON)
+object can still request the wrong service, just as a correctly interpreted
+request can yield incorrect OCR text. We retain these separate endpoints.
+Cost-aware prediction and routing systems, including FrugalML, FrugalGPT, and
+RouteLLM, consider different ways to allocate model calls under quality and
+cost objectives~\cite{chen2020frugalml,chen2023frugalgptb,ong2024routellma}.
+We compare fixed interpretation backends under a shared admission policy.
+
+Caching is another direct alternative to repeatedly paying inference
+latency. GPTCache studies reuse through a semantic cache~\cite{bang2023gptcache}.
+Our cache reuses valid parsing results for identical normalized intent text.
+Applying the same policy to every backend tests how decision reuse changes
+the value of faster interpretation.

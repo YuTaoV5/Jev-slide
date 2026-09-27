@@ -1,0 +1,44 @@
+\section{Discussion}
+\subsection{Implications for Service Orchestration}
+The experiments show a practical use for Jev in edge-service admission:
+reducing the time and API fees spent interpreting requests while retaining
+the observed correct-completion counts. The shared intent contract lets
+Jev replace the generative interpreter within the same validation and
+scheduling pipeline. The real OCR results show that the latency benefit
+remains visible after image transfer, worker queueing, and recognition.
+
+This integration gives service designers two ways to reduce interpretation
+overhead. A faster decision backend shortens fresh calls, while caching
+reuses decisions for repeated descriptions. The repeated-text conditions
+show how effective the latter can be, including for self-hosted Qwen.
+Choosing between backends therefore depends on the share of requests that
+need a new decision and the time available for service execution. In the
+admission path studied here, shorter decision waiting leaves more deadline
+slack and releases interpretation capacity sooner.
+
+\subsection{Evaluating the Complete Service Path}
+The shared scheduler connects interpreter performance to delivered service.
+It reads current worker state after interpretation and checks placement,
+tier, priority, and predicted completion time before dispatch. Evaluating
+intent fidelity, execution compliance, and actual output separately makes
+it possible to trace how an interpretation affects the final result.
+For example, the normal-versus-unspecified urgency difference maps to the
+same execution priority, while the returned OCR text determines whether
+recognition succeeded. This evaluation supports a service-level choice of
+interpreter using completion, response time, and fees together.
+
+\subsection{Scope and Next Steps}
+The studies use synthetic English requests, repeated texts and images, and
+one measurement session; completion retention is descriptive as defined in
+Section~\ref{sec:design}. The real service has two workers and one service
+family. Hosted timings include provider and network paths, with sequential
+runs exposed to temporal variation. They compare deployed services rather
+than isolate internal model inference. API fees cover interpretation calls;
+local compute and communication costs are outside this measure.
+Appendix~\ref{app:settings} records the configuration.
+
+The next step is to evaluate independently authored requests across days,
+services, and network conditions, using deadlines drawn from application
+requirements. Optimized local serving and a domain-trained classifier or
+bounded extractor, absent from the present comparison, would extend the
+available deployment choices.

@@ -1,0 +1,26 @@
+\begin{table}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{3pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{llcccc}\toprule
+            & &  & \multicolumn{2}{c}{\# spans read before finding: } & \\\cmidrule(lr){4-5}
+            & $n$ & \# spans & one span & all spans &  mAP \\\midrule
+            Continuous & 128 & 2.64 & 1.09 & 3.82 & 0.91 \\
+            Discontinuous & 128 & 2.34 & 1.04 & 3.84 & 0.94 \\
+            \midrule
+            Continuous & 64 & 2.64 & 1.16 & 4.33 & 0.89 \\
+            Discontinuous & 64 & 2.34 & 1.01 & 4.85 & 0.94 \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            ``\# spans read before finding one (all) span(s)'' refers to the number of spans a user needs to read until the user finds one (all) span(s) if the user reads the spans in an order of a system's span probability output. Thus, it is better when it is lower and 1.0 is the best possible value.
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{Evidence identification performance of models with different minimum number of surrounding tokens $n$ on documents with dis-/continuous spans}\label{tab:experiment-discontinous}
+\end{table}

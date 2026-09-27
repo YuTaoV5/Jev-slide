@@ -1,0 +1,15 @@
+arxiv_id	category	directory	title	pdf_url	source_url
+2609.27678	jev_papers	jev_papers/2609.27678_same_scores_different_decisions	Same Scores, Different Decisions: Evaluating JEV and Language Models for Legal Document Understanding	https://arxiv.org/pdf/2609.27678	https://arxiv.org/src/2609.27678
+2609.26550	jev_papers	jev_papers/2609.26550_jev_as_a_judge	JEV-as-a-Judge: Accept When Confident, Escalate When Unsure	https://arxiv.org/pdf/2609.26550	https://arxiv.org/src/2609.26550
+2609.26758	jev_papers	jev_papers/2609.26758_type_safe_is_not_error_free	Type-Safe Is Not Error-Free: A Constrained Decision Head Follows the Option Name, Not the Rubric Bound to It	https://arxiv.org/pdf/2609.26758	https://arxiv.org/src/2609.26758
+2609.28940	jev_papers	jev_papers/2609.28940_calibrated_decisions_pentest	Calibrated Decision Models for Autonomous Penetration-Testing Harnesses	https://arxiv.org/pdf/2609.28940	https://arxiv.org/src/2609.28940
+2609.24965	jev_papers	jev_papers/2609.24965_jev_scientific_decisions	Jev for Scientific Decisions: Evaluating Semantic Choices and Their Consequences	https://arxiv.org/pdf/2609.24965	https://arxiv.org/src/2609.24965
+2609.24574	jev_papers	jev_papers/2609.24574_decision_models_social_science	Evaluating Decision Models for Text Annotation in Computational Social Science	https://arxiv.org/pdf/2609.24574	https://arxiv.org/src/2609.24574
+2609.23886	jev_papers	jev_papers/2609.23886_this_that_model	this-that-model-1.0: A typed decision model that decides in 30 ms, for a millionth of a cent	https://arxiv.org/pdf/2609.23886	https://arxiv.org/src/2609.23886
+2609.24052	jev_papers	jev_papers/2609.24052_calibrated_decisions_crash_narratives	Calibrated Decisions at Scale: Converting Police Crash Narratives into Probabilistic Crash Variables with a System One Model (Jev)	https://arxiv.org/pdf/2609.24052	https://arxiv.org/src/2609.24052
+2609.23986	jev_papers	jev_papers/2609.23986_jev_mem	Jev-Mem: System-One-Controlled Agentic Memory for Efficient AI Agents	https://arxiv.org/pdf/2609.23986	https://arxiv.org/src/2609.23986
+2609.23959	jev_papers	jev_papers/2609.23959_open_jev_callscreenbench	Open-Jev Judgments on CallScreenBench: Calibrated One-Pass Scam Screening with a Small Language Model	https://arxiv.org/pdf/2609.23959	https://arxiv.org/src/2609.23959
+2609.23136	jev_papers	jev_papers/2609.23136_jev_6g_edge_orchestration	Fast Intent-Driven Service Orchestration with Jev for 6G Edge Networks	https://arxiv.org/pdf/2609.23136	https://arxiv.org/src/2609.23136
+2609.22753	jev_papers	jev_papers/2609.22753_jev_edge_service_orchestration	Replacing Large Language Models with Jev Decision Models for Low-Latency Edge Service Orchestration	https://arxiv.org/pdf/2609.22753	https://arxiv.org/src/2609.22753
+2110.01799	comparison_models	comparison_models/2110.01799_contractnli	ContractNLI: A Dataset for Document-level Natural Language Inference for Contracts	https://arxiv.org/pdf/2110.01799	https://arxiv.org/src/2110.01799
+2505.09388	comparison_models	comparison_models/2505.09388_qwen3_technical_report	Qwen3 Technical Report	https://arxiv.org/pdf/2505.09388	https://arxiv.org/src/2505.09388

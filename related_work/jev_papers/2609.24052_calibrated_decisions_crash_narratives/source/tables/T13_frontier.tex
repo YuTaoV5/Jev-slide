@@ -1,0 +1,23 @@
+\begin{table}[pos=!htbp]
+\centering
+\rmfamily\small
+\setlength{\tabcolsep}{4.0pt}
+\caption{Jev against frontier generative models on the same human reference labels.}
+\label{tab:frontier}
+\begin{threeparttable}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+\multicolumn{2}{c}{} & \multicolumn{5}{c}{\jevhead{Agreement with human labels}} & \multicolumn{4}{c}{\jevhead{Calibration}} & \multicolumn{1}{c}{} \\
+\cmidrule(lr){3-7}\cmidrule(lr){8-11}
+\jevhead{model} & \jevhead{$n$} & \jevhead{prec.} & \jevhead{rec.} & \jevhead{$F_1$} & \jevhead{} & \jevhead{$\kappa$} & \jevhead{ECE} & \jevhead{Brier} & \jevhead{slope} & \jevhead{$z$} & \jevhead{prob.} \\
+\midrule
+Jev 1.13 & 2,416 & 0.902 & 0.915 & 0.908 & \jevbar{0.541}{0.459} & 0.906 & 0.0231 & 0.0045 & 1.63 & \jevflag{-5.3} & native \\
+claude-fable-5-1 & 2,416 & 0.959 & \jevbest{0.976} & \jevbest{0.967} & \jevbar{0.837}{0.163} & \jevbest{0.966} & 0.0282 & \jevbest{0.0025} & 2.55 & \jevflag{-6.0} & elicited \\
+gpt-5.6-sol & 2,416 & \jevbest{0.970} & 0.814 & 0.885 & \jevbar{0.427}{0.573} & 0.883 & \jevbest{0.0027} & 0.0056 & 0.98 & \jevflag{-0.3} & elicited \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\small\rmfamily
+\item \textit{Note:}~All arms answer the same narratives and variables under the same criteria text, scored against the same labels with the same code. \jevbest{Bold} is the leader per metric and bars scale $F_1$ from 0.80. The last column states whether the model returns a probability natively or was asked to state one. Every $z$ is \jevflag{red} because every arm is rejected, and they fail in opposite directions, since a slope above one with $z<0$ over-states prevalence and a slope below one with $z>0$ under-states it. Cost is not measured here, and Figure~\ref{fig:frontier} prices a comparable tier at list rates. No arm is held out from the reference set.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

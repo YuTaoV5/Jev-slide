@@ -1,0 +1,74 @@
+% Integration: start main.tex with \documentclass{article}, then input this
+% file, supply \title{...}, and retain the existing document body.
+% This replaces the ACL preamble, math shorthand definitions, and author block.
+\PassOptionsToPackage{authoryear,round}{natbib}
+\usepackage[preprint]{neurips_2026}
+\usepackage{jev_presentation}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\input{model-style}
+\definecolor{linkblue}{RGB}{0,90,181}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\usepackage{fontawesome5}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\C}{\mathrm{C}}
+\newcommand{\N}{\mathrm{N}}
+\newcommand{\I}{\mathbf{1}}
+% Author names and affiliations flow naturally within the text width.
+% Each name/affiliation is kept intact; wrapping occurs between entries.
+\newcommand{\jevauthorblock}{%
+  \begin{minipage}[t]{\dimexpr\textwidth-2\tabcolsep\relax}
+  \centering\normalfont
+  \setlength{\parskip}{0pt}
+  \mbox{\textbf{Fan Zhang}\textsuperscript{1,2}}\quad
+  \mbox{\textbf{Yankai Chen}\textsuperscript{2,3}}\quad
+  \mbox{\textbf{Zhuohan Xie}\textsuperscript{2}}\quad
+  \mbox{\textbf{Yixi Zhou}\textsuperscript{4}}\quad
+  \mbox{\textbf{Sijia Peng}\textsuperscript{5}}\quad
+  \mbox{\textbf{Lei Fan}\textsuperscript{6}}\quad
+  \mbox{\textbf{Xinhua Ji}\textsuperscript{7}}\quad
+  \mbox{\textbf{Cunyuan Zheng }\textsuperscript{8}}\quad
+  \mbox{\textbf{Huangyong Shan}\textsuperscript{9,11}}\quad
+  \mbox{\textbf{Philip S. Yu}\textsuperscript{10}}\quad
+  \mbox{\textbf{Xue Liu}\textsuperscript{2,3}}\quad
+  \mbox{\textbf{Yu Chen}\textsuperscript{1}}\quad
+  \mbox{\textbf{Preslav Nakov}\textsuperscript{2}}\quad
+  \mbox{\textbf{Songwei He}\textsuperscript{9,11}}\par
+  \vspace{0.4em}
+  {\small
+  \mbox{\textsuperscript{1}The University of Tokyo}\quad
+  \mbox{\textsuperscript{2}MBZUAI}\quad
+  \mbox{\textsuperscript{3}McGill University}\quad
+  \mbox{\textsuperscript{4}Hong Kong Baptist University}\quad
+  \mbox{\textsuperscript{5}Fudan University}\quad
+  \mbox{\textsuperscript{6}University of Illinois Urbana-Champaign}\quad
+  \mbox{\textsuperscript{7}UCloud}\quad
+  \mbox{\textsuperscript{8}Columbia University}\quad
+  \mbox{\textsuperscript{9}The University of Hong Kong}\quad
+  \mbox{\textsuperscript{10}University of Illinois Chicago}\quad
+  \mbox{\textsuperscript{11}Quantell Capital}\par}
+  \vspace{0.2em}
+  {\small\texttt{\{fan.zhang, yankai.chen, zhuohan.xie, preslav.nakov\}@mbzuai.ac.ae}\par}
+  \end{minipage}%
+}
+\author{\jevauthorblock}
+% ACL supplied the bibliography style implicitly. The replacement must supply
+% it explicitly; plainnat retains author-year citations supported by natbib.
+\bibliographystyle{plainnat}
+
+\hypersetup{
+  pdftitle={Cost--Accuracy Trade-offs in Legal Document Understanding: Evaluating JEV and Language Models},
+  pdfauthor={Fan Zhang, Yankai Chen, Zhuohan Xie, Yixi Zhou, Sijia Peng, Lei Fan, Xinhua Ji, Philip S. Yu, Xue Liu, Yu Chen, Preslav Nakov, Songwei He}
+}

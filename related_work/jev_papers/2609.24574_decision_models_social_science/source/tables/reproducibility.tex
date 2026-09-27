@@ -1,0 +1,46 @@
+\begin{longtable}{@{}l >{\raggedright\arraybackslash}p{0.27\textwidth} >{\raggedright\arraybackslash}p{0.34\textwidth} l@{}}
+\caption{Reproducibility record, generated from the per-call logs: resolved model version, serving providers observed, and access route. Main-evaluation runs 2026-09-20, with the two 0.6B local models pinned to Hugging Face snapshot hashes. $^{\dagger}$ marks open decision systems added after the analysis plan was filed (Appendix~\ref{app:exploratory}) were run 2026-09-20 to 2026-09-23 and are identified by the version string each system's released code reports.}\label{tab:repro}\\
+\toprule
+Model & Resolved version(s) & Provider(s) & Route \\
+\midrule
+\endfirsthead
+\toprule
+Model & Resolved version(s) & Provider(s) & Route \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Jev & \texttt{jev-1.13-20260917} & -- & decisions API \\
+Qwen3-0.6B-RLCD & \texttt{b327ec5efb5f\allowbreak dbf8bfafa3b3\allowbreak 69720ac5f643\allowbreak 4b05} & -- & local (HF) \\
+Qwen3-0.6B base & \texttt{Qwen3-0.6B-Base} & -- & local (HF) \\
+Verdict-0.15B$^{\dagger}$ & \texttt{heman10x/rlc\allowbreak d-modernbert\allowbreak -151m@v1.4 (\allowbreak artifacts/v2\allowbreak  onnx)} & -- & local (HF) \\
+Laya-0.4B$^{\dagger}$ & \texttt{laya-0.3.4/c\allowbreak onvaiinnovat\allowbreak ions/laya\,/\,laya-0.3.4/c\allowbreak onvaiinnovat\allowbreak ions/laya/mu\allowbreak ltilingual} & -- & local (HF) \\
+NLI-0.4B$^{\dagger}$ & \texttt{opendecision\allowbreak -0.1.1/Morit\allowbreak zLaurer/Mode\allowbreak rnBERT-large\allowbreak -zeroshot-v2\allowbreak .0} & -- & local (HF) \\
+Von-0.4B$^{\dagger}$ & \texttt{wfzyx/von we\allowbreak ights-1.1.0 \allowbreak snapshot-d8b\allowbreak b5e0 sdk-1.0\allowbreak .1} & -- & local (HF) \\
+decider-0.8b$^{\dagger}$ & \texttt{Mapika/decider-0.8b} & -- & local (HF) \\
+Kev-0.8B$^{\dagger}$ & \texttt{jaredpalmer/kev-0.8b} & -- & local (HF) \\
+decider-2b$^{\dagger}$ & \texttt{Mapika/decider-2b} & -- & local (HF) \\
+SemIf-4B$^{\dagger}$ & \texttt{semif-direct\allowbreak -mlx/Qwen/Qw\allowbreak en3.5-4B@851\allowbreak bf6e8} & -- & local (HF) \\
+Kev-4B$^{\dagger}$ & \texttt{jaredpalmer/kev-4b} & -- & local (HF) \\
+Nimble-9B$^{\dagger}$ & \texttt{bespokelabs/\allowbreak Bespoke-Nimb\allowbreak le-9B} & -- & local (HF) \\
+Kev-9B$^{\dagger}$ & \texttt{jaredpalmer/kev-9b} & -- & local (HF) \\
+Fable 5.1 & \texttt{claude-fable-5.1} & Anthropic, Google & chat completions \\
+Haiku 4.5 & \texttt{claude-haiku-4.5} & Amazon Bedrock, Anthropic & chat completions \\
+Opus 5 & \texttt{claude-opus-5} & Claude Platform on AWS & chat completions \\
+Sonnet 5 & \texttt{claude-sonnet-5} & Claude Platform on AWS & chat completions \\
+DS V3.2 & \texttt{deepseek-v3.2} & Alibaba, AtlasCloud, Baidu, DeepInfra, DigitalOcean, Friendli, GMICloud, Google, Novita, Phala, SiliconFlow, StreamLake, Venice & chat completions \\
+Gem 3.1P & \texttt{gemini-3.1-pro-preview} & Google, Google AI Studio & chat completions \\
+Gem FL & \texttt{gemini-3.5-flash-lite} & Google, Google AI Studio & chat completions \\
+Gem 3.8F & \texttt{gemini-3.8-flash} & Google, Google AI Studio & chat completions \\
+Gemma 31B & \texttt{gemma-4-31b-it} & Chutes, CoreWeave, Crusoe, DeepInfra, Friendli, ModelRun, Novita, Parasail, SambaNova, Venice & chat completions \\
+L4 Mav & \texttt{llama-4-maverick} & DeepInfra, DigitalOcean, Novita, Parasail & chat completions \\
+L4 Scout & \texttt{llama-4-scout} & DeepInfra, Novita & chat completions \\
+Mistral M & \texttt{mistral-medium-3-5} & Mistral & chat completions \\
+Kimi 2.6 & \texttt{kimi-k2.6} & AtlasCloud, Baidu, Chutes, Cloudflare, CoreWeave, Crusoe, Decart, DeepInfra, DigitalOcean, GMICloud, Inceptron, Moonshot AI, Novita, Parasail, Phala, Sail Research, SiliconFlow, StreamLake, Venice & chat completions \\
+Luna & \texttt{gpt-5.6-luna} & Azure, OpenAI & chat completions \\
+Sol & \texttt{gpt-5.6-sol} & Azure, OpenAI & chat completions \\
+Terra & \texttt{gpt-5.6-terra} & Azure, OpenAI & chat completions \\
+OSS 120B & \texttt{gpt-oss-120b} & AkashML, Amazon Bedrock, BaseTen, Cerebras, CoreWeave, Crusoe, DeepInfra, DekaLLM, DigitalOcean, Google, Groq, Mancer 2, Mara, Nebius, Novita, Parasail, Phala, SambaNova, SiliconFlow, Together & chat completions \\
+Qwen 235B & \texttt{qwen3-235b-a22b-2507} & Alibaba, DeepInfra, GMICloud, Google, Nebius, Novita, Parasail, StreamLake, Venice & chat completions \\
+GLM 5.3 & \texttt{glm-5.3} & AkashML, Alibaba, AtlasCloud, Baidu, BaseTen, Cloudflare, Crusoe, Decart, DeepInfra, DigitalOcean, Fireworks, Friendli, GMICloud, Inceptron, InferenceNet, Io Net, Makora, Mistral, Modal, Morph, Novita, Parasail, Phala, Reka, Sail Research, SiliconFlow, Together, Venice, Wafer, Z.AI & chat completions \\
+\end{longtable}

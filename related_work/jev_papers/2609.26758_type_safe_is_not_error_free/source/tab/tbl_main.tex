@@ -1,0 +1,17 @@
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llcccccl@{}}
+\toprule
+ & & \multicolumn{2}{c}{balanced acc.} & \multicolumn{2}{c}{AUC} & & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+option names & in voc. & aligned & reassigned & aligned & reassigned & flip & difference from \textit{0/1} (pp, 95\% CI) \\
+\midrule
+yes/no & \checkmark & \m{balANY}\% & \m{balSNY}\% & \m{aucANY}\% & \m{aucSNY}\% & \m{flipNY}\% & $+$\m{didNYZo} \tiny{[$+$\m{ciNYZolo}, $+$\m{ciNYZohi}]} \\
+false/true & \checkmark & \m{balAFT}\% & \m{balSFT}\% & \m{aucAFT}\% & \m{aucSFT}\% & \m{flipFT}\% & $+$\m{didFTZo} \tiny{[$+$\m{ciFTZolo}, $+$\m{ciFTZohi}]} \\
+absent/present &  & \m{balAAP}\% & \m{balSAP}\% & \m{aucAAP}\% & \m{aucSAP}\% & \m{flipAP}\% & $+$\m{didAPZo} \tiny{[$+$\m{ciAPZolo}, $+$\m{ciAPZohi}]} \\
+negative/positive &  & \m{balANP}\% & \m{balSNP}\% & \m{aucANP}\% & \m{aucSNP}\% & \m{flipNP}\% & $+$\m{didNPZo} \tiny{[$+$\m{ciNPZolo}, $+$\m{ciNPZohi}]} \\
+rejected/accepted &  & \m{balARA}\% & \m{balSRA}\% & \m{aucARA}\% & \m{aucSRA}\% & \m{flipRA}\% & $+$\m{didRAZo} \tiny{[$+$\m{ciRAZolo}, $+$\m{ciRAZohi}]} \\
+\midrule
+\textit{0/1} &  & \m{balAZO}\% & \m{balSZO}\% & \m{aucAZO}\% & \m{aucSZO}\% & \m{flipZO}\% &  \\
+\textit{A/B} &  & \m{balAAB}\% & \m{balSAB}\% & \m{aucAAB}\% & \m{aucSAB}\% & \m{flipAB}\% &  \\
+\bottomrule
+\end{tabular}

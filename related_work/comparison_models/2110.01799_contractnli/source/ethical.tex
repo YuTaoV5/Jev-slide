@@ -1,0 +1,21 @@
+\section*{Ethical Consideration}
+
+In this work, we collected contracts from EDGAR and Internet search engines.
+For the former, EDGAR states that all filed documents are public information and can be redistributed without a further consent\footnote{\url{https://www.sec.gov/privacy.htm\#dissemination}}.
+For the latter, we obtained publicly accessible documents and our academic use is within the scope of fair use.
+Nevertheless, we placed a contact form for a concerned individual or organization in a similar way as other crawled datasets.
+
+For the annotation, we hosted our annotation task on Amazon Mechanical Turk so that each worker can participate voluntarily and withdraw at any time.
+We made sure each worker receives at least the US federal wage and the actual average pay was 18.31 US dollars per hour (excluding Amazon Mechanical Turk fees).
+Our annotation procedure did not go through an institutional review board since we are not directly collecting information from human subjects.
+
+While we did not run computationally expensive pretraining of Transformer-based models, we ran fine-tuning of the models 156 times for this paper.
+Running experiments multiple times was necessary in order to ensure validity and reproducibility of the experiments when our dataset is modest in size from a machine learning perspective.
+We believe this energy consumption can be justified by resources that we can potentially save by assisting contract review.
+Moreover, we introduced an architectural change that benefits the models more than simply making the model larger (e.g., Span NLI BERT with BERT\textsubscript{\textit{base}} performed better than SQuAD BERT with BERT\textsubscript{\textit{large}} in \cref{tab:results}).
+
+There was a concern that publication of our annotations or models may be regarded as an unauthorized practice of law (i.e., giving a legal advice without a license), which is forbidden in many jurisdictions.
+This also means that an individual may suffer from a loss by relying on information from our annotation or model outputs as a legal advice.
+We have consulted an attorney regarding this issue and were advised that releasing general information (the annotations and the models) does not constitute an unauthorized practice of law.
+We were nevertheless advised to place a disclaimer that warns users not to rely on the information and to seek an attorney's advice instead.
+Furthermore, we took additional measures, such as forbidding a crawler to index our annotations, in order to minimize a risk of an individual from referencing our annotation as a legal advice.

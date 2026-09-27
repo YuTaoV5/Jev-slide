@@ -1,0 +1,26 @@
+\begin{table}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{2pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{lc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}c}\toprule
+            & \multicolumn{4}{c}{Evidence} & \multicolumn{6}{c}{NLI} \\\cmidrule(lr){2-5}\cmidrule(lr){6-11}
+            Hypothesis Usage & \multicolumn{2}{c}{mAP} & \multicolumn{2}{c}{P@R80} & \multicolumn{2}{c}{Acc.} & \multicolumn{2}{c}{F1 (C)} & \multicolumn{2}{c}{F1 (E)} \\\midrule
+            Symbol (BERT\textsubscript{\textit{base}})  & .857 & \textsubscript{.044} & .574 & \textsubscript{.136} & .830 & \textsubscript{.014} & .294 & \textsubscript{.075} & .751 & \textsubscript{.027} \\
+            Symbol (BERT\textsubscript{\textit{large}}) & .894 & \textsubscript{.020} & .703 & \textsubscript{.092} & .849 & \textsubscript{.006} & .303 & \textsubscript{.058} & .794 & \textsubscript{.026} \\
+            \midrule
+            Text (BERT\textsubscript{\textit{base}})  & .885 & \textsubscript{.025} & .663 & \textsubscript{.093} & .838 & \textsubscript{.020} & .287 & \textsubscript{.022} & .765 & \textsubscript{.035} \\
+            Text (BERT\textsubscript{\textit{large}}) & .922 & \textsubscript{.006} & .793 & \textsubscript{.018} & .875 & \textsubscript{.016} & .357 & \textsubscript{.039} & .834 & \textsubscript{.002} \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            Refer to \cref{sec:experiment-settings} for the details on the metrics.
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{A controlled experiment using a randomly initialized special token for each hypothesis (Symbol) instead of hypothesis' surface tokens (Text)}\label{tab:results-symbolic}
+\end{table}

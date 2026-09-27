@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{Entailment recall\\(\%) $\uparrow$ $n=280$} & \shortstack{Contradiction recall\\(\%) $\uparrow$ $n=48$} & \shortstack{Not mentioned recall\\(\%) $\uparrow$ $n=182$} \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 88.21 & \secondscore{81.25} & 58.79 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & \bestscore{93.93} & 66.67 & 64.84 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \secondscore{93.21} & 70.83 & 70.33 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 92.86 & 70.83 & 56.04 \\
+\modelicon{openai}GPT-5.6 Terra & 89.64 & 70.83 & \bestscore{72.53} \\
+\modelicon{openai}GPT-6 Astra & \bestscore{93.93} & 72.92 & 65.38 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 91.43 & 75.00 & 60.44 \\
+\modelicon{claude}Claude Sonnet 5 & 91.79 & 66.67 & 69.23 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 90.36 & 33.33 & \secondscore{71.98} \\
+\modelicon{qwen}Qwen3.5-9B & 90.00 & \bestscore{87.50} & 58.79 \\
+\bottomrule
+\end{tabularx}
+\caption{Baseline-only class recalls on the 30 development contracts and 510 labels. All 17 judgments are requested together. Header counts give gold-label supports shared by all ten models. Failed predictions remain in their class denominators. This table adds no $K{=}1$, $K{=}4$, $K{=}8$, or concurrency measurements. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} indicate the best and second-best distinct values, including ties, within each indicated comparison; these marks do not imply statistical significance.}
+\label{tab:developmentclassrecalls}
+\end{table*}

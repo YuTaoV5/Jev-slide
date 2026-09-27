@@ -1,0 +1,72 @@
+\section{Metric Definitions and Output Coverage}
+\label{app:metrics}
+
+Let $i\in\{1,\ldots,10\}$ index cases, $t\in\{1,\ldots,5\}$ repetitions and $k\in\{1,2\}$ Choices. Write $s_{itk}=1$ when the received option exactly matches its reference, and zero otherwise. Let $d_{it}$ indicate exact agreement on the case's declared downstream fields, and $\ell_{it}$ exact agreement on its canonical final label. Missing responses set each indicator to zero. The planned-denominator metrics are
+\begin{align}
+ A_S &= \frac{1}{100}\sum_{i,t,k}s_{itk}, & A_D &= \frac{1}{50}\sum_{i,t}d_{it}, \\
+ A_L &= \frac{1}{50}\sum_{i,t}\ell_{it}, & A_J &= \frac{1}{50}\sum_{i,t}d_{it}\prod_k s_{itk}.
+\end{align}
+
+Table~\ref{tab:output-fields} specifies the scientific quantities and properties assessed by downstream exactness. These include counts, counts by group, Boolean properties, symbolic covariance terms and unknown values. Selected options and final labels are scored separately; intermediate claim judgments are excluded from downstream exactness. Exactness requires agreement in both value and type for every declared field: an omitted value differs from an explicitly unknown quantity, and a Boolean differs from a number. Reference quantities that are unknown must also remain unknown in the prediction.
+
+The final label combines the judgments of the individual claim clauses. A rejected clause makes the overall claim inconsistent; otherwise an unresolved clause yields insufficient evidence, and a claim with all clauses supported is consistent. The reference labels in this comparison are all inconsistent.
+
+Downstream and joint scores coincide empirically because each observed semantic error changes a growth-history count.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{.06\textwidth}p{.44\textwidth}X@{}}
+\toprule
+Case & Declared downstream fields & Coverage of semantic distinctions \\
+\midrule
+E004 & Exact parent-lot count; availability of complete lot assignments. & The powder-history relation affects a clause rather than these fields. \\
+E005 & Next stress after initial failure; next stress after initial runout; observed replication at a fixed stress. & Specimen continuity is not used by the recorded stress calculation. \\
+E006 & Paired realizations; simulation executions; values entering the ensemble. & The phase relation and the averaging operation are not recorded as output fields. \\
+E007 & Original-protocol members; revised-protocol members; total members; whether the contrast changes smoothing only. & Different descriptions of a bundled change can share the same Boolean output. \\
+E009 & Compared laboratory results; calibration visits; shared covariance term; exact effective replication. & A bracketing average and an adjustment contrast can have the same recorded counts. \\
+E010 & Original and retained experimental units; joint assignment events; range-level records; assignment-independence Boolean. & The exposure interpretation affects a clause rather than these fields. \\
+B001 & F3 pups; weaned litters; newly injected F3 animals; first generation beyond the original exposure window; distinct F0 ancestors. & Some alternative dosing descriptions imply the same newly injected F3 count. \\
+B002 & Plating counts, growth-history counts and colony totals by series; exact mutation origins. & The colony--origin relation affects a clause; the exact origin count stays unknown. \\
+B003 & Selected libraries; distinct contributors, overall and by genotype; contributor appearances; separately observed contributor profiles. & Pooling stage affects a clause rather than these fields. \\
+B004 & Deep-sequenced hybrid founders; reported mutant alleles; validated new germline lines. & The substantive mosaicism and marker alternatives affect clauses rather than these fields. \\
+\bottomrule
+\end{tabularx}
+\caption{Declared scientific outputs used for downstream exactness. These fields capture selected consequences of a Choice; semantic scoring covers distinctions that do not change the recorded outputs. Null entries include quantities not established by the supplied evidence.}
+\label{tab:output-fields}
+\end{table*}
+
+Different semantic selections can produce the same declared output. For example, E005-Q02 asks whether a new specimen receives the next stress setting; this answer does not enter the recorded stress calculation. Semantic and joint correctness still require the reference selection. Downstream exactness therefore applies to the declared fields rather than every possible consequence of a relation.
+
+\section{Correctness Conditional on a Received Response}
+\label{app:observed}
+
+Table~\ref{tab:observed} uses only received, complete responses. It complements the planned-denominator results: a route with low availability may return correct answers for a selective subset of cases. Each received response supplies two semantic answers and one group output. No absent answer is treated as a semantic mistake or as an insufficient-evidence selection.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Model & Semantic & Down./Joint & Label \\
+\midrule
+Jev 1.13 & 100/100 & 50/50 & 50/50 \\
+GPT-5.6 Luna & 99/100 & 49/50 & 50/50 \\
+GPT-5.6 Terra & 98/98 & 49/49 & 49/49 \\
+GPT-5.6 Sol & 100/100 & 50/50 & 50/50 \\
+GPT-6 Astra & 100/100 & 50/50 & 50/50 \\
+Claude Sonnet 5 & 100/100 & 50/50 & 50/50 \\
+Qwen3.8 Flash & 83/84 & 41/42 & 42/42 \\
+Qwen3.8 Max & 95/100 & 45/50 & 50/50 \\
+DeepSeek V4.1 Flash & 96/96 & 48/48 & 48/48 \\
+DeepSeek V4 Pro & 98/98 & 49/49 & 49/49 \\
+Claude Opus 5 & 100/100 & 50/50 & 50/50 \\
+Kimi K3 & 100/100 & 50/50 & 50/50 \\
+\bottomrule
+\end{tabular}
+\caption{Correct outputs among received responses. Availability is reported separately in Table~\ref{tab:main}. Versions are those listed in the main table.}
+\label{tab:observed}
+\end{table}
+
+All 588 received labels match their references, compared with 581 exact downstream results and 1,169 correct Choices out of 1,176. The seven semantic errors each alter a growth-history count while preserving the final label, illustrating the distinction between the three evaluation levels.

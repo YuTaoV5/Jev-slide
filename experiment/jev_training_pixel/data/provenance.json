@@ -1,0 +1,29 @@
+{
+  "kind": "deterministic teaching calculation",
+  "model_run": false,
+  "api_calls": 0,
+  "q": 0.6,
+  "log_loss": {
+    "0.5": 0.6931471805599453,
+    "0.6": 0.6730116670092565,
+    "0.8": 0.7776612957621661,
+    "0.9": 0.9842503465923143,
+    "0.95": 1.2290688860541263,
+    "0.99": 1.8480982759073372
+  },
+  "outcomes": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "calibration_start": 0.8999999999999999,
+  "calibration_end": 0.6000017641807133,
+  "notes": "Not the disclosed Jev loss. Scalar gradient descent illustrates proper-scoring optimum, not the actual RLCD optimizer."
+}

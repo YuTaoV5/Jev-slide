@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xlrrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Thinking & A (\%) & B (\%) & C (\%) & D (\%) & All 12 correct & Valid calls \\
+\midrule
+\multirow[c]{2}{*}{\modelicon{qwen}Qwen3.5-4B} & Off & 76.67 & 76.67 & 73.33 & 80.00 & 17/30 & 360/360 \\
+ & On & 80.00 & 87.78 & 80.00 & 76.67 & 17/30 & 358/360 \\
+\multirow[c]{2}{*}{\modelicon{qwen}Qwen3.5-9B} & Off & 83.33 & 76.67 & 66.67 & 70.00 & 16/30 & 360/360 \\
+ & On & 86.67 & 84.44 & 78.89 & 80.00 & 18/30 & 357/360 \\
+\bottomrule
+\end{tabularx}
+\caption{Qwen configuration comparison on the same 30 development anchors in ten contracts, kept separate from the official test split. All 360 planned requests are attempted under each configuration. Off uses temperature zero and a 2,048-token limit; On uses temperature 1, top-$p$ 0.95 and a 32,768-token combined reasoning-and-answer limit without a separate reasoning cutoff. Invalid responses count wrong and cannot satisfy All 12 correct. These changes compare inference configurations and do not isolate the effect of enabling reasoning.}
+\label{tab:qwenthinking}
+\end{table*}

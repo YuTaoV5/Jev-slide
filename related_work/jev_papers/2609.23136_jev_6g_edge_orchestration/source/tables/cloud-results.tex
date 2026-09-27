@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{Cloud comparison. Response cells give the median and [25th, 75th] percentiles in milliseconds over 21 calls per model. Contract accuracy uses 63 checks; completion is the mean over nine updated-contract trajectories.}
+\label{tab:cloud}
+\footnotesize\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.16}
+\begin{tabular}{@{}lrrr@{}}\toprule
+& \multicolumn{2}{c}{Interpretation} & Service\\
+\cmidrule(lr){2-3}\cmidrule(l){4-4}
+\rowcolor{TableHeaderShade}
+Model & Correct & Response (ms) & Updated (\%)\\\midrule
+Jev & 63/63 & \shortstack{374.6\\{\scriptsize [348.1, 423.4]}} & 97.00\\
+DeepSeek & 63/63 & \shortstack{482.9\\{\scriptsize [436.8, 562.7]}} & 93.51\\
+Gemini & 63/63 & \shortstack{984.5\\{\scriptsize [949.9, 1087.5]}} & 88.65\\
+\bottomrule\end{tabular}\end{table}

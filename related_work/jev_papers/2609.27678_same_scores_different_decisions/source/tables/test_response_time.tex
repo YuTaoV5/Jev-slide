@@ -1,0 +1,29 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabularx}{\textwidth}{Xrrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{Baseline\\median (s) $\downarrow$} & \shortstack{Baseline\\P95 (s) $\downarrow$} & \shortstack{B: one\\median (s)} & \shortstack{C: 17\\median (s)} & \shortstack{Paired $C-B$\\median (s)} & 95\% CI \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & \bestscore{1.24} & \bestscore{1.59} & 1.15 & 1.22 & +0.19 & $[+0.06,+0.24]$ \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & \secondscore{1.60} & 2.78 & 0.99 & 1.86 & +0.49 & $[+0.45,+0.58]$ \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & 3.73 & 8.49 & 3.50 & 3.73 & +0.43 & $[-0.05,+0.58]$ \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 1.74 & \secondscore{2.25} & 1.10 & 1.78 & +0.67 & $[+0.59,+0.71]$ \\
+\modelicon{openai}GPT-5.6 Terra & 11.61 & 22.62 & 3.40 & 12.18 & +8.73 & $[+7.73,+9.57]$ \\
+\modelicon{openai}GPT-6 Astra & 20.94 & 48.47 & 3.56 & 23.03 & +19.62 & $[+11.90,+28.15]$ \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 5.65 & 7.07 & 1.99 & 5.20 & +2.84 & $[+1.06,+3.40]$ \\
+\modelicon{claude}Claude Sonnet 5 & 3.27 & 4.51 & 2.32 & 3.25 & +0.84 & $[+0.62,+1.26]$ \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 86.87 & 175.08 & 25.77 & 82.57 & +56.31 & $[+50.20,+66.03]$ \\
+\modelicon{qwen}Qwen3.5-9B & 134.64 & 167.61 & 39.18 & 123.09 & +86.09 & $[+70.99,+94.40]$ \\
+\bottomrule
+\end{tabularx}
+\caption{Client elapsed time for all ten model configurations. The baseline uses 123 contracts with 17 requested judgments per contract. Conditions B and C both show 17 hypotheses and request one or 17 judgments, respectively; each uses 30 contracts and three repeats (90 calls). All attempts, including failures, are retained. Paired changes match contract and repeat; 95\% intervals resample whole contracts 5,000 times. P95 uses linear interpolation. Timings include client, network, and service effects. \textbf{Bold} and \underline{underlining} mark the lowest and second-lowest baseline values, without implying significance.}
+\label{tab:testtiming}
+\end{table}

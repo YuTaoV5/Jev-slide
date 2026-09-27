@@ -1,0 +1,16 @@
+{
+  "output": "X:\\Items\\Jev-proj\\experiment\\jev_training_pixel\\out\\jev-training-rlvr-zh.mp4",
+  "width": 1920,
+  "height": 1080,
+  "fps": 60.0,
+  "decoded_frames": 1920,
+  "duration_seconds": 32.0,
+  "silent": true,
+  "native_canvas": [
+    480,
+    270
+  ],
+  "integer_scale": 4,
+  "fixture_model_run": false,
+  "render_seconds": 139.3
+}

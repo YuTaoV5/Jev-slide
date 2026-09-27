@@ -1,0 +1,51 @@
+\section{Experiments}\label{sec:experiment}
+
+\subsection{Baselines}\label{sec:baselines}
+
+In order to study the dataset's characteristics, we implemented five baselines with different capabilities.
+We briefly explain the five baselines that we implemented below, but more details can be found in \cref{sec:appendix-experiments-baseline}
+
+\begin{description}
+    \item[Majority vote] A baseline that outputs an oracle majority label for each hypothesis (NLI only).
+    \item[Doc TF-IDF+SVM] A document-level multi-class linear Support Vector Machine \cite[SVM;][]{chang_libsvm_2011} with unigram bag-of-words features (NLI only).
+    \item[Span TF-IDF+Cosine] Evidence identification based on unigram TF-IDF cosine similarities between each hypothesis and each span  (evidence identification only).
+    \item[Span TF-IDF+SVM] A span-level binary Linear SVM with unigram bag-of-words features  (evidence identification only).
+    \item[SQuAD BERT] A Transformer-based model as in the previous works discussed in \cref{sec:system-model}.
+    Instead of allowing it to predict spans at arbitrary boundaries, we calculate a score for each of predefined spans by averaging token scores associated with the start and end of the span over different context windows.
+    This makes sure that its performance is not discounted for getting span boundaries wrong.
+\end{description}
+
+\subsection{Experiment Settings}\label{sec:experiment-settings}
+
+For evidence identification, we report mean average precision (mAP) that is micro averaged over labels.
+We also report precision at recall 0.8 (P@R80) that is micro averaged over documents and labels.
+P@R80 is the precision score when the threshold for evidence identification is adjusted to achieve a recall score of 0.8.
+It was used in \cite{hendrycks_cuad_2021} to measure efficacy of a system under a required coverage level that is similar to typical human's.
+
+\input{tab/experiment-models}
+\input{tab/experiment-results}
+
+For NLI, we report accuracy, a F1 score for contradiction (F1 (C)) and for entailment (F1 (E)).
+We micro average these scores over documents and then macro average over labels.
+This is to avoid the label imbalance to \emph{cancel out} with micro averaging and the results to appear too optimistic.
+
+For our Span NLI BERT, we ran the same experiment ten times with different hyperparameters (detailed in \cref{sec:appendix-experiments-hyperparameters}) and report the average score of three models with the best development scores.
+Since NLI is more challenging than evidence identification, we used macro average NLI accuracy for the criterion.
+For the SQuAD BERT baseline, we ran hyperparameter search over 18 hyperparameter sets as described in \cite{devlin_bert_2019} and likewise report the average score of the three best models.
+The metrics for the experiments with the hyperparameter search are followed by subscript numbers each of which denotes standard deviation of metrics over three runs.
+
+\subsection{Results}
+
+We first compared Span NLI BERT against baselines (\cref{tab:results}).
+Span NLI BERT performed significantly better than the baselines, both in terms of evidence identification and NLI.
+Nevertheless, the performance for contradiction labels is much worse than that of entailment labels, due to the imbalanced label distribution.
+In terms of evidence identification, SQuAD BERT's mAP score was no better than that of Span TF-IDF+SVM, which illustrates the importance of explicitly incorporating span boundaries to input.
+
+We then compared Span NLI BERT's performance with different backbone models and pretraining corpora including DeBERTa v2 \cite{he_deberta_2021} which was most successful in \cite{hendrycks_cuad_2021} (\cref{tab:results-pretrained}).
+We can observe that making the models bigger benefits both evidence identification and NLI.
+Fine-tuning models on legal corpora had mixed results.
+Using a model pretrained on a case law corpus \cite{zheng_when_2021} did not benefit evidence identification nor NLI.
+Fine-tuning BERT\textsubscript{\textit{base}} on NDAs has slightly improved the performance but the benefit is no longer visible for BERT\textsubscript{\textit{large}}.
+Transferring DeBERTa\textsubscript{\textit{xlarge}} trained on CUAD \cite{hendrycks_cuad_2021} gave marginal improvement on NLI, making it the best performing model on the ContractNLI dataset.
+
+\input{tab/experiment-symbolic}

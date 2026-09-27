@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-09-26T23:39:50.973893+00:00",
+  "python": "3.12.7",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "archives": [
+    {
+      "file": "awesome-jev-main.zip",
+      "sha256": "ff6c4f95241b2d189561397d91f138d4bd9bf880ca6afd70dd3db1d3b7c54eb5",
+      "bytes": 179972
+    },
+    {
+      "file": "fast-jev-compaction-main.zip",
+      "sha256": "28f284ec34dd93854c34493a0ab597cbfdfe4fd1efdae407c73f49c29877045e",
+      "bytes": 173042
+    },
+    {
+      "file": "jev-chat-jarvis-main.zip",
+      "sha256": "37615511639c1d2ba131d1a50d453f81929b5e7b45b5f77139f7be8f169ae1e6",
+      "bytes": 14606012
+    },
+    {
+      "file": "jevfire-main.zip",
+      "sha256": "9f7cbaa51994dff8938eec7755f7e87215f13f557d8fbbb10b9834695f3276cf",
+      "bytes": 8967664
+    },
+    {
+      "file": "NanoJev-main.zip",
+      "sha256": "bae0b7dce066750420c8d0e09b13b7a537a0b5e849e2be1ea0e93476c651800b",
+      "bytes": 49196907
+    }
+  ],
+  "scope": "Offline teaching demonstrations; not a research benchmark.",
+  "api_calls": 0,
+  "cost_usd": 0,
+  "github_clones": [
+    {
+      "repo": "https://github.com/rmalde/minecraft-agent",
+      "local": "related_work/minecraft-agent",
+      "fetched_at": "2026-09-27",
+      "commit": "78b40ed59514e5e2abde33a05ce398ecb2c39e05",
+      "head_message": "Add Astra and JEV Minecraft agent, native renderer, route tests, and verification tools",
+      "analysis": "results/minecraft-agent-debunk.md",
+      "reason": "User asked to read the issues and verify the JEV/Astra Minecraft demo claims by static code analysis only; no API calls or runtime execution.",
+      "issues_consulted": [1, 2, 3, 4]
+    }
+  ]
+}

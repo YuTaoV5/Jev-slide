@@ -1,0 +1,88 @@
+\section{Intent-Driven Edge Orchestration}
+\label{sec:system}
+\subsection{Wireless Access and Edge Resources}
+The service path consists of mobile users, wireless access, an orchestrator, and edge workers. In the trace-driven model, handover changes a user's serving cell and hence which worker has the shorter transport path. Shared queues, available computing capacity, and the overhead of changing placement also affect the preferred worker. Service requirements constrain these placement choices. We place the interpreter at this service-orchestration layer: it supplies the requirements under which the numerical scheduler allocates edge work. Wireless delivery and mobility events continue while either stage is running.
+
+\subsection{Contracts and Request Versions}
+Let $u$ index a user and $v$ a contract version shared across the users. Versions are numbered in order of issue, with issue time $\tau_v$; an initial version exists at or before the first request. For each user, $\mathcal{A}_{u,v}$ is the permitted set of edge workers, $d_{u,v}>0$ the send-to-completion budget, and $p_{u,v}>0$ the priority, with larger values served first. These requirements form the intended service contract
+\begin{equation}
+c_{u,v}=(\mathcal{A}_{u,v},d_{u,v},p_{u,v}).
+\label{eq:contract}
+\end{equation}
+The two workers are denoted A and B, giving three supported location sets: A only, B only, and either worker. A natural-language description expresses each contract.
+
+For request $i$, let $u_i$ be its user and $s_i$ its send time. Its version $v_i$ is fixed at generation:
+\begin{equation}
+v_i=\max\{v:\tau_v\le s_i\}.
+\end{equation}
+Scoring uses $c_{u_i,v_i}$ even if another version is issued before the request finishes. Consequently, a later update does not retrospectively change the requirements of work already submitted. The evaluator stores canonical contracts separately from the text passed to a model. The model returns an interpreted contract $\widehat c_{u,v}$ with attributes $\widehat{\mathcal A}_{u,v}$, $\widehat d_{u,v}$, and $\widehat p_{u,v}$. A shared validator checks format and supported values. Validation permits execution; semantic correctness is scored separately against the canonical contract.
+
+\subsection{Semantic Interpretation and Placement}
+We compare two integration choices. In direct orchestration, the model receives the current contract descriptions and observed numerical state, then selects both contract profiles and the joint placement of the users. The shared execution layer checks the returned plan against the interpreted location permissions before applying it. Numerical state includes current queues, available service capacity, communication delay estimates, and existing placements.
+
+In cached interpretation, the model only translates the current contract descriptions. The cache identity includes the descriptions, version, and catalog identity. A change to these inputs requires fresh interpretation. A handover or capacity event can reuse the existing contract while triggering placement reconsideration. A numerical scheduler chooses from the permitted combinations using the state available after interpretation finishes. This separates changes in service requirements from changes in the network and computing resources used to satisfy them.
+
+The trace-driven scheduler enumerates the permitted joint placements and scores them using estimated queueing and processing delay, current offered load, communication delay, and placement-change overhead. Delay is normalized by each interpreted deadline and weighted by its interpreted priority. This is a shared heuristic used to compare interpreters. The real image service uses the same separation of responsibilities, with per-request placement at the allowed worker having the earliest predicted finish. Each worker serves queued work in non-preemptive priority order, breaking priority ties by deadline. The precise scoring rule is given in the appendix.
+
+The structured-input reference receives canonical contracts directly and uses the same numerical scheduler. It measures service execution when an upstream system already supplies structured requirements and no language interpretation is needed.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\footnotesize,>=Latex,
+ box/.style={draw=black!55,rounded corners=2pt,align=center,minimum height=8mm,text width=24mm},
+ arr/.style={->,line width=.65pt}]
+\node[box] (text) at (0,0) {Versioned\newline intent text};
+\node[box,fill=teal!7] (parse) at (3,0) {Interpretation\newline and validation};
+\node[box] (cache) at (6,0) {Contract\newline cache};
+\node[box] (radio) at (0,-1.65) {Mobile request\newline arrivals};
+\node[box,fill=teal!7] (gate) at (3,-1.65) {Version gate\newline and scheduler};
+\node[box] (edge) at (6,-1.65) {Edge queues\newline and execution};
+\draw[arr] (text)--(parse);
+\draw[arr] (parse)--(cache);
+\draw[arr] (radio)--(gate);
+\draw[arr] (cache.south)--(gate.north east);
+\draw[arr] (gate)--(edge);
+\draw[arr] (edge.south)--++(0,-.6)-|node[pos=.25,below,font=\scriptsize]{current numerical state}(gate.south);
+\draw[dashed,black!45] (-1.35,-.85)--(7.35,-.85);
+\end{tikzpicture}
+\caption{Intent-driven orchestration above wireless access. Semantic interpretation activates a service contract at first use and updates. Radio-delivered requests then pass the version gate to edge execution. Numerical scheduling uses current network and computing state, while unchanged contracts are reused.}
+\label{fig:system}
+\end{figure}
+
+\subsection{Wireless Delivery and the Service Deadline}
+Figure~\ref{fig:system} locates the semantic stage relative to arriving requests. Let $a_v$ be the time at which a validated interpretation of version $v$ is installed, and $b_i$ the radio-delivery time of request $i$. For a delivered request whose contract becomes available, define the earliest time permitted by version readiness, $r_i$, and the associated gate wait, $g_i$, as
+\begin{equation}
+r_i=\max(b_i,a_{v_i}),\qquad
+g_i=\max(0,a_{v_i}-b_i).
+\label{eq:gate}
+\end{equation}
+Placement changes and service queues can delay execution beyond $r_i$. Radio loss or failure to activate a usable contract prevents successful completion; Eq.~\eqref{eq:gate} applies to requests that pass those prerequisites.
+
+The remaining budget at version readiness makes the communication--orchestration coupling explicit:
+\begin{equation}
+s_i+d_{u_i,v_i}-r_i
+=d_{u_i,v_i}-(b_i-s_i)-g_i.
+\label{eq:remaining-budget}
+\end{equation}
+Here $b_i-s_i$ is elapsed wireless-delivery time, and $g_i$ is any additional waiting for the contract after delivery. A negative value means that these two intervals have already exhausted the deadline. The remaining time must accommodate scheduling, transport to the selected worker, queueing, and execution. Earlier activation reduces $g_i$ for requests waiting on that version and leaves more time for these stages. One interpretation can therefore benefit many requests; subsequent requests reuse the installed contract.
+
+Decision latency is measured at the client from invocation until the response is available to the caller. It includes transport, provider processing, and queueing along that path. Scheduling duration is recorded separately; together, the two measurements define the control waits used in our replay analysis. During every measured wait, the trace-driven model advances arrivals, radio events, queues, and capacity changes. The real service uses asynchronous requests on a common wall-clock timeline. Neither execution pauses its workload clock to await the model.
+
+\subsection{Quality and Completion Metrics}
+Semantic correctness requires exact agreement of all three interpreted contract attributes with their canonical values. This is evaluated separately from the service outcome.
+Let $f_i$ be request completion time and $e_i$ its execution worker; for the image service, completion means that the result has returned to the orchestrator. Write $\mathbf{1}\{E\}$ for the indicator of condition $E$. In the modeled service, define
+\begin{equation}
+y_i^{\mathrm{model}}=
+\mathbf{1}\{f_i\le s_i+d_{u_i,v_i}\}
+\mathbf{1}\{e_i\in\mathcal A_{u_i,v_i}\},
+\label{eq:success}
+\end{equation}
+with the indicator set to zero for unfinished requests. Priority affects queue order but is not a separate success predicate in this modeled metric. For the image service, let $z_i$ equal one when a successfully returned text matches the normalized reference, and zero otherwise. Normalization preserves case, applies Unicode Normalization Form C, and trims boundary whitespace. Let $\widehat p_i$ be the interpreted priority used for request $i$. Using the same deadline and location checks, its success indicator is
+\begin{equation}
+y_i^{\mathrm{image}}=y_i^{\mathrm{model}}z_i
+\mathbf{1}\{\widehat p_i=p_{u_i,v_i}\}.
+\label{eq:image-success}
+\end{equation}
+Both indicators are zero for unfinished requests.
+
+For a trajectory containing $N>0$ submitted foreground requests, the completion fraction is $N^{-1}\sum_{i=1}^{N}y_i$, using the indicator appropriate to that experiment. Radio losses and unsuccessful requests remain in the denominator. We report modeled and image-service outcomes separately because the latter also requires a correct application output.

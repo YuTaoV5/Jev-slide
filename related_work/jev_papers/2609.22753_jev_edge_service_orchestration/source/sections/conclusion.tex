@@ -1,0 +1,12 @@
+\section{Conclusion}
+We integrated Jev into an edge-service admission pipeline and evaluated its
+ability to replace a concise generative interpreter. The shared contract
+and scheduler connect decision latency to actual service completion. Across
+three measurement blocks, Jev reduces median decision latency by
+15.9--26.5\%. In the real OCR service, it matches or exceeds DeepSeek's
+correct-completion count in all eight paired conditions. Median response
+time among shared successes is 11.1--25.3\% lower without caching. Across
+all eight conditions, API fees per correct completion are 69.0--70.6\% lower.
+These results support Jev as a practical alternative for the tested
+admission workload. Faster decisions address requests that need fresh
+interpretation, while caching reuses decisions for repeated descriptions.

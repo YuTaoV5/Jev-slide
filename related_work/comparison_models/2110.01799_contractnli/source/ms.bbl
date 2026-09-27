@@ -1,0 +1,156 @@
+\begin{thebibliography}{18}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Chalkidis et~al.(2020)Chalkidis, Fergadiotis, Malakasiotis, Aletras,
+  and Androutsopoulos}]{chalkidis_legal-bert_2020}
+Ilias Chalkidis, Manos Fergadiotis, Prodromos Malakasiotis, Nikolaos Aletras,
+  and Ion Androutsopoulos. 2020.
+\newblock \href {https://doi.org/10.18653/v1/2020.findings-emnlp.261}
+  {{LEGAL}-{BERT}: {The} {Muppets} straight out of {Law} {School}}.
+\newblock In \emph{Findings of the {Association} for {Computational}
+  {Linguistics}: {EMNLP} 2020}, pages 2898--2904.
+
+\bibitem[{Chang and Lin(2011)}]{chang_libsvm_2011}
+Chih-Chung Chang and Chih-Jen Lin. 2011.
+\newblock \href {https://doi.org/10.1145/1961189.1961199} {{LIBSVM}: {A}
+  {Library} for {Support} {Vector} {Machines}}.
+\newblock \emph{ACM Transactions on Intelligent Systems and Technology}, 2(3).
+
+\bibitem[{Devlin et~al.(2019)Devlin, Chang, Lee, and
+  Toutanova}]{devlin_bert_2019}
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019.
+\newblock \href {https://doi.org/10.18653/v1/N19-1423} {{BERT}: {Pre}-training
+  of {Deep} {Bidirectional} {Transformers} for {Language} {Understanding}}.
+\newblock In \emph{Proceedings of the 2019 {Conference} of the {North}
+  {American} {Chapter} of the {Association} for {Computational} {Linguistics}:
+  {Human} {Language} {Technologies}}.
+
+\bibitem[{{Exigent Group Limited}(2019)}]{exigent_group_limited_how_2019}
+{Exigent Group Limited}. 2019.
+\newblock \href
+  {https://offers.exigent-group.com/how-gcs-can-thrive-not-just-survive} {How
+  {GCs} can thrive, not just survive}.
+\newblock Technical report.
+
+\bibitem[{He et~al.(2021)He, Liu, Gao, and Chen}]{he_deberta_2021}
+Pengcheng He, Xiaodong Liu, Jianfeng Gao, and Weizhu Chen. 2021.
+\newblock \href {http://arxiv.org/abs/2006.03654} {{DeBERTa}:
+  {Decoding}-enhanced {BERT} with {Disentangled} {Attention}}.
+\newblock \emph{arXiv:2006.03654 [cs]}.
+
+\bibitem[{Hendrycks et~al.(2021)Hendrycks, Burns, Chen, and
+  Ball}]{hendrycks_cuad_2021}
+Dan Hendrycks, Collin Burns, Anya Chen, and Spencer Ball. 2021.
+\newblock \href {http://arxiv.org/abs/2103.06268} {{CUAD}: {An}
+  {Expert}-{Annotated} {NLP} {Dataset} for {Legal} {Contract} {Review}}.
+\newblock \emph{arXiv}.
+
+\bibitem[{Holzenberger et~al.(2020)Holzenberger, Blair-Stanek, and
+  Van~Durme}]{holzenberger_dataset_2020}
+Nils Holzenberger, Andrew Blair-Stanek, and Benjamin Van~Durme. 2020.
+\newblock A {Dataset} for {Statutory} {Reasoning} in {Tax} {Law} {Entailment}
+  and {Question} {Answering}.
+\newblock In \emph{Proceedings of the 2020 {Natural} {Legal} {Language}
+  {Processing} ({NLLP}) {Workshop}}.
+
+\bibitem[{Jiang et~al.(2020)Jiang, Bordia, Zhong, Dognin, Singh, and
+  Bansal}]{jiang_hover_2020}
+Yichen Jiang, Shikha Bordia, Zheng Zhong, Charles Dognin, Maneesh Singh, and
+  Mohit Bansal. 2020.
+\newblock \href {https://doi.org/10.18653/v1/2020.findings-emnlp.309} {{HoVer}:
+  {A} {Dataset} for {Many}-{Hop} {Fact} {Extraction} {And} {Claim}
+  {Verification}}.
+\newblock In \emph{Findings of the {Association} for {Computational}
+  {Linguistics}: {EMNLP} 2020}, pages 3441--3460. Association for Computational
+  Linguistics.
+
+\bibitem[{Koreeda and Manning(2021)}]{koreeda_capturing_2021}
+Yuta Koreeda and Christopher~D. Manning. 2021.
+\newblock \href {http://arxiv.org/abs/2105.00150} {Capturing {Logical}
+  {Structure} of {Visually} {Structured} {Documents} with {Multimodal}
+  {Transition} {Parser}}.
+\newblock \emph{arXiv}.
+
+\bibitem[{Leivaditi et~al.(2020)Leivaditi, Rossi, and
+  Kanoulas}]{leivaditi_benchmark_2020}
+Spyretta Leivaditi, Julien Rossi, and Evangelos Kanoulas. 2020.
+\newblock \href {http://arxiv.org/abs/2010.10386} {A {Benchmark} for {Lease}
+  {Contract} {Review}}.
+\newblock \emph{arXiv}.
+
+\bibitem[{Lippi et~al.(2019)Lippi, Pałka, Contissa, Lagioia, Micklitz, Sartor,
+  and Torroni}]{lippi_claudette_2019}
+Marco Lippi, Przemysław Pałka, Giuseppe Contissa, Francesca Lagioia,
+  Hans-Wolfgang Micklitz, Giovanni Sartor, and Paolo Torroni. 2019.
+\newblock \href {https://doi.org/10.1007/s10506-019-09243-2} {{CLAUDETTE}: an
+  automated detector of potentially unfair clauses in online terms of service}.
+\newblock \emph{Artificial Intelligence and Law}, 27(2):117--139.
+
+\bibitem[{Pedregosa et~al.(2011)Pedregosa, Varoquaux, Gramfort, Michel,
+  Thirion, Grisel, Blondel, Prettenhofer, Weiss, Dubourg, Vanderplas, Passos,
+  Cournapeau, Brucher, Perrot, and Duchesnay}]{pedregosa_2011}
+F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
+  M.~Blondel, P.~Prettenhofer, R.~Weiss, V.~Dubourg, J.~Vanderplas, A.~Passos,
+  D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay. 2011.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock \emph{Journal of Machine Learning Research}, 12:2825--2830.
+
+\bibitem[{Qi et~al.(2020)Qi, Zhang, Zhang, Bolton, and
+  Manning}]{qi-etal-2020-stanza}
+Peng Qi, Yuhao Zhang, Yuhui Zhang, Jason Bolton, and Christopher~D. Manning.
+  2020.
+\newblock \href {https://doi.org/10.18653/v1/2020.acl-demos.14} {{S}tanza: A
+  python natural language processing toolkit for many human languages}.
+\newblock In \emph{Proceedings of the 58th Annual Meeting of the Association
+  for Computational Linguistics}.
+
+\bibitem[{Rabelo et~al.(2020)Rabelo, Kim, Goebel, Yoshioka, Kano, and
+  Satoh}]{rabelo_coliee_nodate}
+Juliano Rabelo, Mi-Young Kim, Randy Goebel, Masaharu Yoshioka, Yoshinobu Kano,
+  and Ken Satoh. 2020.
+\newblock \href
+  {https://sites.ualberta.ca/~rabelo/COLIEE2021/COLIEE_2020_summary.pdf}
+  {{COLIEE} 2020: {Methods} for {Legal} {Document} {Retrieval} and
+  {Entailment}}.
+
+\bibitem[{{The U.S. Securities and Exchange Commission}(2018)}]{sec_edgar_2018}
+{The U.S. Securities and Exchange Commission}. 2018.
+\newblock \emph{EDGAR® Public Dissemination Service Technical Specification}.
+
+\bibitem[{Thorne et~al.(2018)Thorne, Vlachos, Christodoulopoulos, and
+  Mittal}]{thorne_fever_2018}
+James Thorne, Andreas Vlachos, Christos Christodoulopoulos, and Arpit Mittal.
+  2018.
+\newblock \href {https://doi.org/10.18653/v1/N18-1074} {{FEVER}: a
+  {Large}-scale {Dataset} for {Fact} {Extraction} and {VERification}}.
+\newblock In \emph{Proceedings of the 2018 {Conference} of the {North}
+  {American} {Chapter} of the {Association} for {Computational} {Linguistics}:
+  {Human} {Language} {Technologies}, {Volume} 1 ({Long} {Papers})}, pages
+  809--819. Association for Computational Linguistics.
+
+\bibitem[{Wu et~al.(2016)Wu, Schuster, Chen, Le, Norouzi, Macherey, Krikun,
+  Cao, Gao, Macherey, Klingner, Shah, Johnson, Liu, Kaiser, Gouws, Kato, Kudo,
+  Kazawa, Stevens, Kurian, Patil, Wang, Young, Smith, Riesa, Rudnick, Vinyals,
+  Corrado, Hughes, and Dean}]{wu_googles_2016}
+Yonghui Wu, Mike Schuster, Zhifeng Chen, Quoc~V. Le, Mohammad Norouzi, Wolfgang
+  Macherey, Maxim Krikun, Yuan Cao, Qin Gao, Klaus Macherey, Jeff Klingner,
+  Apurva Shah, Melvin Johnson, Xiaobing Liu, Łukasz Kaiser, Stephan Gouws,
+  Yoshikiyo Kato, Taku Kudo, Hideto Kazawa, Keith Stevens, George Kurian,
+  Nishant Patil, Wei Wang, Cliff Young, Jason Smith, Jason Riesa, Alex Rudnick,
+  Oriol Vinyals, Greg Corrado, Macduff Hughes, and Jeffrey Dean. 2016.
+\newblock \href {http://arxiv.org/abs/1609.08144} {Google's {Neural} {Machine}
+  {Translation} {System}: {Bridging} the {Gap} between {Human} and {Machine}
+  {Translation}}.
+\newblock \emph{arXiv}.
+
+\bibitem[{Zheng et~al.(2021)Zheng, Guha, Anderson, Henderson, and
+  Ho}]{zheng_when_2021}
+Lucia Zheng, Neel Guha, Brandon~R. Anderson, Peter Henderson, and Daniel~E. Ho.
+  2021.
+\newblock \href {https://arxiv.org/abs/2104.08671} {When {Does} {Pretraining}
+  {Help}? {Assessing} {Self}-{Supervised} {Learning} for {Law} and the
+  {CaseHOLD} {Dataset}}.
+\newblock In \emph{Proceedings of the 18th {International} {Conference} on
+  {Artificial} {Intelligence} and {Law}}. Association for Computing Machinery.
+
+\end{thebibliography}

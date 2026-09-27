@@ -1,0 +1,14 @@
+\begin{table}[t]
+    \centering
+    \fontsize{8pt}{10pt}\selectfont
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{.6}
+    \begin{tabular}{cccccc}\toprule
+        Format & Source & Train & Development & Test & Total \\\midrule
+        Plain Text & EDGAR & 83 & 12 & 24 & 119 \\
+        HTML & EDGAR & 79 & 11 & 23 & 113\\
+        PDF & Search engines & 261 & 38 & 76 & 375 \\\midrule
+        \multicolumn{2}{c}{Total} & 423 & 61 & 123 & 607\\\bottomrule
+    \end{tabular}
+    \caption{Data split}\label{tab:data-split}
+\end{table}

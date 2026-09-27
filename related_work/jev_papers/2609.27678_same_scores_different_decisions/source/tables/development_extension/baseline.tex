@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{Accuracy\\(\%) $\uparrow$} & \shortstack{Macro-F1\\(\%) $\uparrow$} & Seconds $\downarrow$ & \shortstack{USD/contract\\$\downarrow$} & Valid calls \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 77.06 & 70.72 & \bestscore{1.25} & \bestscore{0.000250} & 30/30 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 80.98 & 74.02 & 1.79 & 0.001486 & 30/30 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \bestscore{82.94} & \bestscore{77.19} & 3.79 & 0.009502 & 30/30 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 77.65 & 70.23 & 1.64 & 0.001058 & 30/30 \\
+\modelicon{openai}GPT-5.6 Terra & \secondscore{81.76} & \secondscore{75.90} & 11.47 & 0.011318 & 30/30 \\
+\modelicon{openai}GPT-6 Astra & \secondscore{81.76} & 74.64 & 20.35 & 0.089897 & 30/30 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 78.82 & 73.46 & 5.73 & 0.005906 & 30/30 \\
+\modelicon{claude}Claude Sonnet 5 & 81.37 & 75.09 & 2.75 & 0.012868 & 30/30 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 78.43 & 66.53 & \secondscore{1.38} & \secondscore{0.000783} & 30/30 \\
+\modelicon{qwen}Qwen3.5-9B & 78.63 & 73.15 & 2.89 & 0.001627 & 30/30 \\
+\bottomrule
+\end{tabularx}
+\caption{Development baseline on 30 contracts and 510 labels, requesting all 17 judgments together. The original seven baseline results are retained; Sonnet, Terra, and Haiku are evaluated on the same contracts. Seconds denotes median document latency. API costs use reported charges or published token rates; GPU costs follow the development calculation in Appendix~\ref{app:development-protocol}. Hardware, API routing, and inference settings differ across models. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} indicate the best and second-best distinct values, including ties, within each indicated comparison; these marks do not imply statistical significance.}
+\label{tab:baseline}
+\end{table*}

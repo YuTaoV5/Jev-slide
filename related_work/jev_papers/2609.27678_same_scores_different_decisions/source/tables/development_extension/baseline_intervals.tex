@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Accuracy (\%) $\uparrow$ & 95\% interval \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 77.06 & [74.12, 80.00] \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 80.98 & [78.24, 83.53] \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \bestscore{82.94} & [80.00, 85.69] \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 77.65 & [74.71, 80.59] \\
+\modelicon{openai}GPT-5.6 Terra & \secondscore{81.76} & [79.02, 84.31] \\
+\modelicon{openai}GPT-6 Astra & \secondscore{81.76} & [78.24, 85.10] \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 78.82 & [76.08, 81.57] \\
+\modelicon{claude}Claude Sonnet 5 & 81.37 & [78.24, 84.31] \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 78.43 & [76.47, 80.39] \\
+\modelicon{qwen}Qwen3.5-9B & 78.63 & [74.71, 82.35] \\
+\bottomrule
+\end{tabularx}
+\caption{Descriptive baseline intervals on the same 30 development contracts. Whole-contract percentile bootstrap intervals use 5,000 draws and retain all 17 judgments per sampled contract. The seven historical intervals are preserved exactly; the three added models use the same seed and quantile convention. Intervals are unadjusted for multiple comparisons. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} indicate the best and second-best distinct values, including ties, within each indicated comparison; these marks do not imply statistical significance.}
+\label{tab:baselineintervals}
+\end{table*}

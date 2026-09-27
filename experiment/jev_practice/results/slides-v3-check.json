@@ -1,0 +1,242 @@
+{
+  "timestamp_utc": "2026-09-27T08:32:17.031231+00:00",
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "device_scale_factor": 1
+  },
+  "external_requests_blocked": [],
+  "page_errors": [],
+  "http_errors": [],
+  "request_failures": [],
+  "checks": [
+    {
+      "name": "deck-practice/http/load-and-page-count",
+      "passed": true,
+      "seconds": 0.22
+    },
+    {
+      "name": "deck-practice/http/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.03
+    },
+    {
+      "name": "deck-practice/http/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.09
+    },
+    {
+      "name": "deck-practice/http/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.56
+    },
+    {
+      "name": "deck-practice/http/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.78
+    },
+    {
+      "name": "deck-practice/http/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.3
+    },
+    {
+      "name": "deck-practice/file/load-and-page-count",
+      "passed": true,
+      "seconds": 0.11
+    },
+    {
+      "name": "deck-practice/file/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.02
+    },
+    {
+      "name": "deck-practice/file/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.09
+    },
+    {
+      "name": "deck-practice/file/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.58
+    },
+    {
+      "name": "deck-practice/file/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.77
+    },
+    {
+      "name": "deck-practice/file/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.27
+    },
+    {
+      "name": "deck-practice/render-all-pages",
+      "passed": true,
+      "seconds": 1.75
+    },
+    {
+      "name": "deck/http/load-and-page-count",
+      "passed": true,
+      "seconds": 0.11
+    },
+    {
+      "name": "deck/http/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.02
+    },
+    {
+      "name": "deck/http/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.14
+    },
+    {
+      "name": "deck/http/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.56
+    },
+    {
+      "name": "deck/http/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.77
+    },
+    {
+      "name": "deck/http/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.3
+    },
+    {
+      "name": "deck/http/video-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.31
+    },
+    {
+      "name": "deck/file/load-and-page-count",
+      "passed": true,
+      "seconds": 0.16
+    },
+    {
+      "name": "deck/file/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.03
+    },
+    {
+      "name": "deck/file/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "name": "deck/file/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.58
+    },
+    {
+      "name": "deck/file/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.78
+    },
+    {
+      "name": "deck/file/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.27
+    },
+    {
+      "name": "deck/file/video-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.31
+    },
+    {
+      "name": "deck/render-all-pages",
+      "passed": true,
+      "seconds": 6.33
+    }
+  ],
+  "renders": {
+    "deck-practice.html": {
+      "pages": 7,
+      "contact_sheet": "X:\\Items\\Jev-proj\\related_work\\08-第30期-Jev-不生成文本的决策模型\\slides\\预览-实战新版.png",
+      "screenshots": [
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-01.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-02.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-03.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-04.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-05.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-06.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-practice-07.png"
+      ],
+      "titles": [
+        "NanoJev 把“小判断”做成可训练模型",
+        "同一张迷宫，NanoJev 先到终点",
+        "少的是尝试次数：2,738 → 225",
+        "控制器先过门槛，再优先靠近终点",
+        "这次，NanoJev 把所有方向都放过了",
+        "移除模型判断，同一控制器只用 162 次",
+        "单条展示，不能替代成功率评估"
+      ]
+    },
+    "deck.html": {
+      "pages": 23,
+      "contact_sheet": "X:\\Items\\Jev-proj\\related_work\\08-第30期-Jev-不生成文本的决策模型\\slides\\预览-全部页面.png",
+      "screenshots": [
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-01.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-02.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-03.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-04.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-05.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-06.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-07.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-08.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-09.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-10.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-11.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-12.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-13.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-14.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-15.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-16.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-17.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-18.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-19.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-20.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-21.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-22.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v3\\deck-23.png"
+      ],
+      "titles": [
+        "Jev：让判断推动问题定位",
+        "先把大问题，拆成有限判断",
+        "材料与题目进，类型化答案出",
+        "用 36 秒看清：判断怎样触发动作",
+        "NanoJev 把“小判断”做成可训练模型",
+        "同一张迷宫，NanoJev 先到终点",
+        "少的是尝试次数：2,738 → 225",
+        "控制器先过门槛，再优先靠近终点",
+        "这次，NanoJev 把所有方向都放过了",
+        "移除模型判断，同一控制器只用 162 次",
+        "单条展示，不能替代成功率评估",
+        "迁移到定位：每一步都要减少无效排查",
+        "当前工作台已成形，分析核心仍是模拟",
+        "Jev 放在取证之后、动作之前",
+        "先把证据变成“可定位、可核对”的状态",
+        "候选要先找全，再让模型调整顺序",
+        "把“谁是根因”改成三类可核验小问题",
+        "每次取证后更新状态，避免原地打转",
+        "例如：hung task，先区分等待发生在哪里",
+        "高分只是建议，停止条件由代码定义",
+        "是否值得接入，用整条定位流程验收",
+        "先把“候选排序”做成最小试点",
+        "让定位更有效，先证明每个判断有用"
+      ]
+    }
+  },
+  "layout_issues": [],
+  "test_method": "UI navigation, native keyboard/wheel, CDP touch, DOM/media assertions; external requests blocked",
+  "elapsed_seconds": 33.86,
+  "passed": true,
+  "final_text_update": {
+    "slide": 17,
+    "change": "Align hypothesis ID H1 with slide 19",
+    "rerendered": true,
+    "layout_issues": []
+  }
+}

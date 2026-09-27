@@ -1,0 +1,80 @@
+\appendices
+\section{Implementation and Evaluation Settings}
+\label{app:settings}
+\subsection{Interpretation Backends}
+The studies were executed on September 18, 2026. Jev uses OpenRouter's
+Decisions endpoint with identifier typesafe/jev-1.13; responses identify
+jev-1.13-20260917 and provider TypeSafe. Four native Choice questions return
+the shared intent fields in one request. DeepSeek uses deepseek-v4.1-flash
+through OpenRouter, pinned to Together with provider fallback disabled.
+It returns a strict four-field JSON object with temperature zero, a
+128-token limit, and reasoning disabled; recorded reasoning-token counts
+are zero.
+
+Qwen2.5-7B-Instruct, revision a09a35458c70, runs in brain floating point 16
+(BF16) on one NVIDIA L40, using Transformers with scaled dot-product
+attention (SDPA) and PyTorch 2.2.0+cu121. It uses the same generative prompt
+and field contract as DeepSeek, greedy decoding, and a 128-token limit.
+The server batches up to four already-pending requests without an intentional
+collection delay. The fixed rule parser uses keywords and regular expressions
+without tuning on evaluation wording.
+
+\subsection{Admission and Execution Controls}
+Both studies use a 2\,s request deadline, four concurrent interpretation
+slots, and an admission queue of capacity 32. API calls have a 15\,s timeout,
+with no automatic retries or repair calls. Connections are warmed before
+measurement. Each condition starts with an empty cache keyed by normalized
+full request text and extraction policy. The controller checks it before
+queueing and after obtaining a slot; concurrent misses are not coalesced.
+
+The real service has one local macOS worker and one remote Linux worker,
+connected through a Secure Shell (SSH) tunnel. The remote allocation provides
+six processor cores and the accelerator used by Qwen; OCR uses processors
+only. Each node has one nonpreemptive worker and a queue of capacity 16.
+Urgent and ordinary jobs have priority values zero and one, respectively;
+equal-priority jobs follow enqueue order. The controller verifies the returned
+node, tier, priority, and image identity. A timed-out OCR process is terminated
+before capacity is released. Transport or protocol errors stop further calls.
+The recorded environment lacks a complete processor inventory for exact
+cross-site reproduction.
+
+\subsection{Study A Parameters}
+The 216 requests use six wording families and two instances of each of the
+108 field combinations, with extraction instructions held fixed. Seeds 42,
+43, and 44 vary request order and arrival traces across three consecutive
+blocks. Each model has 648 semantic measurements on the same 216 texts.
+There is one semantic-stage warmup per model per block and no fixed interval
+between blocks.
+
+Each service condition has 48 arrivals. Steady traffic has rate 2 requests/s;
+bursty traffic alternates 0.5 and 8 requests/s in 20\,s segments. The execution
+model has four edge nodes and one cloud node, with payloads of 0.25--2\,MB.
+Local, other-edge, and cloud links have propagation delays of 2, 20, and
+60\,ms and bandwidths of 1000, 100, and 50\,Mbit/s, respectively; transfer
+also includes serialization. Base durations are 40\,ms for counting, 80\,ms
+for detection, and 60\,ms for OCR. The high tier multiplies these by 1.8;
+node factors are 1.0, 1.1, 1.2, and 1.3 for the edges and 0.65 for the cloud.
+Each node has one priority worker. These are exploratory simulation inputs.
+
+\subsection{Study B Parameters and Scoring}
+Model conditions run sequentially in randomized order with seed 42 and no
+fixed cooldown. Both workers use Tesseract 5.5.3, English recognition,
+one OpenMP thread, and single-word mode (engine mode 1, segmentation mode 8).
+Standard and high tiers use tessdata\_fast and tessdata\_best, respectively,
+with identical weights across nodes. Seed 42 selects 20 training and 80 test
+images from sorted IIIT5K identifiers before recognition outcomes are known.
+
+Calibration runs each training image once per node and tier. Median
+request--response durations, including transfer, are 80.85/96.26\,ms for
+local standard/high and 95.30/139.35\,ms for remote standard/high.
+The workload has 48 distinct intents. Repeated-text conditions use eight
+descriptions, six supported and two unsupported, each repeated six times.
+The test images recur across conditions. Arrival rates match Study A;
+eight conditions for four backends produce 32 runs and 1536 arrivals.
+
+OCR comparison uses case-preserving character annotations without a
+recognition lexicon, normalizes Unicode to Normalization Form C (NFC), and
+strips surrounding whitespace. Quantile summaries use nearest-rank 5th and
+95th percentiles and linearly interpolated interquartile ranges. Each
+request is evaluated on its recorded timing and output; cached decisions
+do not replace service execution.

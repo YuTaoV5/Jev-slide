@@ -1,0 +1,358 @@
+\pdfoutput=1
+\documentclass{article}
+\input{template-preamble}
+\title{Same Scores, Different Decisions: Evaluating JEV and Language Models for Legal Document Understanding}
+\begin{document}
+\maketitle
+\suppressfloats[t]
+
+\begin{abstract}
+Contract inference requires multiple judgments about a shared document, but aggregate accuracy can conceal changes in the individual decisions. Repeated agreement is also insufficient: a model may consistently return the wrong answer. In this paper, we compare Jev with nine language models on ContractNLI, evaluating inference cost, response time, average correctness, and correctness across repeated request conditions. Controlled comparisons vary hypothesis visibility, requested outputs, and output order while keeping the contract and target judgment fixed. Jev has the lowest cost and median response time among the evaluated configurations, while hosted language models achieve higher baseline accuracy. Rankings by baseline accuracy differ from rankings by correctness across every condition and repeat, although small differences in the latter do not establish a general stability advantage. Development diagnostics further reveal compensating corrections and regressions, as well as persistent errors. These findings motivate evaluating cost and response time alongside whether individual judgments remain correct as the request configuration changes. Code:
+\href{https://github.com/ZF-Utokyo/Jev-Benchmark}{\faGithub\ GitHub}.
+\end{abstract}
+
+\section{Introduction}
+Contract review requires several judgments about one document: whether information is confidential, whether copies may be made, and what obligations remain after termination~\citep{koreeda2021contractnli,hendrycks2021cuad}. These judgments can be requested jointly or separately, while their intended answers remain tied to the contract. A model's practical value therefore depends on the cost and time required to obtain its answers and their correctness across request configurations, beyond accuracy in a single configuration.
+
+One difficulty is that aggregate accuracy conceals which judgments change. Behavioral testing examines individual predictions~\citep{ribeiro2020checklist}, while studies of batching, position, demonstration order, and prompt formatting reveal request sensitivity~\citep{lin2024batchprompt,lu2022fantastically,sclar2024quantifying}. A recent preprint likewise shows that similar ranking quality can coexist with different downstream decisions~\citep{frohmann2026equal}. For judgments sharing one contract, corrections and regressions can cancel each other out even when many decisions differ. Figure~\ref{fig:example} (panel 2) illustrates this concern: Qwen3.5-4B changes its prediction for a fixed development-set judgment when more hypotheses become visible, although only the target label is requested.
+
+A second difficulty is that agreement does not establish correctness: a model may repeat an incorrect label across every condition. Variation can also arise when an unchanged request is repeated. Evaluation must therefore score persistent answers against gold labels and use unchanged repetitions as a reference for variability. Examining these behaviors alongside cost follows HELM's multidimensional perspective~\citep{liang2023helm}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/contract_inference.pdf}
+\caption[Overview of the contract-inference workload and evaluation questions.]{\input{figures/contract_inference_caption.tex}}
+\label{fig:example}
+\end{figure}
+
+These considerations motivate a paired study of Jev and generative language models centered on three questions. \textbf{RQ1:} What trade-offs between cost, response time, and accuracy do Jev and its comparators exhibit? \textbf{RQ2:} Does higher accuracy imply that more judgments remain correct across repeated request conditions? \textbf{RQ3:} Which decisions change when visible hypotheses, requested outputs, or their order change? We address these questions by preserving target judgments and gold labels across controlled conditions, retaining invalid responses in the accuracy denominator, and estimating uncertainty at the contract level.
+
+Our main evaluation uses the official ContractNLI test split for accuracy and a preselected subset for stability; all ten models complete both evaluations. Separate development analyses include earlier diagnostics that motivated the controlled design and additional comparisons collected after the test results were inspected. Three API comparators extend the original model selection using the same task, samples, and scoring rules.
+
+Our contributions are:
+\begin{itemize}[leftmargin=*,itemsep=2pt,topsep=3pt,parsep=0pt,partopsep=0pt]
+\item A paired cost--accuracy evaluation of Jev and its comparators on fixed contract judgments, relating classification quality to response time and inference expenditure under explicit pricing assumptions (Sections~\ref{sec:task}--\ref{sec:test}).
+\item An evaluation of average and persistent correctness that distinguishes their observed rankings and compares them on shared targets, with paired uncertainty estimates to define the scope of the conclusions (Section~\ref{sec:test}).
+\item Controlled behavioral diagnostics that reveal compensating corrections and regressions, distinguish persistent correctness from stable errors, and interpret request sensitivity alongside repetition under unchanged conditions (Appendices~\ref{sec:diagnostics} and~\ref{sec:findings}--\ref{sec:planned}).
+\end{itemize}
+
+\section{Task and Evaluation Design}
+\label{sec:task}
+For a contract $d$, let $H_d=\{h_1,\ldots,h_{17}\}$ denote the original hypothesis set, with gold labels $y_{dh}\in\{\E,\C,\N\}$ for entailment, contradiction, and not mentioned. A model returns a label $\hat y_{dh}$ or no valid prediction. We evaluate ContractNLI's classification component; evidence-span extraction is outside the scope of this study. Every prediction is scored against the existing annotations, without new human labeling or model-based judging.
+
+\paragraph{Accuracy and validity.}
+The baseline requests all 17 labels jointly, once per contract. A valid response must contain exactly the requested IDs and one of the three allowed labels for each. Accuracy is computed over all intended judgments, with invalid responses counted as incorrect. We also report Macro-F1 and valid-response coverage. Responses that exhaust the generation allowance before producing final labels remain failures of the evaluated configuration (Appendix~\ref{app:budget}).
+
+\paragraph{Controlled request conditions.}
+The stability study fixes one target hypothesis, called the anchor, for each selected test contract. Four conditions preserve its contract and gold label:
+\begin{description}
+\item[A.] Only the anchor is visible; only its label is requested.
+\item[B.] All 17 hypotheses are visible; only the anchor label is requested.
+\item[C.] The same catalog is visible; all 17 labels are requested, anchor first.
+\item[D.] The same catalog is visible; all 17 labels are requested, anchor last.
+\end{description}
+The catalog order is fixed in B/C/D. A--B changes visible hypotheses at a fixed requested answer set; B--C changes output workload and structure at fixed visible content; C--D changes requested output order and structure. Each condition is repeated three times. Primary scoring uses only the fixed anchor; the extra labels in C/D do not increase the number of primary targets.
+
+\paragraph{Correctness across all twelve responses.}
+An anchor is \emph{consistently correct} only when every response across the four conditions and three repeats gives the correct label. A \emph{stable error} consists of twelve valid, identical, but incorrect labels. The remaining outcomes consist of either twelve valid labels that change, or a set containing at least one invalid response. These mutually exclusive categories distinguish persistent correctness from agreement alone, with every selected anchor retained in the denominator. Within-condition repeat disagreement separately describes variation under unchanged requests.
+
+We also compare average and persistent correctness on identical targets by averaging correctness over all 360 anchor responses, again counting invalid responses as incorrect. Unlike the broader baseline accuracy, this mean and all-twelve correctness concern the same targets. The mean weights every response equally; all-twelve correctness requires every response for a target to succeed. Their relationship therefore depends on how errors are distributed across targets and cannot be inferred from the mean alone.
+
+\paragraph{Paired changes.}
+For conditions $b$ and $c$, let $V_{bc}$ contain anchor--replicate pairs $(d,h,r)$ with valid predictions under both conditions. Their label-change rate is
+\begin{equation*}
+F(b,c)=\frac{\sum_{(d,h,r)\in V_{bc}}\I[\hat y^b_{dhr}\ne\hat y^c_{dhr}]}{|V_{bc}|}.
+\end{equation*}
+For these valid pairs, we report coverage and separate correct-to-wrong, wrong-to-correct, and wrong-to-different-wrong changes. With complete coverage, the accuracy difference is determined by corrections minus regressions, rather than by the total number of changed decisions. Unchanged-repeat disagreement supplies a reference for variation, but subtracting it from a condition difference would not identify a causal effect.
+
+\section{Data and Experimental Protocol}
+\label{sec:protocol}
+\subsection{Data and uncertainty}
+The official ContractNLI test split contains 123 contracts and 2,091 judgments: 968 entailments, 220 contradictions, and 903 not-mentioned labels~\citep{koreeda2021contractnli}. We preserve full contract text, all original hypotheses, and their annotations. Evidence spans are excluded from model inputs. The stability panel selects 30 test contracts and one anchor per contract using seed 20260922 and document-specific anchor seeds, independently of labels and model predictions. The panel is a subset of the accuracy evaluation, so these are complementary analyses of overlapping contracts.
+
+Each model receives 123 requests in the accuracy evaluation and 360 in the stability evaluation. The latter yields 90 primary judgments per condition from 30 independent contract targets. We estimate uncertainty using 5,000 whole-contract bootstrap resamples with seed 20260922, preserving paired observations when comparing models. The resulting intervals are descriptive and unadjusted for multiple comparisons~\citep{dror2018hitchhiker}. Repeated requests supply additional observations of the same contracts, rather than additional independent contracts.
+
+The task, test inputs, target selection, and scoring rules were fixed before test inference. The configurations for Jev, both Qwen models, both Gemini models, Luna, and Astra were fixed before their respective test evaluations. Sonnet, Haiku, and Terra were added after inspecting earlier results; their configurations were fixed before collecting their test predictions, and they use the same samples and evaluation rules. The ten-model comparison therefore does not constitute a wholly prospective model selection. The development experiments use separate contracts and are analyzed separately; their later extension follows inspection of the test results (Appendix~\ref{app:development-protocol}).
+
+\subsection{Models and inference}
+We compare Jev 1.13.0 with Qwen3.5-4B and 9B, Gemini 3.5 Flash-Lite and 3.1 Pro Preview, GPT-5.6 Luna and Terra, GPT-6 Astra, Claude Sonnet 5, and Claude Haiku 4.5. Jev receives the contract as shared state and each requested hypothesis as a native Choice question. Generative models receive semantically aligned classification instructions and return a JSON label map. The baseline and controlled catalog prompts differ, but each is fixed across its corresponding comparisons. Appendix~\ref{app:repro} gives the classification instruction.
+
+Flash-Lite uses minimal thinking, Gemini Pro low thinking, Luna no reasoning, and Astra high reasoning. Terra uses medium reasoning with a 16,384-token output allowance. Sonnet uses adaptive thinking with medium effort and the same allowance; Haiku disables thinking with an 8,192-token allowance. The three added models are accessed through a common third-party gateway, whereas Luna and Astra use their original OpenRouter route. These provider-specific operating points do not equalize computation or actual reasoning length.
+
+Both Qwen test configurations use BF16, enabled thinking, temperature 1, top-$p$ 0.95, and a shared allowance of 32,768 tokens for reasoning and the final answer. They use native model templates, one GPU per model, and no separate reasoning cutoff. Their historical development configurations disable thinking; a paired development comparison in Appendix~\ref{app:fairness} examines the complete configuration change. No test prompts or settings are selected from model performance.
+
+Requests are issued sequentially for each model, while different models may run concurrently. Stability conditions and repetitions are shuffled within each contract using the fixed schedule. No failed evaluation attempt is repaired, replaced, or automatically retried. Model-specific response interfaces remain part of the evaluated configuration. In particular, Jev's C/D intervention changes question-key order; it is not equivalent to an autoregressive output-position intervention, and requested output order need not match internal reasoning order.
+
+\subsection{Cost and timing}
+Quality and cost are measured over the same requests, including failed attempts. For Luna and Astra, API costs use provider-reported charges; for other API models, we multiply recorded token usage by the public input, output, and cache prices applicable to the evaluation. When usage is missing, its cost remains unknown, and we report the known subtotal and coverage separately. Baseline cost is averaged over the 123 baseline contracts; stability cost is reported separately for its 360 requests.
+
+For each local model, rental-equivalent baseline cost is
+\begin{equation}
+\widehat C_{\mathrm{GPU}}=\frac{r}{123\times3600}\sum_{d=1}^{123}t_d,
+\end{equation}
+where $t_d$ is the measured request time and $r$ is \$2.00 per GPU-hour. Each model uses one GPU. This is a valuation of observed local inference time, not a measured bill or a claim about cloud throughput. The declared reference rate and hardware differences are documented in Appendix~\ref{app:development-protocol}; loading, idle allocation, storage, transfer, and taxes are excluded. Latency also reflects network, scheduling, caching, and provider infrastructure. An observed cost--accuracy frontier therefore describes these measured configurations and pricing assumptions.
+
+Response time uses recorded client elapsed time, including request preparation, connection establishment, network transfer, service-side processing, and response validation. All test collections use the same client machine, with one in-flight request per model and no retries. We report the median and 95th percentile (P95), retaining failed attempts. These measurements describe the evaluated deployments; separate model computation, queueing time, and time to first token were not recorded.
+
+\section{Results on the Official Test Split}
+\label{sec:test}
+The official-test comparison separates four aspects of performance: inference expenditure, response time, baseline accuracy, and correctness across repeated conditions. All ten models complete the 123-contract baseline and the 30-contract stability panel, with failed requests retained in the intended denominators. Figure~\ref{fig:jev-main-results} summarizes the comparison, and Tables~\ref{tab:testbaseline} and~\ref{tab:teststates} detail baseline and repeated-target correctness. Appendix~\ref{app:testdetails} provides condition-level scores and paired uncertainty.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/jev_test_cost_accuracy.pdf}
+\caption[Official-test cost, accuracy, and correctness across all twelve responses.]{\input{figures/jev_test_cost_accuracy_caption.tex}}
+\label{fig:jev-main-results}
+\end{figure*}
+
+\input{tables/test_completed_baseline}
+
+\subsection{RQ1: Cost, response time, and accuracy}
+Jev achieves 77.38\% accuracy at \$0.000228 per contract. All seven hosted language-model comparators have higher accuracy point estimates, ranging from 78.96\% for Luna to 83.21\% for Gemini Pro. Flash-Lite gains 5.16 percentage points over Jev at approximately six times the cost. The strength of evidence for these gains differs: the paired 95\% interval is 3.49--6.98 points for Flash-Lite minus Jev, but $-0.05$--3.11 points for Luna minus Jev (Appendix~\ref{app:testdetails}). Thus, the higher observed scores do not establish a reliable improvement for every comparator.
+
+Under the stated prices, Jev, Luna, Flash-Lite, and Gemini Pro form the observed cost--accuracy frontier. The three added comparators broaden model-family coverage without extending this two-dimensional frontier. Sonnet and Terra achieve accuracy close to Flash-Lite at higher costs; Haiku falls between Jev and Flash-Lite in accuracy while costing more than either. The comparison is specific to these operating points and pricing bases. Qwen4B and Qwen9B achieve 74.22\% and 79.15\%, respectively, including six and one baseline requests that exhaust the generation allowance before producing final labels.
+
+\paragraph{Cost increments and observed gains.}
+Higher expenditure along the frontier does not yield a uniform return in accuracy. Gemini Pro costs 6.26 times as much as Flash-Lite for a gain of 0.67 percentage points, with a paired 95\% interval of $-0.72$--2.10 percentage points. It therefore has the highest accuracy point estimate, but no established advantage over Flash-Lite on this sample. Its all-twelve-correct count also exceeds Flash-Lite's by only one target. Frontier membership describes the observed cost and quality coordinates; paired uncertainty indicates how strongly the sample supports a difference. Together, they inform model choice without identifying a universally preferred configuration.
+
+\paragraph{Response time and output workload.}
+Jev also has the lowest observed median baseline response time: 1.24 seconds, compared with 1.60 for Flash-Lite and 1.74 for Luna. Their P95 times are 1.59, 2.78, and 2.25 seconds, respectively. The full comparison, including slower reasoning-enabled configurations and failed attempts, appears in Appendix~\ref{app:timing}.
+
+At a fixed visible catalog of 17 hypotheses, requesting 17 labels instead of one (B--C) changes Jev's median response time from 1.15 to 1.22 seconds, versus 0.99 to 1.86 for Flash-Lite and 1.10 to 1.78 for Luna. This small increase describes the observed service behavior. It does not identify internal parallelism: fixed network overhead and serving policies can also affect the increase. Accuracy and latency must both be considered when choosing a request configuration.
+
+Pairing requests by contract and repeat gives a median B--C increase of 0.19 seconds for Jev (descriptive 95\% interval: 0.06--0.24), 0.49 for Flash-Lite (0.45--0.58), and 0.67 for Luna (0.59--0.71). These summarize individual time differences, not differences between condition medians; intervals preserve all repeats within contracts. Rankings depend on the requested outputs: Flash-Lite has a lower median than Jev in B, whereas Jev has the lower median for joint prediction. Speed comparisons therefore require a specified workload.
+
+\subsection{RQ2: Correctness across repeated conditions}
+\input{tables/test_anchor_outcomes_main}
+Sonnet keeps 24 of 30 anchors correct across all twelve responses, followed by Jev with 23. Gemini Pro, Luna, and Astra each retain 22, while Qwen9B retains 18 (Table~\ref{tab:teststates}). The Sonnet--Jev difference amounts to one target, with a paired 95\% interval of $-10.00$--16.67 percentage points; the panel therefore does not establish a general stability advantage for the comparison with Sonnet. Jev exceeds Haiku, Qwen9B, and Qwen4B by four, five, and six targets, respectively. The paired intervals exclude zero for Haiku and Qwen4B, while Qwen9B's interval reaches zero. These unadjusted comparisons remain exploratory.
+
+\paragraph{Similar means on the same targets.}
+Baseline accuracy and all-twelve correctness yield different observed rankings, but their target sets differ. To hold target composition fixed, Table~\ref{tab:teststates} compares mean and persistent correctness within the stability panel. Jev answers 286 of its 360 anchor responses correctly (79.44\%), and Qwen9B answers 285 (79.17\%). These nearly identical means coexist with 23 versus 18 anchors that remain correct throughout. The paired mean difference, Qwen9B minus Jev, is $-0.28$ points (95\% interval: $-9.44$--10.00), which does not establish equivalence. The comparison nevertheless shows that the difference in persistent-correctness point estimates remains when both measures use identical targets.
+
+\paragraph{The distribution of errors matters.}
+The allocation of errors across targets explains this distinction. Jev has five anchors that receive the same wrong label throughout and two whose labels change. Qwen9B has two targets with consistently wrong labels, eight targets with changing valid labels, and two targets with invalid responses. Similar totals of correct responses can therefore leave different numbers of targets correct throughout. Agreement alone obscures another part of the comparison: Jev and Astra each repeat the same label on 28 of 30 targets, compared with Sonnet's 25. However, five of Jev's and six of Astra's consistent labels are wrong, compared with one for Sonnet. Treating agreement as successful stability would reverse the interpretation of these outcomes.
+
+\subsection{RQ3: Changes hidden by average accuracy}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/test_sensitivity.pdf}
+\caption[Official-test changes across conditions and identical-request repetition.]{\input{figures/test_sensitivity_caption.tex}}
+\label{fig:test-sensitivity}
+\end{figure*}
+Condition-level accuracy can remain unchanged even when the underlying decisions differ. For Qwen4B, A and B have identical accuracy, yet nine of 90 paired responses change: four regressions, four corrections, and one switch between wrong labels. Terra likewise has equal accuracy in B and C despite seven changed responses, comprising three regressions, three corrections, and one wrong-label switch. In both cases, the contract and target remain fixed, while opposing changes cancel in the aggregate score.
+
+Sensitivity to requested output order also varies across configurations. Haiku changes 14 of 90 paired responses from C to D, including twelve regressions and two corrections. Its accuracy falls by 11.11 percentage points (descriptive paired 95\% interval: $-23.33$ to $-1.11$). Jev shows no C--D changes in this panel, although its question-key intervention differs from autoregressive output ordering and a finite sample with no changes does not establish invariance. Appendix~\ref{app:testdetails} reports all transition counts and valid-pair coverage, retaining failures separately from valid label changes.
+
+\paragraph{Variation without a changed condition.}
+Unchanged-request repetition shows why cross-condition changes require a reference for variability. In Figure~\ref{fig:test-sensitivity}, Qwen9B changes 15 of 90 valid pairs between A and B, alongside 12 of 90 repeat pairs within A and six of 90 within B. Its C--D comparison changes 12 of 88 valid pairs, while repeats within D change eleven of 86 valid pairs. Thus, variation is already present without altering the request condition. Because these counts describe different dependent comparisons, subtracting them would not estimate the causal contribution of an intervention. Directional transitions, unchanged-repeat variation, and invalid-response coverage together clarify what a single change rate leaves unresolved.
+
+\subsection{Can incomplete answers explain the differences?}
+Generation-budget exhaustion lowers the Qwen scores, but cannot fully account for their difference from Flash-Lite. To bound the numerical effect of missing labels, we assign every missing label in a truncated baseline response its correct answer while holding all observed answers fixed. This deliberately optimistic calculation raises Qwen4B from 74.22\% to at most 79.10\% and Qwen9B from 79.15\% to at most 79.96\%, both below Flash-Lite's observed 82.54\%. These bounds do not replace the reported scores or predict what a larger generation allowance would achieve.
+
+The anchor outcomes show that errors in completed answers also limit persistent correctness. Both Qwen9B targets with an invalid response already contain wrong answers among their other eleven responses: four for one target and one for the other. Correcting the two missing answers would therefore leave its all-twelve-correct count at 18. For Qwen4B, only two of the three affected targets have all remaining responses correct. Correct answers for all missing responses could raise its count from 17 to at most 19, still below Jev's 23. The difference thus cannot be attributed solely to retaining truncated responses in the evaluation. Appendix~\ref{app:budget} gives the termination evidence and scoring rationale.
+
+\section{Development Diagnostics}
+\label{sec:development-overview}
+Development experiments provide separate diagnostics under their original samples and settings (Appendices~\ref{sec:diagnostics}--\ref{sec:planned}). Qwen4B changes 87 of 510 labels between joint and single-hypothesis requests, while its correct count changes by only four. In the disjoint anchor panel, A and B have equal accuracy but 24 of 90 responses change: twelve corrections and twelve regressions. Unchanged repeats within each arm agree, and Figure~\ref{fig:example} shows one regression.
+
+A paired Qwen configuration comparison also finds higher mean correctness without a clear gain in all-twelve correctness, despite much greater token use. Reasoning, sampling, and output allowance change together; Appendix~\ref{app:fairness} reports the full comparison. These diagnostics motivate separating changes in visible hypotheses, requested outputs, and inference settings.
+
+\section{Related Work}
+\label{sec:related}
+\paragraph{Legal-task evaluation.}
+ContractNLI, CUAD, and LegalBench evaluate contract inference, evidence extraction, and broader legal reasoning~\citep{koreeda2021contractnli,hendrycks2021cuad,guha2023legalbench}. We use ContractNLI's existing labels to examine how request configuration affects multiple judgments about one document.
+
+\paragraph{Request sensitivity and behavioral evaluation.}
+Prompt studies reveal sensitivity to demonstration order and meaning-preserving formatting~\citep{lu2022fantastically,sclar2024quantifying}. Batch prompting examines efficiency and positional effects across jointly requested examples~\citep{cheng2023batchprompting,lin2024batchprompt}; related work varies evidence location and answer-option order~\citep{liu2024lost,zheng2024selectors}. Our controls vary visible hypotheses, requested outputs, and output order while holding the contract and target fixed. CheckList motivates behavioral analysis beyond average accuracy~\citep{ribeiro2020checklist}, and order-consistent scoring shows that similar ranking quality can coexist with different decisions~\citep{frohmann2026equal}. We distinguish corrections, regressions, persistent errors, and variation across repeats under unchanged conditions.
+
+\paragraph{Joint quality and cost evaluation.}
+HELM jointly evaluates quality, robustness, and efficiency~\citep{liang2023helm}, while model routing studies accuracy--cost trade-offs~\citep{chen2024frugalgpt,ong2025routellm}. We compare individual configurations with explicit costs and invalid-response accounting, connecting average correctness to whether fixed judgments remain correct across repeated conditions. Appendix~\ref{app:related} details these comparisons and additional legal, prompting, and evaluation literature.
+
+\section{Discussion and Conclusion}
+\label{sec:conclusion}
+Cost, response time, average accuracy, and persistent correctness describe complementary aspects of contract inference. Jev has the lowest cost and median baseline response time among the evaluated configurations, while hosted language models achieve higher baseline accuracy. Gemini Pro and Sonnet have the highest baseline and all-twelve-correct point estimates, respectively. Jev is competitive on repeated-condition correctness, but the small anchor panel does not establish a general stability advantage. The cost frontier remains specific to the evaluated configurations and prices.
+
+Decision-level analysis explains these distinctions. On identical targets, similar mean correctness can coexist with different numbers of judgments that remain correct throughout. Corrections and regressions can cancel each other out in aggregate accuracy, while agreement can preserve errors. Even optimistically completing truncated answers leaves both Qwen configurations below Flash-Lite in baseline accuracy and below Jev in all-twelve correctness. Reporting correctness, direction of change, and validity alongside expenditure thus clarifies the observed trade-offs.
+
+\label{sec:content-end}
+\clearpage
+\section*{Limitations}
+\label{sec:limitations}
+The official test contains 123 contracts and a stability subset of 30 contract targets, all drawn from the same 17 hypothesis types. The development analyses use 30 contracts for grouping experiments and ten different contracts for anchor controls. These samples limit generalization to other legal questions and domains. We use existing annotations without a human performance comparison, new adjudication, or external-domain validation. An official held-out split does not establish absence from model training data.
+
+The two principal quality measures use different target sets: baseline accuracy spans every contract--hypothesis pair, whereas all-twelve correctness concerns one anchor in each selected contract. Ranking differences can therefore reflect both target composition and sensitivity to the tested conditions. Three repeats provide limited information about possible responses, and bootstrap intervals may degenerate when no changes are observed. The small stability panel makes rankings sensitive to a few targets. Its intervals and paired comparisons are descriptive and not corrected for multiple testing.
+
+Inference settings, interfaces, instruction wording, hardware, providers, and collection times differ across models. Hosted models may change behind a fixed identifier. Jev's question-key ordering differs from autoregressive output ordering. The Qwen development comparison changes reasoning, temperature, and generation allowance together, so it cannot isolate the effect of reasoning alone. Nor does a common token limit equalize realized computation. Budget-exhausted answers are failures of the evaluated configuration, rather than evidence that a task is intrinsically beyond the model.
+
+Costs follow the calculation in Section~\ref{sec:protocol}. Local GPU costs use a declared rental equivalent. Local estimates exclude loading, idle allocation, and other non-inference expenditure, and do not measure cloud throughput. Latency includes infrastructure and network effects. The frontier may change under other prices, serving methods, or reasoning budgets.
+
+Latency comparisons use one client but different collection times, providers, routes, and inference settings, with uncontrolled provider caching. Small differences in client-side preparation also remain. They cannot isolate architecture-level efficiency, separate computation from network and queueing delays, or establish throughput under concurrent load.
+
+The model comparison developed in stages: Sonnet, Haiku, and Terra were added after earlier results were inspected. Their predictions use fixed task and scoring rules, but model selection itself is exploratory. All ten test stability evaluations are complete; historical Astra development anchor coverage remains incomplete and is analyzed separately. Broader evidence would be required to assess suitability for legal practice or financial decision-making.
+
+\section*{Ethical considerations}
+We use ContractNLI under its stated CC BY 4.0 license and retain attribution to its creators. The study uses existing data and annotations, with no new personal-data collection or human participation. Examples retain their dataset identifiers and original labels. Any redistribution should preserve attribution and licensing while minimizing additional identifying information. The evaluation concerns model behavior in a research setting. Incorrect or unstable judgments could cause harm if treated as professional legal or financial determinations.
+
+\bibliography{references}
+
+\clearpage
+\appendix
+\suppressfloats[t]
+\makeatletter
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{18pt}
+\setlength{\@dblfpbot}{0pt plus 1fil}
+\makeatother
+
+\section{Supplementary Official-Test Comparisons}
+\label{app:testdetails}
+The supplementary official-test analyses examine class-specific errors, paired model differences, and response transitions for all ten models. Both baseline and stability evaluations are complete. The following development appendices retain the earlier experiments and add baseline, repetition, order, and anchor comparisons; their samples and results remain separate from the official-test evaluation.
+
+Table~\ref{tab:testanchor} gives condition-level correctness, all-twelve uncertainty, and response validity for the complete stability panel. Each model has 360 attempted requests, with 90 intended anchor responses per condition.
+\input{tables/test_completed_anchor}
+
+Table~\ref{tab:testclassrecalls} reports class recalls for all ten models on the same 123 test contracts. Table~\ref{tab:testpaired} reports paired differences from Jev for baseline accuracy and correctness across all twelve responses. Table~\ref{tab:teststates} separates persistent correctness, stable errors, valid but changed answers, and invalid responses. Figure~\ref{fig:test-sensitivity} compares changes across conditions with disagreement under unchanged repetition; Table~\ref{tab:testchanges} separates the directions of those condition changes. These analyses retain the same contract clusters and intended denominators as the main evaluation.
+
+The class recalls expose error profiles that overall accuracy obscures. Jev has the highest observed contradiction recall, Astra the highest entailment recall, and Sonnet the highest not-mentioned recall. These descriptive comparisons concern classes with unequal support; they do not establish significant differences between models.
+
+Jev correctly classifies 170 of 220 contradictions, whereas Gemini Pro correctly classifies 135. Relative to Jev, Gemini Pro gains 47 correct entailments and 110 correct not-mentioned labels but loses 35 correct contradictions, producing its net gain of 122 correct judgments. Overall accuracy weights class-specific recall by class support. These counts do not establish an application-specific preference without an independently justified valuation of the errors.
+
+Qwen9B illustrates how similar condition-level scores can conceal changes at the target level. Each condition yields 71 or 72 correct answers among 90 intended judgments, yet eight targets receive different valid labels across the twelve responses. Two more targets encounter generation-budget exhaustion, and two repeat the same wrong label throughout. The remaining eighteen are correct in every response. Invalid answers count as incorrect and prevent all-twelve correctness, but supply no observed label for the change-rate calculation.
+
+\input{tables/test_class_recalls}
+
+
+\input{tables/test_paired_comparisons}
+\input{tables/test_condition_changes}
+
+\section{Development Diagnostics}
+\label{sec:diagnostics}
+The development experiments clarify how request factors and outcome categories affect the interpretation of model performance. They include earlier diagnostics that motivated the test design, but use different samples, prompts, and inference configurations. We therefore preserve their results as a separate analysis, detailed in Appendices~\ref{app:development-protocol}--\ref{sec:planned}.
+
+\paragraph{Compensating changes.}
+On 30 development contracts, Qwen4B changes 87 of 510 labels between joint and single-hypothesis requests, but the number correct changes by only four. The changes comprise 38 regressions, 34 corrections, and 15 switches between wrong labels. Aggregate accuracy therefore understates the number of decisions affected by grouping.
+
+\paragraph{Visibility at fixed output workload.}
+In the disjoint development anchor panel, Qwen4B has the same A and B accuracy, yet 24 of 90 paired responses change: 12 regressions and 12 corrections. The requested answer set is fixed, and every anchor has the same answer across unchanged repeats within each arm. Figure~\ref{fig:example} shows one regression. This example motivates separating visible questions from the number of requested answers.
+
+\paragraph{Additional computation and persistent correctness.}
+A separate paired development comparison changes the Qwen configurations from thinking disabled with a 2,048-token allowance to thinking enabled with a 32,768-token allowance, also changing temperature and sampling. Mean anchor correctness rises from 76.67\% to 81.11\% for Qwen4B and from 74.17\% to 82.50\% for Qwen9B, but their all-twelve-correct counts change from 17 to 17 and from 16 to 18, respectively. Recorded completion-token use increases by 68.30 and 63.51 times. Both paired intervals for the all-twelve change include zero. Additional generation can thus accompany higher average correctness without a comparably clear gain in persistent correctness. This is a comparison of complete configurations, not an isolated reasoning ablation; Appendix~\ref{app:fairness} reports the paired results.
+
+\input{sections/development_protocol}
+\input{sections/development_grouping}
+\input{sections/development_anchor}
+
+\section{Development Sampling and Classification Prompts}
+\label{app:repro}
+The retained experimental inputs, individual predictions, and scoring code support independent recomputation of the reported results. Exact replication of hosted-model predictions remains subject to provider availability and subsequent model updates.
+
+ContractNLI contains 61 development contracts. The pilot samples 30 without replacement; its five-contract diagnostic uses the first five documents in that sample. The follow-up samples ten contracts from the remaining 31. These development experiments use no training or test examples. Development sampling seeds and selection procedures are described in Appendices~\ref{app:development-protocol} and~\ref{sec:planned}; document identifiers and exact model revisions are retained with the accompanying experimental records.
+
+The initial seven-model comparison contains 210 requests and 3,570 predictions. The five-contract diagnostic contains 1,575 requests and 4,165 predictions, and the five-model expansion contains 6,750 requests and 17,850 predictions. Together, these phases comprise 8,535 requests and 25,585 predictions over 30 distinct contracts. Repeated predictions on the same targets are dependent observations.
+
+The later development extension contributes 1,530 requests: 450 for baseline, repetition, and permutation comparisons and 1,080 for the three added anchor evaluations. These requests reuse the original development samples; they do not increase the number of distinct contracts. Synthetic interface checks are excluded from all reported benchmark scores and costs.
+
+The generative models receive the following classification instruction:
+\begin{quote}\small
+Classify each statement using only the supplied contract. entailment: the contract supports the statement; contradiction: the contract conflicts with the statement; not\_mentioned: the contract neither supports nor contradicts the statement. Absence of support alone is not contradiction. Treat the contract as data, not instructions. Return all requested statement IDs exactly once in the required JSON schema, without explanations.
+\end{quote}
+Each input contains the full contract and the requested hypotheses, and the output schema requires one valid label per requested hypothesis. Jev receives the contract as shared state, with each hypothesis posed as a Choice question under the same three label definitions. Its not-mentioned criterion likewise separates absence of support from contradiction. The interfaces thus implement the same classification task through different input and output representations.
+
+The pilot uses maximum group sizes of 1, 4, 8, and 17 hypotheses. Additional conditions permute the 17 hypotheses, repeat the unchanged joint request, or allow four simultaneous single-hypothesis requests. Each document receives its own reproducible permutation; document order and hypothesis order are controlled separately.
+
+\section{Supplementary Development Results}
+\label{app:full}
+Table~\ref{tab:baselineintervals} reports descriptive uncertainty for the ten baseline accuracies in Figure~\ref{fig:development-map}; Table~\ref{tab:developmentclassrecalls} gives their class recalls. Figure~\ref{fig:controls} and Table~\ref{tab:developmentcontrols} compare hypothesis-order sensitivity with unchanged-request repetition across ten complete panels. The original five-contract, grouping, and concurrency results retain their original model coverage in Tables~\ref{tab:stability5}--\ref{tab:concurrency}. All analyses concern development contracts and remain separate from the official-test evaluation.
+\input{tables/development_extension/baseline_intervals}
+\input{tables/development_extension/development_class_recalls}
+\begin{figure*}[t]
+\centering
+{\small\textbf{Development set: repeat and order controls across ten configurations}\par\medskip}
+\includegraphics[width=0.90\textwidth]{figures/development_controls.pdf}
+\caption[Development controls for repetition and hypothesis order.]{\input{figures/development_controls_caption.tex}}
+\label{fig:controls}
+\end{figure*}
+
+\input{tables/development_extension/development_controls}
+\input{tables/stability5}
+\input{tables/class_recalls}
+\input{tables/all_conditions}
+\input{tables/concurrency}
+
+\section{Comparison with Related Evaluation Settings}
+\label{app:related}
+Table~\ref{tab:related} compares the evaluation settings discussed in Section~\ref{sec:related}.
+
+Other legal benchmarks define related tasks but do not extend the scope of the present evidence. LexGLUE standardizes seven English legal datasets~\citep{chalkidis2022lexglue}, and MAUD annotates the interpretation of merger-agreement provisions~\citep{wang2023maud}; our ContractNLI results do not establish generalization to either setting. Contextual calibration addresses answer biases in few-shot prompting~\citep{zhao2021calibrate}, while experiments on prompted NLI show that strong predictive performance can persist under irrelevant or misleading instructions~\citep{webson2022prompts}. These findings motivate distinguishing classification scores from sensitivity to input design. Our comparisons keep the classification instruction fixed and use no demonstrations. Score distributions characterize variability across training runs~\citep{reimers2017score}; our repeated requests instead describe inference-time variability under a fixed configuration. Computation allocated to model selection can also affect experimental comparisons~\citep{dodge2019show}, and AI-agent evaluation emphasizes expenditure alongside task performance~\citep{kapoor2025agents}. Together, these perspectives motivate joint quality--cost reporting, with request times and provider charges interpreted within the configurations that produced them.
+
+\begin{table*}[t]
+\small
+\centering
+\begin{tabularx}{\textwidth}{p{0.24\textwidth}XX}
+\toprule
+\rowcolor{tableHeader}
+Work & Primary evaluation object & Relationship to this study \\
+\midrule
+ContractNLI \citep{koreeda2021contractnli} & Contract--hypothesis labels and evidence & Supplies the task and reference labels; our evaluation focuses on classification. \\
+BatchPrompt \citep{lin2024batchprompt} & Batched examples, positions, and order & Examines batching sensitivity across examples; we study judgments sharing one contract. \\
+\citet{lu2022fantastically} & Few-shot demonstration order & Studies order effects in a different prompt component. \\
+\citet{liu2024lost} & Location of evidence in long contexts & Studies input position, complementing our visibility and output-order controls. \\
+\citet{frohmann2026equal} & Ranking quality and downstream decisions & Examines decision variation at similar aggregate quality; we analyze categorical error transitions and repetition. \\
+This study & Multiple judgments about a shared document & Compares correctness, paired label changes, and stable errors under grouping, visibility, and output controls. \\
+\bottomrule
+\end{tabularx}
+\caption{Related evaluation settings and their relationship to the present study.}
+\label{tab:related}
+\end{table*}
+
+\section{Development Anchor Sample and Partial Coverage}
+The initial follow-up comprises 1,373 of 1,440 intended requests. Jev, Qwen3.5-4B, and Flash-Lite each provide 360 valid responses; Astra provides 293. Qwen9B subsequently contributes 360 valid responses. Across these five models, the anchor study therefore contains 1,733 attempted requests out of 1,800 intended requests on the same ten contracts. All 1,733 responses are valid, with Astra's 67 remaining requests unissued. Each request has one primary anchor target. The additional labels requested in C and D do not increase the number of primary targets.
+
+The later Sonnet, Terra, and Haiku evaluations contribute another 1,080 attempted requests on the same anchors. The development anchor tables and Figure~\ref{fig:development-map} therefore include seven complete evaluations: Jev, Flash-Lite, both Qwen models, Sonnet, Terra, and Haiku. The older partial Astra collection remains separate. Additional Qwen9B computational resources are reported in Appendix~\ref{app:extension}. All comparisons use the same 30 anchors; adding a model does not increase the number of independent contracts.
+
+\subsection{Partial development evaluation of Astra}
+\label{app:astra}
+The prespecified spending rule stops the Astra evaluation after 293 valid responses, leaving 67 requests unissued. No attempted request fails. Conditions A/B/C/D contain 74/74/72/73 observations, respectively, out of 90 intended observations each. Eight contracts have all 36 observations, one has five, and one has none. Table~\ref{tab:anchorpartial} reports accuracy and repeat disagreement for the observed subset, with their denominators. This unequal coverage precludes direct comparison with the complete-sample results; unissued requests are excluded from these descriptive partial-sample estimates.
+
+Astra's cost is \$14.51. The initial anchor study costs approximately \$14.98, including \$0.07 for Jev and \$0.40 for Flash-Lite; local GPU costs are not included. These amounts cover anchor inference; Figure~\ref{fig:development-map} reports baseline costs separately.
+
+\input{tables/anchor/anchor_partial}
+
+\section{Supplementary Qwen9B Development Results}
+\label{app:extension}
+Table~\ref{tab:qwenextensionresources} reports Qwen9B computational resources. Its development baseline performance appears in Table~\ref{tab:baseline}, and its anchor results appear alongside the other complete models in Tables~\ref{tab:anchorconditions}--\ref{tab:anchorrobustness}. The baseline uses 30 development contracts, while the anchor evaluation uses ten disjoint development contracts with three anchors each. All 360 planned anchor requests return valid responses. As discussed in Appendix~\ref{sec:qwen9extension}, this evaluation follows the initial anchor analysis and remains exploratory. The resource table reports measured time and tokens; Figure~\ref{fig:development-map} separately estimates rental-equivalent GPU cost for the baseline. No local GPU bill was measured.
+\input{tables/qwen_extension}
+
+\section{Qwen Inference-Configuration Comparison}
+\label{app:fairness}
+We compare two configurations of each Qwen model on the same ten development contracts, 30 anchors, four conditions, and three repeats. The historical configuration disables thinking, uses temperature zero, and permits 2,048 output tokens per anchor request. The reasoning-enabled configuration uses temperature 1, top-$p$ 0.95, and a shared allowance of 32,768 tokens for reasoning and the final answer, without a separate reasoning cutoff. These sampling controls define an explicit experimental configuration rather than the complete vendor-recommended decoding recipe. Each configuration is evaluated on all 360 planned requests per model.
+
+\input{tables/qwen_thinking_control}
+
+Table~\ref{tab:qwenthinking} reports correctness, all-twelve correctness, and response validity. Qwen4B's average anchor accuracy rises from 76.67\% to 81.11\%, while its all-twelve-correct count remains 17/30. Qwen9B's average accuracy rises from 74.17\% to 82.50\%, and its all-twelve-correct count changes from 16/30 to 18/30. The reasoning-enabled collections include two and three truncated responses, respectively, which remain in all intended-target denominators. Higher average correctness thus need not translate into more targets that are correct on every trial.
+
+Recorded completion-token use increases by 68.30 times for Qwen4B and 63.51 times for Qwen9B under the reasoning-enabled configurations.
+
+Reasoning, temperature, and generation allowance change together in this comparison, so the results concern the complete inference configuration rather than reasoning alone. The repeated observations come from ten independent contracts. Paired uncertainty estimates resample those contracts while preserving every anchor, condition, and repeat within each one. The change in all-twelve correctness is 0.00 percentage points for Qwen4B (descriptive 95\% interval: $-16.67$ to 20.00) and 6.67 points for Qwen9B ($-16.67$ to 30.00). Both intervals include zero. These development controls remain separate from the official-test observations; Appendix~\ref{app:budget} explains how budget-exhausted responses are scored.
+
+\section{Generation-Budget Exhaustion}
+\label{app:budget}
+\paragraph{Scope and observations.}
+The six completed reasoning-enabled Qwen evaluations reported here contain seventeen truncated responses. Qwen3.5-4B has two in its development anchor control, six in its test baseline, and three in its test stability evaluation. Qwen3.5-9B has three in its development anchor control, one in its test baseline, and two in its test stability evaluation. The latter two occur on different targets in condition D and remain in the intended denominators. Each truncated response returns a reasoning trace, reaches the configured limit of 32,768 generated tokens, and provides no final answer. Development and test scores remain separate, as do the historical thinking-disabled results.
+
+\paragraph{Interpretation of the failure.}
+With reasoning enabled, this configuration uses temperature 1 and top-$p$ 0.95. Reasoning and the final answer share a single generation allowance, with natural termination and no separate reasoning cutoff or reserved answer budget. A response may therefore consume its allowance before reaching the required decisions. The recorded termination establishes a failure to complete within the evaluated configuration. It does not reveal whether the reasoning was repetitive, whether a larger allowance would have produced an answer, or whether the model lacked the necessary task knowledge. We classify these cases as budget-exhausted responses, separately from transport failures that return no model response.
+
+\paragraph{Consequences for evaluation.}
+Our accuracy measure concerns usable decisions from a single attempt under the stated configuration. A truncated response without final labels remains in the intended-target denominator and contributes no correct predictions. For a joint baseline request, this means zero correct labels among its 17 targets. In the anchor study, an affected target cannot satisfy the requirement of correctness across all four conditions and three repeats. A missing decision also provides no evidence of a stable wrong label; label-change rates continue to use valid pairs with their coverage reported. Generated tokens and elapsed time from failed attempts are retained in resource accounting, and unavailable monetary costs remain unknown.
+
+\paragraph{Why the original responses are retained.}
+Retaining unfinished responses preserves the single-attempt evaluation. Excluding them would condition accuracy on successful completion, while selectively replacing them would give some requests additional opportunities to finish. Replacement would also conceal failures in the twelve-response correctness criterion. The unsuccessful attempts therefore remain part of the reported accuracy, stability, and cost. A separate retry policy would require explicit eligibility and stopping rules, together with the cost and time of every attempt; its results would characterize that policy rather than replace the original observations.
+
+\paragraph{Relationship to prior evaluation practice.}
+This treatment has a direct precedent: \citet{bashari2026gespi} count responses without a complete answer within a 32,768-token limit as incorrect in their reasoning-model comparison (Appendix B.3). Other settings allow different procedures. MathArena considers changing API providers and rerunning a model when frequent truncation suggests a provider-imposed generation limit \citep[Section 3.3]{balunovic2025matharena}. Our choice follows the evaluation objective and the observed termination evidence; it is not a general prohibition on retries. A larger allowance or an explicit transition from reasoning to answering would define an additional inference configuration, whose quality and resource use would require separate evaluation.
+
+\paragraph{API failure without a recorded response.}
+One Gemini Pro test stability request is unsuccessful without a recorded model answer or token usage. The available error record cannot distinguish a transport failure from a response-decoding failure, so neither model reasoning nor generation-budget exhaustion can be identified as the cause. The judgment remains unsuccessful in the primary analysis, and its elapsed time is retained. Recorded stability expenditure totals \$2.920162 for 359 of 360 requests. The remaining charge is unknown, so this is a known subtotal rather than a complete cost total. Any service-recovery retry would require a separate stated policy and would not erase the original observation.
+\input{sections/response_time}
+\end{document}

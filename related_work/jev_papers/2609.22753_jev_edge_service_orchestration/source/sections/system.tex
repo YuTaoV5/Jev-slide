@@ -1,0 +1,103 @@
+\section{Service Admission Architecture}
+\label{sec:system}
+\subsection{Request and Interpretation Contract}
+Each request $i$ contains a natural-language description, an arrival time
+$a_i$, an absolute deadline $d_i$, an origin, and payload metadata. Times
+share the originating controller's clock. Only the
+description is sent to the interpreter; the scheduler receives the remaining
+metadata through the same interface for every backend. Reference intent
+labels and expected service outputs are available exclusively to the
+evaluator. Table~\ref{tab:schema} defines the shared interpretation contract.
+Its four fields describe the requested service and execution requirements,
+with $4\times3\times3\times3=108$ possible tuples. Missing requirements remain
+unspecified rather than being inferred from the evaluator's labels.
+
+\begin{table}[t]
+\caption{Shared intent contract. OCR denotes optical character recognition.}
+\label{tab:schema}
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+Field & Allowed values \\
+\midrule
+Service & Count, detection, OCR, unsupported \\
+Locality & Site only, remote allowed, unspecified \\
+Quality floor & Standard, high, unspecified \\
+Urgency & Normal, urgent, unspecified \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Jev selects among the allowed values, while the generative backends return
+the same fields in a concise structured response. The rule-based interpreter
+maps the same input text to this contract. The required meaning of each
+output is fixed across interfaces. A request to read an image
+locally with high quality and urgent handling, for example, maps to OCR, site
+only, high, and urgent. Selecting the execution node remains the scheduler's
+responsibility.
+
+\subsection{Validation, Caching, and Admission}
+The validator checks that all required fields are present and that each value
+belongs to its allowed set. Invalid interpretations do not proceed to
+scheduling. Requests also leave the admission path when their deadline or
+the available admission capacity is exhausted. This common policy controls
+which responses can be executed; semantic correctness must be evaluated
+separately against the request's intended meaning.
+
+When caching is enabled, each backend reuses its own validated interpretation
+for identical normalized request text under the same extraction policy.
+A response becomes reusable only after it has arrived. The cache contains
+neither reference labels nor service outputs, and it can retain a
+well-formed but semantically incorrect interpretation. Repeated descriptions
+may accompany different images, so reusing a decision does not eliminate
+the corresponding service execution. All backends use the same cache policy.
+
+Admission and execution share one elapsed-time axis. Waiting for an
+interpretation slot and receiving a remote response both consume the budget
+between $a_i$ and $d_i$. A call that outlives its request's deadline continues
+to occupy its slot until the call terminates, while new requests continue
+to arrive. Interpretation latency thus affects both service feasibility
+and queue occupancy.
+
+\subsection{Shared Scheduling and Execution}
+After interpretation, the scheduler reads the current worker state. Only an
+explicit remote permission allows a payload to leave its originating site;
+unspecified locality defaults to local execution. A high quality requirement
+selects the high tier, and other requests use the standard tier. Urgent
+requests take priority over ordinary requests without interrupting active
+work. These shared defaults can make distinct field values operationally
+equivalent, as with normal and unspecified urgency.
+
+For the real service, let $t_i$ denote the time at which request $i$ is
+scheduled, after its interpretation has completed. Its selected tier is
+$q_i$, and its priority is $p_i$, with smaller values indicating higher
+priority. Let $\mathcal{N}_i$ contain the nodes that provide the interpreted
+service, satisfy its placement restriction, and have queue capacity.
+For a node $n\in\mathcal{N}_i$, let $b_n$ be the estimated finish time of
+active work, or zero if idle, and let $h_n(q)$ be the calibrated duration of
+serving tier $q$, including transfer and response overhead. Finally,
+$\mathcal{Q}_n^{\leq p_i}$ is the set of pending jobs with equal or higher
+priority than request $i$, and $q_j$ is pending job $j$'s tier. All node
+quantities refer to the state observed at $t_i$. The predicted finish time
+$\widehat f_{in}$ is
+\begin{equation}
+\widehat f_{in}=\max(t_i,b_n)
+  +\sum_{j\in\mathcal{Q}_n^{\leq p_i}}h_n(q_j)+h_n(q_i).
+\label{eq:finish}
+\end{equation}
+The scheduler selects the node with the smallest predicted finish time among
+those satisfying $\widehat f_{in}\leq d_i$, breaking ties in favor of the
+local node. It rejects the request if no such node exists. Equation~\ref{eq:finish}
+is a shared admission estimate: execution-time variation and subsequent
+higher-priority arrivals can invalidate its prediction. Correct completion
+therefore depends on the observed result and finish time, not merely on
+passing the admission test.
+
+An accepted request transfers its payload to the selected worker and returns
+the service output to the originating controller. Payloads are transferred
+only after node selection. The evaluator checks the actual service, node,
+tier, priority, output, and deadline against the reference requirements.
+All elapsed times are measured at the originating controller. Locality
+constraints govern service payloads; the textual description still reaches
+the chosen interpretation API. The scheduler and these checks are common
+to all backends, allowing the comparison to focus on interpreter substitution.

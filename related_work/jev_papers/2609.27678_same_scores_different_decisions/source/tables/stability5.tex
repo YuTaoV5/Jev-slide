@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & $K{=}17$ correct & $K$ flips & Order & Repeat \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 67/85 & 1 & 1 & 1 \\
+\modelicon{qwen}Qwen3.5-4B & 63/85 & 11 & 11 & 0 \\
+\modelicon{qwen}Qwen3.5-9B & 65/85 & 6 & 7 & 0 \\
+\modelicon{gemini}Gemini 3.1 Pro & 70/85 & 6 & 6 & 6 \\
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 71/85 & 11 & 3 & 1 \\
+\modelicon{openai}GPT-5.6 Luna & 68/85 & 8 & 5 & 3 \\
+\modelicon{openai}GPT-6 Astra & 72/85 & 1 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Development-set sensitivity analysis for seven models on five contracts (85 targets per condition). This subset of the 30-contract sample does not constitute an independent replication. Flip counts must not be ranked against rates from panels of different sizes.}
+\label{tab:stability5}
+\end{table*}

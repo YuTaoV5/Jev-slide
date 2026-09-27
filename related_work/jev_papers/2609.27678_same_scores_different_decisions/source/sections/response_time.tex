@@ -1,0 +1,21 @@
+\section{Response Time and Output Workload}
+\label{app:timing}
+
+Table~\ref{tab:testtiming} and Figure~\ref{fig:testtiming} summarize recorded response times for all ten official-test configurations. The baseline includes 123 joint requests per model, each requesting 17 labels. The stability panel includes 90 requests per condition: three repeats on each of 30 contracts. All attempted requests contribute their observed elapsed time, including invalid or truncated responses and the Gemini Pro request without a recorded answer. These timing summaries therefore describe attempted requests rather than time conditional on a successful answer.
+
+\paragraph{Measurement and comparability.}
+All collections use the same client machine, with one in-flight request per model and no automatic retries. The client timer spans the prediction call, including request preparation, connection establishment, network transfer, service-side processing, and response validation. The original seven-model stability collection also times construction of the condition-specific payload; the later three-model extension prepares that payload before starting the timer. Collections occur at different times and retain their provider routes and default caching behavior. Thus, these measurements compare the observed deployments and inference configurations. They do not isolate model computation, equalize hardware or reasoning budgets, or measure maximum throughput. Separate server computation, queueing, and first-token timings were not recorded.
+
+\paragraph{Output workload at fixed visible content.}
+Conditions B and C keep all 17 hypotheses visible while requesting one label and 17 labels, respectively. Their comparison changes output workload and structure. Table~\ref{tab:testtiming} reports the median time in each condition and the median of 90 paired elapsed-time differences, matched by contract and repeat. The latter is computed from $t_C-t_B$ for each pair and need not equal the difference between the two condition medians. Its descriptive 95\% intervals resample all three repeats together within each of the 30 contracts, using 5,000 paired bootstrap draws without multiplicity adjustment. Failures remain in these timing pairs.
+
+Jev has the lowest observed baseline median and P95 response times. At fixed visible content, its median changes little when 17 labels are requested instead of one. This small increase is useful for characterizing the service, but does not establish a causal explanation in terms of internal parallelism. Fixed connection and network overhead, caching, and serving policies can also affect how elapsed time changes with output workload. The timing comparison should be read alongside correctness and request validity, rather than as a claim about an isolated model architecture.
+
+\input{tables/test_response_time}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/test_response_time.pdf}
+\caption[Jev response time under joint prediction and fixed visible content.]{\input{figures/test_response_time_caption.tex}}
+\label{fig:testtiming}
+\end{figure}

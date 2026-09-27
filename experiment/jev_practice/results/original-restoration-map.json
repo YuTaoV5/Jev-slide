@@ -1,0 +1,162 @@
+[
+  {
+    "original": 1,
+    "current": 1,
+    "title": "封面"
+  },
+  {
+    "original": 2,
+    "current": 2,
+    "title": "谁做的"
+  },
+  {
+    "original": 3,
+    "current": 3,
+    "title": "有多火"
+  },
+  {
+    "original": 4,
+    "current": 4,
+    "title": "官方公开的 · 社区反推的"
+  },
+  {
+    "original": 5,
+    "current": 5,
+    "title": "过渡：什么是 Jev"
+  },
+  {
+    "original": 6,
+    "current": 6,
+    "title": "一句话"
+  },
+  {
+    "original": 7,
+    "current": 7,
+    "title": "输入和输出"
+  },
+  {
+    "original": 8,
+    "current": 9,
+    "title": "真实的请求和返回"
+  },
+  {
+    "original": 9,
+    "current": 10,
+    "title": "一条工单，三道题"
+  },
+  {
+    "original": 10,
+    "current": 11,
+    "title": "过渡：动机"
+  },
+  {
+    "original": 11,
+    "current": 12,
+    "title": "输出要人裁决 vs 输出自带把握"
+  },
+  {
+    "original": 12,
+    "current": 14,
+    "title": "过渡：架构"
+  },
+  {
+    "original": 13,
+    "current": 15,
+    "title": "一份 state，三条互不相见的分支"
+  },
+  {
+    "original": 14,
+    "current": 17,
+    "title": "每条分支的最后一个 token 做决定"
+  },
+  {
+    "original": 15,
+    "current": 19,
+    "title": "三种读出头"
+  },
+  {
+    "original": 16,
+    "current": 20,
+    "title": "输入长度与问题批量都会影响延迟"
+  },
+  {
+    "original": 17,
+    "current": 21,
+    "title": "底座画像"
+  },
+  {
+    "original": 18,
+    "current": 22,
+    "title": "过渡：训练"
+  },
+  {
+    "original": 19,
+    "current": 24,
+    "title": "三条后训练路线"
+  },
+  {
+    "original": 20,
+    "current": 29,
+    "title": "过渡：数据"
+  },
+  {
+    "original": 21,
+    "current": 30,
+    "title": "创始人怎么说数据"
+  },
+  {
+    "original": 22,
+    "current": 31,
+    "title": "倒果为因：先抽结果，再造材料"
+  },
+  {
+    "original": 23,
+    "current": 32,
+    "title": "模拟器怎么造一条数据"
+  },
+  {
+    "original": 24,
+    "current": 33,
+    "title": "三种样本，一个代价"
+  },
+  {
+    "original": 25,
+    "current": 35,
+    "title": "过渡：实验"
+  },
+  {
+    "original": 26,
+    "current": 36,
+    "title": "官方评测：Pareto 前沿"
+  },
+  {
+    "original": 27,
+    "current": 37,
+    "title": "官方评测：分工作流"
+  },
+  {
+    "original": 28,
+    "current": 38,
+    "title": "两端可信，中间不可信"
+  },
+  {
+    "original": 29,
+    "current": 39,
+    "title": "短文本持平小模型，要推理的输前沿"
+  },
+  {
+    "original": 40,
+    "current": 58,
+    "title": "一个 agent 任务里，判断点比生成点多"
+  },
+  {
+    "original": 41,
+    "current": 59,
+    "title": "发现问题的重要性"
+  },
+  {
+    "original": 42,
+    "current": 60,
+    "title": "收尾"
+  }
+]

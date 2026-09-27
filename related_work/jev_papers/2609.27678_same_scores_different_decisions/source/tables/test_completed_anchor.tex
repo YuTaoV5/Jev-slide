@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrrcrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{A (\%)\\$\uparrow$} & \shortstack{B (\%)\\$\uparrow$} & \shortstack{C (\%)\\$\uparrow$} & \shortstack{D (\%)\\$\uparrow$} & \shortstack{All 12\\correct $\uparrow$} & \shortstack{95\%\\interval} & Valid calls \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 76.67 & 81.11 & 80.00 & 80.00 & \secondscore{23/30} & [60.0, 90.0] & 360/360 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 82.22 & 83.33 & 84.44 & 80.00 & 21/30 & [53.3, 83.3] & 360/360 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \bestscore{85.56} & \bestscore{85.56} & 86.67 & \secondscore{83.33} & 22/30 & [56.7, 86.7] & 359/360 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 80.00 & 82.22 & 84.44 & 81.11 & 22/30 & [56.7, 86.7] & 360/360 \\
+\modelicon{openai}GPT-5.6 Terra & 76.67 & 83.33 & 83.33 & 78.89 & 20/30 & [50.0, 83.3] & 360/360 \\
+\modelicon{openai}GPT-6 Astra & 76.67 & 74.44 & 75.56 & 78.89 & 22/30 & [56.7, 86.7] & 360/360 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 78.89 & \secondscore{84.44} & \secondscore{87.78} & 76.67 & 19/30 & [46.7, 80.0] & 360/360 \\
+\modelicon{claude}Claude Sonnet 5 & \secondscore{83.33} & \secondscore{84.44} & \bestscore{88.89} & \bestscore{90.00} & \bestscore{24/30} & [63.3, 93.3] & 360/360 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 75.56 & 75.56 & 81.11 & 77.78 & 17/30 & [40.0, 73.3] & 357/360 \\
+\modelicon{qwen}Qwen3.5-9B & 78.89 & 80.00 & 78.89 & 78.89 & 18/30 & [43.3, 76.7] & 358/360 \\
+\bottomrule
+\end{tabularx}
+\caption{Official-test stability evaluation on 30 contracts with one anchor each, four conditions and three repeats (90 anchor judgments per condition; 360 requests per model). All 360 requests were attempted for each of the ten models. All 12 correct retains all 30 targets and requires every response to be valid and correct. Its percentage intervals use 5,000 whole-contract bootstrap samples. Invalid responses remain in every intended denominator. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} mark the best and second-best distinct values in columns with arrows, including ties; these marks do not imply statistical significance.}
+\label{tab:testanchor}
+\end{table*}

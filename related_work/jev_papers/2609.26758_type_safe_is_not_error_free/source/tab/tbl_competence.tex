@@ -1,0 +1,11 @@
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lp{.37\columnwidth}ccc@{}}
+\toprule
+decision task & instructions & $n$ & bal.\ acc. & AUC \\
+\midrule
+invoice & \textit{``The invoice reconciles with the purchase order and the recorded delivery.''} & 300 & 87.8\% & 97.1\% \\
+agent & \textit{``This trace requires human review.''} & 300 & 87.4\% & 94.7\% \\
+security & \textit{``This alert reflects genuinely malicious or unauthorised activity.''} & 300 & 93.1\% & 98.7\% \\
+customer & \textit{``This conversation requires a human agent rather than automated handling.''} & 300 & 78.6\% & 91.4\% \\
+\bottomrule
+\end{tabular}

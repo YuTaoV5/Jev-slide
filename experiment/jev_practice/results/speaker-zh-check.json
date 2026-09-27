@@ -1,0 +1,12 @@
+{
+  "speaker_pages": 60,
+  "titles_match": true,
+  "timed_animation_pages": [
+    25,
+    26,
+    27
+  ],
+  "timed_stages_per_animation": 8,
+  "slide_html_unchanged": true,
+  "passed": true
+}

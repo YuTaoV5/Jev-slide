@@ -1,0 +1,26 @@
+\begin{table}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{3pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{lc@{\hskip0pt}cc@{\hskip0pt}cc@{\hskip0pt}c}\toprule
+            & \multicolumn{6}{c}{NLI} \\\cmidrule(lr){2-7}
+            &  \multicolumn{2}{c}{Accuracy} & \multicolumn{2}{c}{F1 (C)} & \multicolumn{2}{c}{F1 (E)} \\\midrule
+            Majority vote & .814 &  & .239 &  & .645 & \\
+            Span NLI (BERT\textsubscript{\textit{base}}) & .883 & \textsubscript{.006} & .490 & \textsubscript{.007} & .795 & \textsubscript{.005} \\
+            Span NLI (BERT\textsubscript{\textit{large}}) & .899 & \textsubscript{.004} & .492 & \textsubscript{.065} & .820 & \textsubscript{.012} \\
+            Oracle NLI (BERT\textsubscript{\textit{base}}) & .918 & \textsubscript{.005} & .657 & \textsubscript{.062} & .816 & \textsubscript{.006} \\
+            Oracle NLI  (BERT\textsubscript{\textit{large}}) & .908 & \textsubscript{.011} & .620 & \textsubscript{.082} & .806 & \textsubscript{.015} \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            Refer to \cref{sec:experiment-settings} for the details on the metrics.
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{A controlled experiment of document-level binary classification over \textsc{Entailment} and \textsc{Contradiction} utilizing oracle evidence spans.}\label{tab:results-nli_only}
+\end{table}

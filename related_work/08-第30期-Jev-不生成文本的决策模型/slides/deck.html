@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Jev · 完整原理、训练动画与实战</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  --bg:#F5F5F7; --ink:#1D1D1F; --muted:#6E6E73; --faint:#A1A1A6; --line:#D2D2D7; --card:#FFFFFF;
+  --accent:#0071E3;
+  --font:"PingFang SC","SF Pro Display","SF Pro SC","Hiragino Sans GB","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","Menlo","JetBrains Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(1);transform-origin:center;background:var(--bg)}
+.slide{position:absolute;inset:0;padding:92px 128px 96px;display:none;flex-direction:column}
+.slide.active{display:flex}
+.kicker{font-size:22px;font-weight:500;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.kicker b{color:var(--ink);font-weight:600;margin-right:14px}
+h1{font-size:68px;font-weight:600;letter-spacing:-.012em;line-height:1.15;margin-top:20px}
+h1 .thin{font-weight:400;color:var(--muted)}
+h1 .acc{color:var(--accent)}
+.sub{font-size:30px;color:var(--muted);margin-top:14px;font-weight:400;line-height:1.4}
+.fig{flex:1;min-height:0;position:relative;margin-top:44px}
+.fig img,.fig video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.fig.card{background:var(--card);border-radius:26px;box-shadow:0 14px 48px rgba(0,0,0,.06)}
+.fig.card img,.fig.card video{padding:30px}
+.fig.plain img,.fig.plain video{border-radius:22px}
+.fig2{flex:1;min-height:0;display:flex;gap:30px;margin-top:44px}
+.fig2 .fig{margin:0}
+.diagbox{flex:1;min-height:0;position:relative;background:var(--card);border-radius:26px;box-shadow:0 14px 48px rgba(0,0,0,.06);margin-top:44px}
+.diagbox svg{position:absolute;inset:0;width:100%;height:100%}
+.diagbox.pad svg{inset:0;margin:auto;width:calc(100% - 88px);height:calc(100% - 68px)}
+/* table */
+.tbl{width:100%;border-collapse:collapse;font-size:32px;text-align:center}
+.tbl th{font-size:24px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:0 0 18px;border-bottom:2px solid var(--line)}
+.tbl td{padding:22px 0;border-bottom:1px solid var(--line);font-family:var(--mono)}
+.tbl td:first-child{font-family:var(--mono);color:var(--muted)}
+.tbl tr.hi td{color:var(--accent);font-weight:600}
+.tbl tr.bad td{color:#D0342C}
+.tbl.small{font-size:28px}
+.tbl.small td{padding:18px 0}
+.tbl.left{text-align:left}
+.tbl.left th{text-align:left;padding-left:16px}
+.tbl.left td{font-family:var(--font);font-size:27px;padding:16px 16px;line-height:1.35}
+.tbl.left td:first-child{color:var(--ink);font-family:var(--font);font-weight:500}
+.tbl.left td.ok{color:var(--accent);font-weight:600;font-family:var(--font)}
+.tbl.left td.no{color:#D0342C;font-weight:600;font-family:var(--font)}
+.tbl.left td:nth-child(2){white-space:nowrap;color:var(--muted)}
+.tbl.left.compact td{font-size:25px;padding:13px 14px}
+.tbl.left.wrap td:nth-child(2){white-space:normal;color:var(--ink)}
+.tbl.left tr.hi td{color:var(--accent);font-weight:600}
+.tbl.num td{font-family:var(--mono);font-size:27px;padding:16px 10px}
+.tbl.num td:first-child{font-family:var(--font);text-align:left;color:var(--ink);font-weight:500;padding-left:16px}
+.tbl.num th:first-child{text-align:left;padding-left:16px}
+.tbl.num td.acc{color:var(--accent);font-weight:600}
+.tbl.num td.dim{color:var(--faint)}
+.tbl.num.two td{padding:14px 10px;line-height:1.25}
+.tbl.num.two td b{font-size:30px;font-weight:600}
+.tbl.num.two td small{font-size:21px;color:var(--muted)}
+.tbl.num.two td.acc small{color:var(--accent)}
+.tbl.num.compact td{font-size:24px;padding:11px 8px;white-space:nowrap}
+.tbl.num.compact th{padding-bottom:12px}
+.tblwrap{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;background:var(--card);border-radius:26px;box-shadow:0 14px 48px rgba(0,0,0,.06);padding:40px 56px;margin-top:44px}
+.fig2 .tblwrap{margin-top:0}
+.tblwrap .tt{font-size:24px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:26px;text-align:center}
+/* timeline */
+.timeline{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 10px}
+.tl-row{position:relative;display:flex;justify-content:space-between;padding-top:56px}
+.tl-row:before{content:"";position:absolute;left:7%;right:7%;top:0;height:2px;background:var(--line)}
+.tl{flex:1;text-align:center;position:relative}
+.tl .dot{position:absolute;left:50%;top:-66px;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;background:var(--line)}
+.tl.key .dot{background:var(--accent);box-shadow:0 0 0 10px rgba(0,113,227,.15)}
+.tl .d{font-family:var(--mono);font-size:20px;color:var(--muted);letter-spacing:.06em}
+.tl .n{font-size:38px;font-weight:600;margin-top:10px;letter-spacing:-.01em;line-height:1.15}
+.tl.key .n{color:var(--accent)}
+.tl.dim .n{color:var(--faint)}
+.tl .w{font-size:22px;color:var(--muted);margin-top:12px;line-height:1.4;padding:0 12px}
+/* stats */
+.stats{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px;align-content:stretch}
+.stats.two{grid-template-columns:repeat(2,1fr)}
+.stat{background:var(--card);border-radius:26px;box-shadow:0 14px 48px rgba(0,0,0,.06);padding:36px 40px;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.stat .n{font-size:82px;font-weight:600;letter-spacing:-.02em;line-height:1;color:var(--accent);white-space:nowrap}
+.stat .n small{font-size:38px;color:var(--ink);margin-left:8px;font-weight:500}
+.stat .l{font-size:25px;color:var(--muted);margin-top:16px;line-height:1.35}
+.stat .l b{color:var(--ink);font-weight:600}
+.stat.dim .n{color:var(--ink)}
+.stat.text .n{font-size:44px;color:var(--ink);white-space:normal;line-height:1.2}
+.stat.text .n .acc{color:var(--accent)}
+/* screenshot grid */
+.grid4{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px;margin-top:44px}
+.grid4 .ph{position:relative;background:var(--card);border-radius:22px;box-shadow:0 14px 48px rgba(0,0,0,.06);overflow:hidden}
+.grid4 .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.grid4 .ph .tag{position:absolute;left:18px;bottom:16px;background:rgba(29,29,31,.82);color:#fff;font-size:20px;padding:8px 14px;border-radius:10px;font-weight:500}
+/* big lines */
+.bigline{flex:1;display:flex;flex-direction:column;justify-content:center;gap:30px}
+.bigline .row{font-size:54px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
+.bigline .row .thin{font-weight:400;color:var(--muted)}
+.bigline .row .acc{color:var(--accent)}
+.bigline .row.small{font-size:36px;font-weight:400;color:var(--muted)}
+/* code page */
+.code2{flex:1;min-height:0;display:flex;gap:26px;margin-top:44px}
+.code{flex:1;min-height:0;background:var(--card);border-radius:26px;box-shadow:0 14px 48px rgba(0,0,0,.06);padding:24px 32px;display:flex;flex-direction:column;overflow:hidden}
+.code .tt{font-size:20px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
+.code pre{font-family:var(--mono);font-size:17px;line-height:1.36;white-space:pre;color:var(--ink);margin:0}
+.code .k{color:var(--muted)}
+.code .n{color:var(--accent);font-weight:600}
+.code .c{color:var(--faint)}
+.code .h{color:var(--muted)}
+/* quotes page */
+.quotes{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:22px;margin-top:30px}
+.quote{background:var(--card);border-radius:22px;box-shadow:0 14px 48px rgba(0,0,0,.06);padding:26px 40px}
+.quote .q{font-size:34px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.quote .q .acc{color:var(--accent)}
+.quote .src{font-size:20px;color:var(--muted);margin-top:10px}
+/* section divider */
+.divider{justify-content:center}
+.divider .num{font-family:var(--mono);font-size:26px;letter-spacing:.2em;color:var(--faint)}
+.divider .word{font-size:160px;font-weight:600;letter-spacing:-.03em;line-height:1.05;margin-top:18px}
+.divider .word .thin{font-weight:400;color:var(--muted)}
+/* cover / end */
+.cover{padding:0}
+.cover .t{position:absolute;left:128px;top:150px}
+.cover .kicker{font-size:24px}
+.cover h1{font-size:230px;letter-spacing:-.035em;line-height:.95;margin-top:26px}
+.cover .p{font-size:42px;color:var(--muted);margin-top:26px;font-weight:400;max-width:1560px;line-height:1.35}
+.cover .p b{color:var(--ink);font-weight:600}
+.cover .brand{position:absolute;right:128px;top:158px;font-size:26px;letter-spacing:.14em;color:var(--muted)}
+.cover .photos{position:absolute;left:0;right:0;bottom:0;height:330px;display:flex;gap:6px;background:#000}
+.cover .photos img{flex:1;min-width:0;height:100%;object-fit:cover;display:block}
+.end{justify-content:center}
+.end .big{font-size:42px;text-align:center;color:var(--muted);margin-top:30px;line-height:1.5}
+.end .big b{color:var(--ink);font-weight:600}
+.end h1{text-align:center;font-size:96px}
+/* nav (top-left page control) */
+#nav-hot{position:fixed;left:0;top:0;width:220px;height:110px;z-index:20}
+#nav-btn{position:fixed;left:14px;top:14px;height:44px;padding:0 14px 0 10px;border-radius:10px;background:rgba(29,29,31,.82);color:#fff;font-size:18px;font-family:var(--mono);display:flex;align-items:center;gap:10px;cursor:pointer;opacity:.22;transition:opacity .25s;z-index:21;user-select:none}
+#nav-btn span.pg{font-size:18px;letter-spacing:.06em}
+#nav-btn .b{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14)}
+#nav-btn .b:hover{background:rgba(255,255,255,.3)}
+#nav-hot:hover ~ #nav-btn,#nav-btn:hover,#nav-btn.open{opacity:1}
+#nav-panel{position:fixed;left:14px;top:66px;width:440px;max-height:calc(100vh - 90px);overflow:auto;background:#fff;color:#1D1D1F;border:1px solid #D2D2D7;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.18);padding:8px;display:none;z-index:22;font-family:var(--font);font-size:14px}
+#nav-panel.open{display:block}
+#nav-panel .sec-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:#6E6E73;padding:10px 10px 4px;text-transform:uppercase}
+#nav-panel .it{display:flex;gap:10px;align-items:baseline;padding:7px 10px;border-radius:8px;cursor:pointer;line-height:1.35}
+#nav-panel .it:hover{background:#F5F5F7}
+#nav-panel .it.cur{background:#E8F0FE;color:#0071E3}
+#nav-panel .it .k{font-family:var(--mono);font-size:12px;color:#6E6E73;min-width:24px;text-align:right}
+#nav-panel .it.cur .k{color:#0071E3}
+#hud{position:fixed;left:18px;bottom:14px;font-family:var(--mono);font-size:13px;color:#8e8e93;opacity:0;transition:opacity .6s;pointer-events:none;z-index:9}
+#hud.show{opacity:1}
+/* svg shared */
+.sv text{font-family:"PingFang SC","Helvetica Neue",sans-serif}
+.sv .mono{font-family:"SF Mono","Menlo",monospace}
+</style>
+<style>:root{--font:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;--mono:"Cascadia Code",Consolas,monospace}
+.sv text{font-family:var(--font)}
+body{overscroll-behavior:none;touch-action:none}
+.practice-v2{padding-bottom:100px}.practice-v2 h1{font-size:68px;line-height:1.3}.practice-v2 .sub{font-size:28px}
+.practice-hero{flex:1;display:flex;flex-direction:column;justify-content:center;gap:45px}.hero-line{font-size:112px;line-height:1.12;letter-spacing:-3px;font-weight:600}.hero-line span{color:var(--accent)}.hero-flow{display:flex;gap:38px;align-items:center;font-size:34px}.hero-flow b{font-weight:500}.hero-flow i{font-style:normal;color:#a1a1a6}.practice-hero p{font-size:24px;color:var(--muted)}
+[data-mechanism]{flex:1;min-height:0;display:flex;flex-direction:column}[data-mechanism] .diagbox{margin-top:35px}.step-controls{display:flex;align-items:center;gap:24px;margin-top:26px;font-size:25px;color:var(--muted)}[data-step-node]{opacity:.22;transition:opacity .25s}[data-step-node].on{opacity:1}[data-step-node].on rect{fill:#E8F0FE;stroke:#0071E3;stroke-width:2}
+.practice-v2 button{font-family:var(--font);font-size:25px;border:1px solid var(--line);background:white;border-radius:12px;padding:12px 24px;color:var(--ink);cursor:pointer}.practice-v2 button:hover{border-color:var(--accent)}.practice-v2 button.selected{background:var(--accent);color:white;border-color:var(--accent)}
+.result-hero{flex:1;display:flex;flex-direction:column;justify-content:center}.large-metric{font:600 152px/1.2 var(--font);letter-spacing:-6px;color:var(--accent)}.large-metric span{font-weight:300;color:#a1a1a6;padding:0 70px}.metric-caption{font-size:29px;color:var(--muted);margin-top:25px}.evidence-line{display:flex;gap:28px;margin-top:64px}.evidence-line b{font-size:28px;background:white;padding:25px 38px;border-radius:18px;font-weight:500}.result-hero p{font-size:27px;color:var(--muted);margin-top:38px}
+.gate-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;min-height:0;margin-top:42px}.gate-chart,.gate-policy{background:white;border-radius:26px;padding:48px}.gate-choice{display:flex;gap:20px;margin-bottom:42px}.gate-bar-row{margin:26px 0;font-size:28px}.gate-bar-meta{display:flex;justify-content:space-between;margin-bottom:14px}.gate-track{height:34px;background:#f5f5f7;border-radius:6px}.gate-fill{height:100%;background:var(--accent);border-radius:6px;transition:width .3s}.gate-policy{display:flex;flex-direction:column;justify-content:center}.gate-policy label{font-size:32px}.gate-policy label b{color:var(--accent);margin-left:15px}.gate-policy input{width:100%;margin:30px 0;accent-color:var(--accent)}#gate-output{font-size:54px;color:var(--accent);font-weight:600;margin-bottom:25px}.gate-policy pre{font:24px/1.6 var(--mono)}.gate-policy p{font-size:24px;color:var(--muted);margin-top:26px}
+.maze-panels{display:flex;gap:24px;flex:1;min-height:0;margin-top:30px}.maze-panel{flex:1;min-width:0;background:white;border-radius:22px;padding:22px 26px;display:flex;flex-direction:column;align-items:center}.maze-panel h2{font-size:30px;font-weight:600;align-self:flex-start;margin-bottom:14px}.maze-panel canvas{width:440px;height:440px;max-height:calc(100% - 100px);object-fit:contain;image-rendering:pixelated}.maze-readout{font-size:26px;margin-top:12px;color:var(--muted)}.maze-controls{display:flex;align-items:center;gap:25px;margin-top:20px;font-size:25px}.maze-controls input{flex:1;accent-color:var(--accent)}.maze-note{font-size:23px;color:var(--muted);margin-top:15px}
+.practice-two{flex:1;display:flex;gap:32px;margin-top:44px}.practice-two article{flex:1;background:white;border-radius:26px;padding:60px;display:flex;flex-direction:column;justify-content:center}.practice-two small{font-size:25px;color:var(--accent);margin-bottom:24px}.practice-two h2{font-size:59px;font-weight:600;margin-bottom:34px}.practice-two p{font-size:32px;color:var(--muted);line-height:1.9}
+.command-board{background:white;border-radius:26px;padding:45px 52px;margin-top:50px}.command-board small{display:block;color:var(--muted);font-size:24px;margin:16px 0}.command-board code{font:29px/1.7 var(--mono);display:block;color:var(--ink);margin-bottom:24px}.run-note{font-size:29px;line-height:1.6;color:var(--muted);margin-top:34px}
+#deck-controls{position:fixed;right:22px;bottom:18px;display:flex;align-items:center;gap:8px;z-index:50;background:#fff;border:1px solid #e1e1e6;border-radius:14px;padding:6px;box-shadow:0 3px 16px #0000000a;font:14px var(--font)}#deck-controls button{border:0;border-radius:8px;background:#f5f5f7;color:#444;padding:8px 13px;cursor:pointer;font:inherit}#deck-controls button:disabled{opacity:.3;cursor:default}#deck-count{min-width:64px;text-align:center;color:#6e6e73}#deck-hint{position:fixed;bottom:29px;left:24px;font:13px var(--font);color:#929298;z-index:30;pointer-events:none}#deck-toc{position:fixed;right:22px;bottom:80px;max-height:75vh;width:420px;background:#fff;border-radius:16px;box-shadow:0 14px 50px #0002;z-index:60;padding:18px;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}#deck-toc p{font:13px var(--font);color:#888;padding:14px 12px 5px}#deck-toc button{display:block;text-align:left;border:0;border-radius:8px;background:white;width:100%;padding:10px 12px;font:15px/1.5 var(--font);cursor:pointer;color:#444}#deck-toc button.chosen{background:#e8f0fe;color:#0071e3}#deck-toc[hidden]{display:none}button:focus-visible,input:focus-visible{outline:3px solid #0071e3;outline-offset:4px}@media(max-width:900px){#deck-hint{display:none}#deck-controls{right:10px;bottom:10px}#deck-toc{right:10px;width:min(420px,94vw)}}
+
+.statement{flex:1;display:flex;flex-direction:column;justify-content:center;gap:38px}.statement>div{font-size:98px;line-height:1.38;font-weight:600;letter-spacing:-2px}.statement span{color:var(--accent)}.statement p{font-size:37px;color:var(--muted)}.statement small{font-size:26px;color:var(--muted);line-height:1.6}.maze-panels{padding:0 145px;gap:40px}.maze-panel{padding:20px 45px}.practice-v2 .tbl.left td{font-size:30px;line-height:1.65;padding:24px 20px}.practice-v2 .tbl.left th{font-size:25px;padding:15px 20px}.practice-v2 h1{font-size:64px}.sub{line-height:1.6}.sv{font-family:var(--font)}
+</style><style>.source-badge{position:absolute;left:128px;bottom:62px;font-size:18px;color:#86868b}.slide:not(.practice-v2) h1{line-height:1.28}.slide:not(.practice-v2){padding-bottom:104px}.cover .p{font-size:33px;line-height:1.65}.slide.cover h1{line-height:1.32}.cover .source-badge{bottom:350px}.slide[data-origin-page="19"] .tbl td{font-size:25px;padding:18px 12px}.slide[data-origin-page="19"] .tbl th{font-size:22px}.slide[data-origin-page="42"] .big{font-size:37px}</style></head>
+<body>
+<div id="stage">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8E8E93"/></marker>
+  <marker id="arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0071E3"/></marker>
+</defs></svg>
+
+<section data-origin-page="1" class="slide cover" data-sec="封面" data-title="封面">
+  <div class="t">
+    <div class="kicker">TypeSafe AI · 2026-09-15 发布 · System One Model</div>
+    <h1>Jev</h1>
+    <div class="p">一个<b>不生成文本</b>的模型：给它材料和选择题，它给每个选项一个<b>校准过的概率</b>。发布一周：HN 近 2000 分、Vercel 24 小时 13% 付费团队、15 个开源复现</div>
+  </div>
+  
+  <div class="photos">
+    <img src="media/blog_hero.png" alt="">
+    <img src="media/cover_doom.png" alt="">
+    <img src="media/wiki_result.png" alt="">
+    <img src="media/cover_race.png" alt="">
+    <img src="media/cover_home.png" alt="">
+  </div>
+</section>
+<section data-origin-page="2" class="slide" data-sec="00 背景" data-title="谁做的">
+  <div class="kicker"><b>00</b>背景 · TypeSafe AI · 旧金山</div>
+  <h1>从 OpenAI 后训练组出来的一家公司</h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- lineage -->
+<text x="0" y="26" font-size="20" fill="#6E6E73" letter-spacing="2">创始人的路径</text>
+<rect x="0" y="44" width="300" height="96" rx="20" fill="#F5F5F7"/><text x="150" y="84" text-anchor="middle" font-size="24" fill="#1D1D1F">Google Brain</text><text x="150" y="118" text-anchor="middle" font-size="18" fill="#6E6E73">研究员</text>
+<line x1="310" y1="92" x2="368" y2="92" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="378" y="44" width="400" height="96" rx="20" fill="#F5F5F7"/><text x="578" y="84" text-anchor="middle" font-size="24" fill="#1D1D1F">OpenAI 后训练团队</text><text x="578" y="118" text-anchor="middle" font-size="18" fill="#6E6E73">InstructGPT 2022 · GPT-4 报告作者</text>
+<line x1="788" y1="92" x2="846" y2="92" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="856" y="44" width="360" height="96" rx="20" fill="#F5F5F7"/><text x="1036" y="84" text-anchor="middle" font-size="24" fill="#1D1D1F">2024 年中 · 创立 TypeSafe</text><text x="1036" y="118" text-anchor="middle" font-size="18" fill="#6E6E73">旧金山 · 两年 stealth</text>
+<line x1="1226" y1="92" x2="1284" y2="92" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1294" y="44" width="306" height="96" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="1447" y="84" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3">2026-09-15 · Jev</text><text x="1447" y="118" text-anchor="middle" font-size="18" fill="#1D1D1F">第一个公开模型 · 1.13 版</text>
+<!-- founders -->
+<text x="0" y="200" font-size="20" fill="#6E6E73" letter-spacing="2">三个创始人</text>
+<rect x="0" y="218" width="520" height="130" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="24" y="256" font-size="24" font-weight="600" fill="#1D1D1F">Diogo Almeida <tspan font-weight="400" fill="#6E6E73" font-size="20">CEO</tspan></text>
+<text x="24" y="292" font-size="19" fill="#1D1D1F">InstructGPT 论文作者 · 前 Google Brain、OpenAI</text>
+<text x="24" y="324" font-size="19" fill="#6E6E73">官网写法：「RLHF 和 InstructGPT 的共同发明人」</text>
+<rect x="540" y="218" width="520" height="130" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="564" y="256" font-size="24" font-weight="600" fill="#1D1D1F">Sasha Sheng <tspan font-weight="400" fill="#6E6E73" font-size="20">COO</tspan></text>
+<text x="564" y="292" font-size="19" fill="#1D1D1F">前 Meta FAIR 研究工程师</text>
+<text x="564" y="324" font-size="19" fill="#6E6E73">NeurIPS / ECCV 论文 · 2023 年赢过 7 场黑客松</text>
+<rect x="1080" y="218" width="520" height="130" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="1104" y="256" font-size="24" font-weight="600" fill="#1D1D1F">Erik Gafni <tspan font-weight="400" fill="#6E6E73" font-size="20">CTO</tspan></text>
+<text x="1104" y="292" font-size="19" fill="#1D1D1F">连续创业者 · Invitae、Freenome 两家独角兽早期员工</text>
+<text x="1104" y="324" font-size="19" fill="#6E6E73">生产级 AI 系统</text>
+<!-- money and company facts -->
+<text x="0" y="408" font-size="20" fill="#6E6E73" letter-spacing="2">钱和人</text>
+<rect x="0" y="426" width="385" height="150" rx="20" fill="#F5F5F7"/>
+<text x="24" y="482" font-size="52" font-weight="600" fill="#0071E3" letter-spacing="-1">$40M</text>
+<text x="24" y="518" font-size="19" fill="#1D1D1F">种子轮 · DCVC 领投</text><text x="24" y="548" font-size="18" fill="#6E6E73">全球 AI 种子轮里排前 1%（Dealroom）</text>
+<rect x="405" y="426" width="385" height="150" rx="20" fill="#F5F5F7"/>
+<text x="429" y="482" font-size="52" font-weight="600" fill="#0071E3" letter-spacing="-1">≈ $2 亿</text>
+<text x="429" y="518" font-size="19" fill="#1D1D1F">估值（36氪）</text><text x="429" y="548" font-size="18" fill="#6E6E73">发布当天才出 stealth</text>
+<rect x="810" y="426" width="385" height="150" rx="20" fill="#F5F5F7"/>
+<text x="834" y="482" font-size="52" font-weight="600" fill="#0071E3" letter-spacing="-1">一半</text>
+<text x="834" y="518" font-size="19" fill="#1D1D1F">员工在一个合成数据实验室里</text><text x="834" y="548" font-size="18" fill="#6E6E73">「我们自己造全部训练数据」</text>
+<rect x="1215" y="426" width="385" height="150" rx="20" fill="#F5F5F7"/>
+<text x="1239" y="482" font-size="52" font-weight="600" fill="#0071E3" letter-spacing="-1">Jev</text>
+<text x="1239" y="518" font-size="19" fill="#1D1D1F">名字来自 Jevons 悖论</text><text x="1239" y="548" font-size="18" fill="#6E6E73">单价降两个数量级，用量涨得更多</text>
+</svg></div>
+</section>
+<section data-origin-page="3" class="slide" data-sec="00 背景" data-title="有多火">
+  <div class="kicker"><b>00</b>背景 · 2026-09-15 → 09-21 · 左：各模型发布当天 Hacker News 帖子的分数</div>
+  <h1>有多火</h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<text x="0" y="22" font-size="20" fill="#6E6E73" letter-spacing="2">Hacker News 发布帖分数</text>
+<text x="236" y="62" text-anchor="end" font-size="19" fill="#1D1D1F">Claude Fable 5</text><rect x="250" y="46" width="661" height="22" rx="6" fill="#D2D2D7"/><text x="923" y="62" font-size="18" fill="#1D1D1F" class="mono">2626</text>
+<text x="236" y="106" text-anchor="end" font-size="19" fill="#1D1D1F">GPT-6 Astra</text><rect x="250" y="90" width="574" height="22" rx="6" fill="#D2D2D7"/><text x="836" y="106" font-size="18" fill="#1D1D1F" class="mono">2279</text>
+<text x="236" y="150" text-anchor="end" font-size="19" fill="#1D1D1F">DeepSeek V4</text><rect x="250" y="134" width="527" height="22" rx="6" fill="#D2D2D7"/><text x="789" y="150" font-size="18" fill="#1D1D1F" class="mono">2091</text>
+<text x="236" y="194" text-anchor="end" font-size="19" fill="#1D1D1F">GPT-5</text><rect x="250" y="178" width="520" height="22" rx="6" fill="#D2D2D7"/><text x="782" y="194" font-size="18" fill="#1D1D1F" class="mono">2063</text>
+<text x="236" y="238" text-anchor="end" font-size="19" font-weight="600" fill="#0071E3">Jev</text><rect x="250" y="222" width="489" height="22" rx="6" fill="#0071E3"/><text x="751" y="238" font-size="18" font-weight="600" fill="#0071E3" class="mono">1943</text>
+<text x="236" y="282" text-anchor="end" font-size="19" fill="#1D1D1F">DeepSeek-R1</text><rect x="250" y="266" width="464" height="22" rx="6" fill="#D2D2D7"/><text x="726" y="282" font-size="18" fill="#1D1D1F" class="mono">1843</text>
+<text x="236" y="326" text-anchor="end" font-size="19" fill="#1D1D1F">Genie 3</text><rect x="250" y="310" width="380" height="22" rx="6" fill="#D2D2D7"/><text x="642" y="326" font-size="18" fill="#1D1D1F" class="mono">1510</text>
+<text x="236" y="370" text-anchor="end" font-size="19" fill="#1D1D1F">Qwen 3.8 27B</text><rect x="250" y="354" width="362" height="22" rx="6" fill="#D2D2D7"/><text x="624" y="370" font-size="18" fill="#1D1D1F" class="mono">1438</text>
+<text x="236" y="414" text-anchor="end" font-size="19" fill="#1D1D1F">Llama 4</text><rect x="250" y="398" width="311" height="22" rx="6" fill="#D2D2D7"/><text x="573" y="414" font-size="18" fill="#1D1D1F" class="mono">1235</text>
+<text x="236" y="458" text-anchor="end" font-size="19" fill="#1D1D1F">Kimi K2 Thinking</text><rect x="250" y="442" width="236" height="22" rx="6" fill="#D2D2D7"/><text x="498" y="458" font-size="18" fill="#1D1D1F" class="mono">936</text>
+<text x="236" y="502" text-anchor="end" font-size="19" fill="#1D1D1F">Atlas（第 18 期）</text><rect x="250" y="486" width="68" height="22" rx="6" fill="#D2D2D7"/><text x="330" y="502" font-size="18" fill="#1D1D1F" class="mono">271</text>
+<text x="236" y="546" text-anchor="end" font-size="19" fill="#1D1D1F">Cosmos 3（第 27 期）</text><rect x="250" y="530" width="38" height="22" rx="6" fill="#D2D2D7"/><text x="300" y="546" font-size="18" fill="#1D1D1F" class="mono">150</text>
+
+<text x="250" y="586" font-size="17" fill="#6E6E73">过去一年 HN 约 300 万条帖子，超过 Jev 这条的只有 53 条</text>
+<!-- right column -->
+<g>
+  <rect x="1040" y="40" width="560" height="118" rx="20" fill="#F5F5F7"/>
+  <text x="1064" y="86" font-size="40" font-weight="600" fill="#0071E3" letter-spacing="-1">2980 万<tspan font-size="20" font-weight="400" fill="#1D1D1F">　次浏览</tspan></text>
+  <text x="1064" y="128" font-size="19" fill="#1D1D1F">X 上的发布帖 · 比上海全市常住人口（约 2480 万）还多</text>
+  <rect x="1040" y="174" width="560" height="118" rx="20" fill="#F5F5F7"/>
+  <text x="1064" y="220" font-size="40" font-weight="600" fill="#0071E3" letter-spacing="-1">每 8 个<tspan font-size="20" font-weight="400" fill="#1D1D1F">　Vercel 付费团队有 1 个</tspan></text>
+  <text x="1064" y="262" font-size="19" fill="#1D1D1F">24 小时内接上 · GPT-5.6 那批的 2 倍、Fable 5.1 的 6 倍</text>
+  <rect x="1040" y="308" width="560" height="118" rx="20" fill="#F5F5F7"/>
+  <text x="1064" y="354" font-size="40" font-weight="600" fill="#0071E3" letter-spacing="-1">15 个<tspan font-size="20" font-weight="400" fill="#1D1D1F">　开源仿制品</tspan></text>
+  <text x="1064" y="396" font-size="19" fill="#1D1D1F">一周之内 · 光叫 awesome-jev 的整理清单就有八九个</text>
+  <rect x="1040" y="442" width="560" height="118" rx="20" fill="#F5F5F7"/>
+  <text x="1064" y="488" font-size="40" font-weight="600" fill="#0071E3" letter-spacing="-1">国内<tspan font-size="20" font-weight="400" fill="#1D1D1F">　机器之心 · 36氪 · 雷峰网 · 知乎</tspan></text>
+  <text x="1064" y="530" font-size="19" fill="#1D1D1F">机器之心标题「2400 万人围观」· API 上线两天被挤爆一次</text>
+</g>
+</svg></div>
+</section>
+<section data-origin-page="4" class="slide" data-sec="00 背景" data-title="官方公开的 · 社区反推的">
+  <div class="kicker"><b>00</b>现状 · 这期内容从哪来</div>
+  <h1>没有论文，没有权重：<span class="thin">官方公开的，和社区反推的</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<g font-size="24" font-weight="600" fill="#1D1D1F"><text x="0" y="30">官方公开的</text><text x="860" y="30">社区反推的</text></g>
+<g font-size="20" fill="#6E6E73"><text x="150" y="30">TypeSafe AI</text><text x="1010" y="30">一周之内</text></g>
+<!-- left column -->
+<g>
+  <rect x="0" y="60" width="720" height="92" rx="18" fill="#F5F5F7"/>
+  <text x="26" y="98" font-size="24" font-weight="600" fill="#1D1D1F">发布文 + 文档</text>
+  <text x="26" y="132" font-size="20" fill="#6E6E73">接口、三种原语、限制、弱点清单（jaggedness）</text>
+  <rect x="0" y="166" width="720" height="92" rx="18" fill="#F5F5F7"/>
+  <text x="26" y="204" font-size="24" font-weight="600" fill="#1D1D1F">evals 站</text>
+  <text x="26" y="238" font-size="20" fill="#6E6E73">四个工作流 · 对比 GPT-5.6 / Opus 5 · 标签来自两个大模型的共识</text>
+  <rect x="0" y="272" width="720" height="92" rx="18" fill="#F5F5F7"/>
+  <text x="26" y="310" font-size="24" font-weight="600" fill="#1D1D1F">TechCrunch 采访 · HN 回复</text>
+  <text x="26" y="344" font-size="20" fill="#6E6E73">transformer · 训练数据 100% 合成 · 「架构先捂着」</text>
+  <rect x="0" y="378" width="720" height="92" rx="18" fill="#F5F5F7"/>
+  <text x="26" y="416" font-size="24" font-weight="600" fill="#1D1D1F">创始人博客</text>
+  <text x="26" y="450" font-size="20" fill="#6E6E73">The Bitterest Lesson：任务 &gt; 数据 &gt; 算力 &gt; 算法</text>
+</g>
+<!-- right column -->
+<g>
+  <rect x="860" y="60" width="740" height="92" rx="18" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="886" y="98" font-size="24" font-weight="600" fill="#0071E3">Archer Hume · 1 万次 API 探针</text>
+  <text x="886" y="132" font-size="20" fill="#1D1D1F">计算图、底座规模、分词器、读出机制</text>
+  <rect x="860" y="166" width="740" height="92" rx="18" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="886" y="204" font-size="24" font-weight="600" fill="#0071E3">15+ 开源复现</text>
+  <text x="886" y="238" font-size="20" fill="#1D1D1F">Laya · kev · NanoJev · open-jev：结构一周内被搭出来</text>
+  <rect x="860" y="272" width="740" height="92" rx="18" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="886" y="310" font-size="24" font-weight="600" fill="#0071E3">9 份独立评测</text>
+  <text x="886" y="344" font-size="20" fill="#1D1D1F">校准（ECE）、公开集准确率、俄语、措辞与选项顺序</text>
+  <rect x="860" y="378" width="740" height="92" rx="18" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="886" y="416" font-size="24" font-weight="600" fill="#0071E3">ConvAI 先例论文 + Laya 配方</text>
+  <text x="886" y="450" font-size="20" fill="#1D1D1F">2025-03 非自回归决策 + RL 校准 · 训练方法的公开参照</text>
+</g>
+<!-- merge -->
+<line x1="360" y1="482" x2="360" y2="530" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<line x1="1230" y1="482" x2="1230" y2="530" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="0" y="536" width="1600" height="60" rx="18" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="800" y="574" text-anchor="middle" font-size="22" fill="#1D1D1F">接口和实验是确定的 · 计算图是行为证据支持的假设 · 底座、训练、数据三部分是推断</text>
+</svg></div>
+</section>
+<section data-origin-page="5" class="slide divider" data-sec="01 什么是 Jev" data-title="过渡：什么是 Jev">
+  <div class="num">01</div>
+  <div class="word">什么是 Jev</div>
+</section>
+<section data-origin-page="6" class="slide" data-sec="01 什么是 Jev" data-title="一句话">
+  <div class="kicker"><b>01</b>什么是 Jev · 官方 demo：同样 27 道题</div>
+  <h1>材料 + 选择题 <span class="thin">→</span> <span class="acc">每个选项一个概率</span></h1>
+  <div class="sub">不生成文字、不输出推理链。左：Jev 0.114 s · $0.00008　右：GPT-5.6 Terra 8.566 s · $0.0139</div>
+  <div class="fig card"><img src="media/poster_race.png" alt=""></div>
+</section>
+<section data-origin-page="7" class="slide" data-sec="01 什么是 Jev" data-title="输入和输出">
+  <div class="kicker"><b>01</b>什么是 Jev · 接口 · 官方文档</div>
+  <h1>输入：材料 + 三种题　<span class="thin">输出：类型化答案与概率</span></h1>
+  <div class="sub">每百万输入 token $0.042 · 输出免费 · 单请求 64k · 9 月 21 日起不用排队，注册送 $5</div>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- headers -->
+<text x="0" y="26" font-size="20" fill="#6E6E73" letter-spacing="2">输入</text>
+<text x="900" y="26" font-size="20" fill="#6E6E73" letter-spacing="2">输出</text>
+<!-- state -->
+<rect x="0" y="44" width="760" height="110" rx="20" fill="#F5F5F7"/>
+<text x="24" y="82" font-size="24" font-weight="600" fill="#1D1D1F">state <tspan font-weight="400" fill="#6E6E73" font-size="20">· 材料，你要让它看的东西</tspan></text>
+<text x="24" y="118" font-size="19" fill="#1D1D1F">一条消息、一个 JSON、一段文档 · 纯文本 · 最多 32k token · 只写一份</text>
+<text x="24" y="144" font-size="18" fill="#6E6E73">它是数据，不是指令</text>
+<!-- questions header -->
+<rect x="0" y="174" width="760" height="382" rx="20" fill="#F5F5F7"/>
+<text x="24" y="212" font-size="24" font-weight="600" fill="#1D1D1F">questions <tspan font-weight="400" fill="#6E6E73" font-size="20">· 题，你要它对材料做的判断 · 一次可以几百道</tspan></text>
+<text x="24" y="246" font-size="18" fill="#6E6E73">每道题写三样：类型 · 问什么（instructions）· 允许的答案（criteria）</text>
+<!-- three types -->
+<g>
+  <rect x="24" y="268" width="712" height="84" rx="16" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="1.5"/>
+  <text x="44" y="302" font-size="22" font-weight="600" fill="#0071E3">choice <tspan fill="#1D1D1F">· 选择题</tspan></text>
+  <text x="44" y="334" font-size="18" fill="#1D1D1F">你列出 2–255 个选项，每个选项配一句描述；它从里面选</text>
+  <rect x="24" y="364" width="712" height="84" rx="16" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="1.5"/>
+  <text x="44" y="398" font-size="22" font-weight="600" fill="#0071E3">score <tspan fill="#1D1D1F">· 打分题</tspan></text>
+  <text x="44" y="430" font-size="18" fill="#1D1D1F">你给 2–10 个有顺序的档位，每档一句描述；它落在哪一档</text>
+  <rect x="24" y="460" width="712" height="84" rx="16" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="1.5"/>
+  <text x="44" y="494" font-size="22" font-weight="600" fill="#0071E3">noul <tspan fill="#1D1D1F">· 是非题</tspan></text>
+  <text x="44" y="526" font-size="18" fill="#1D1D1F">你写一个命题；它判断成立不成立</text>
+</g>
+<!-- arrow -->
+<line x1="780" y1="410" x2="880" y2="410" stroke="#0071E3" stroke-width="4" marker-end="url(#arB)"/>
+<text x="830" y="392" text-anchor="middle" font-size="20" font-weight="600" fill="#0071E3">Jev</text>
+<text x="830" y="440" text-anchor="middle" font-size="16" fill="#6E6E73">一次前向</text>
+<text x="830" y="462" text-anchor="middle" font-size="16" fill="#6E6E73">≈ 100 ms</text>
+<!-- outputs -->
+<rect x="900" y="44" width="700" height="110" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="924" y="82" font-size="24" font-weight="600" fill="#1D1D1F">没有文本</text>
+<text x="924" y="118" font-size="19" fill="#1D1D1F">它不生成文字、不输出推理链；每道题返回一组数</text>
+<text x="924" y="144" font-size="18" fill="#6E6E73">答案只能落在你给的选项里——想不到的答案它连出口都没有</text>
+<text x="900" y="212" font-size="18" fill="#6E6E73">所有题对同一份材料并行算，互不影响；多题可并行；输入费用仍随题目增加</text>
+<g>
+  <rect x="900" y="268" width="700" height="84" rx="16" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="924" y="302" font-size="22" font-weight="600" fill="#0071E3">每个选项一个概率</text>
+  <text x="924" y="334" font-size="18" fill="#1D1D1F">加起来等于 1 · 顺手给出选中的那个（最高的）和一个 confidence</text>
+  <rect x="1400" y="286" width="90" height="12" rx="4" fill="#0071E3"/><rect x="1400" y="304" width="14" height="12" rx="4" fill="#0071E3"/><rect x="1418" y="304" width="3" height="12" rx="1" fill="#0071E3"/>
+  <text x="1500" y="296" font-size="15" fill="#1D1D1F" class="mono">0.89</text><text x="1500" y="314" font-size="15" fill="#1D1D1F" class="mono">0.10 · 0.01</text>
+  <rect x="900" y="364" width="700" height="84" rx="16" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="924" y="398" font-size="22" font-weight="600" fill="#0071E3">每一档一个概率 + 一个期望分</text>
+  <text x="924" y="430" font-size="18" fill="#1D1D1F">档位从 0 数起，三档满分是 2 · 期望分 = Σ 档位 × 概率，可落在两档之间</text>
+  <rect x="1400" y="382" width="2" height="12" rx="1" fill="#0071E3"/><rect x="1406" y="382" width="34" height="12" rx="4" fill="#0071E3"/><rect x="1444" y="382" width="66" height="12" rx="4" fill="#0071E3"/>
+  <text x="1400" y="416" font-size="15" fill="#1D1D1F" class="mono">0 · 0.34 · 0.66 → 1.66</text>
+  <rect x="900" y="460" width="700" height="84" rx="16" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="924" y="494" font-size="22" font-weight="600" fill="#0071E3">一个 0 到 1 的数</text>
+  <text x="924" y="526" font-size="18" fill="#1D1D1F">接近 1 是「成立」，接近 0 是「不成立」，0.5 附近是「没把握」</text>
+  <rect x="1400" y="478" width="98" height="12" rx="4" fill="#0071E3"/><text x="1506" y="490" font-size="15" fill="#1D1D1F" class="mono">0.98</text>
+</g>
+<text x="900" y="586" font-size="18" fill="#6E6E73">概率是校准过的：说 0.8，就应该有 80% 的时候是对的（群体意义上）</text>
+</svg></div>
+</section>
+<section class="slide practice-v2" data-sec="01 接口 · 先分清阶段" data-title="训练改参数，推理用参数"><div class="kicker">01 接口 · 先分清阶段</div><h1>训练改参数，推理用参数</h1><div class="sub">先分清两个时间尺度，后面三段动画讲的都是训练</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">训练阶段</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">样本 → 反馈 → 更新参数</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">保存模型</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">参数固定下来</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">推理阶段</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">新材料 → 类型化答案</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">线上请求通常不在现场重新训练奖励模型</text></svg></div></section>
+<section data-origin-page="8" class="slide" data-sec="01 什么是 Jev" data-title="真实的请求和返回">
+  <div class="kicker"><b>01</b>什么是 Jev · 官方 API · 同一条工单 · 原样</div>
+  <h1>发过去的，和收回来的</h1>
+  <div class="code2">
+    <div class="code"><div class="tt">请求 · 一个 JSON</div><pre><span class="h">POST https://api.typesafe.ai/v1/systemone
+Authorization: Bearer &lt;你的 key&gt;</span>
+
+{
+  <span class="k">"model"</span>: "jev-latest",
+  <span class="k">"state"</span>: "你好，我三天前买的会员到现在还没开通，
+            钱已经扣了，客服电话也打不通，今天不解决我就去投诉。",
+  <span class="k">"questions"</span>: {
+    <span class="k">"部门"</span>: {
+      <span class="k">"type"</span>: "choice",
+      <span class="k">"instructions"</span>: "这条消息应该转给哪个团队？",
+      <span class="k">"criteria"</span>: {"计费": "扣款、发票、退款、支付问题",
+                   "技术": "功能故障、接口、bug",
+                   "销售": "价格、套餐、升级"}
+    },
+    <span class="k">"情绪"</span>: {
+      <span class="k">"type"</span>: "score",
+      <span class="k">"instructions"</span>: "客户有多生气？",
+      <span class="k">"criteria"</span>: ["平静", "不满但克制", "非常愤怒"]
+    },
+    <span class="k">"威胁投诉"</span>: {
+      <span class="k">"type"</span>: "noul",
+      <span class="k">"instructions"</span>: "客户是否威胁要投诉或采取进一步行动？"
+    }
+  }
+}</pre></div>
+    <div class="code"><div class="tt">返回 · 全是数</div><pre><span class="h">HTTP 200 · 服务端 89 ms · 469 个输入 token · 2026-09-21 实测</span>
+
+{
+  <span class="k">"model"</span>: "jev-1.13.0",
+  <span class="k">"answers"</span>: {
+    <span class="k">"部门"</span>: {
+      <span class="k">"type"</span>: "choice",
+      <span class="k">"choice"</span>: "计费",
+      <span class="k">"probabilities"</span>: {"计费": <span class="n">0.89</span>, "技术": <span class="n">0.10</span>, "销售": <span class="n">0.01</span>},
+      <span class="k">"confidence"</span>: <span class="n">0.84</span>
+    },
+    <span class="k">"情绪"</span>: {
+      <span class="k">"type"</span>: "score",
+      <span class="k">"score"</span>: <span class="n">1.66</span>,
+      <span class="k">"probabilities"</span>: {"0": <span class="n">0.00</span>, "1": <span class="n">0.34</span>, "2": <span class="n">0.66</span>},
+      <span class="k">"legend"</span>: {"0": "平静", "1": "不满但克制", "2": "非常愤怒"},
+      <span class="k">"confidence"</span>: <span class="n">0.49</span>
+    },
+    <span class="k">"威胁投诉"</span>: {
+      <span class="k">"type"</span>: "noul",
+      <span class="k">"noul"</span>: <span class="n">0.98</span>
+    }
+  },
+  <span class="k">"usage"</span>: {"input_tokens": 469, "output_tokens": 75}
+}</pre></div>
+  </div>
+</section>
+<section data-origin-page="9" class="slide" data-sec="01 什么是 Jev" data-title="一条工单，三道题">
+  <div class="kicker"><b>01</b>什么是 Jev · 实测 · jev-1.13.0 · 469 token · 服务端 89 ms</div>
+  <h1>一条工单，三道题，<span class="thin">89 毫秒</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 620" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- request -->
+<text x="0" y="26" font-size="20" fill="#6E6E73" letter-spacing="2">请求</text>
+<rect x="0" y="44" width="700" height="132" rx="18" fill="#F5F5F7"/>
+<text x="24" y="80" font-size="20" fill="#6E6E73" class="mono">state</text>
+<text x="24" y="116" font-size="23" fill="#1D1D1F">你好，我三天前买的会员到现在还没开通，钱已经扣了，</text>
+<text x="24" y="150" font-size="23" fill="#1D1D1F">客服电话也打不通，今天不解决我就去投诉。</text>
+<rect x="0" y="196" width="700" height="118" rx="18" fill="#F5F5F7"/>
+<text x="24" y="230" font-size="20" fill="#6E6E73" class="mono">questions · 部门 · choice</text>
+<text x="24" y="264" font-size="22" fill="#1D1D1F">这条消息应该转给哪个团队？</text>
+<text x="24" y="296" font-size="20" fill="#6E6E73">计费：扣款、发票、退款　技术：故障、接口　销售：价格、套餐</text>
+<rect x="0" y="334" width="700" height="118" rx="18" fill="#F5F5F7"/>
+<text x="24" y="368" font-size="20" fill="#6E6E73" class="mono">情绪 · score</text>
+<text x="24" y="402" font-size="22" fill="#1D1D1F">客户有多生气？</text>
+<text x="24" y="434" font-size="20" fill="#6E6E73">0 平静　1 不满但克制　2 非常愤怒</text>
+<rect x="0" y="472" width="700" height="118" rx="18" fill="#F5F5F7"/>
+<text x="24" y="506" font-size="20" fill="#6E6E73" class="mono">威胁投诉 · noul</text>
+<text x="24" y="540" font-size="22" fill="#1D1D1F">客户是否威胁要投诉或采取进一步行动？</text>
+<text x="24" y="572" font-size="20" fill="#6E6E73">答案空间：是 / 否</text>
+<!-- arrow -->
+<line x1="720" y1="316" x2="860" y2="316" stroke="#0071E3" stroke-width="4" marker-end="url(#arB)"/>
+<text x="790" y="298" text-anchor="middle" font-size="22" font-weight="600" fill="#0071E3">Jev</text>
+<text x="790" y="348" text-anchor="middle" font-size="18" fill="#6E6E73">89 ms</text>
+<!-- response -->
+<text x="900" y="26" font-size="20" fill="#6E6E73" letter-spacing="2">返回 · 全是数字</text>
+<!-- 部门 -->
+<rect x="900" y="44" width="700" height="190" rx="18" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="924" y="80" font-size="20" fill="#6E6E73" class="mono">部门 · choice</text>
+<text x="924" y="120" font-size="22" fill="#1D1D1F">计费</text><rect x="1010" y="102" width="445" height="24" rx="6" fill="#E8F0FE"/><rect x="1010" y="102" width="396" height="24" rx="6" fill="#0071E3"/><text x="1470" y="121" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.89</text>
+<text x="924" y="160" font-size="22" fill="#1D1D1F">技术</text><rect x="1010" y="142" width="445" height="24" rx="6" fill="#E8F0FE"/><rect x="1010" y="142" width="44" height="24" rx="6" fill="#0071E3"/><text x="1470" y="161" font-size="22" fill="#1D1D1F" class="mono">0.10</text>
+<text x="924" y="200" font-size="22" fill="#1D1D1F">销售</text><rect x="1010" y="182" width="445" height="24" rx="6" fill="#E8F0FE"/><rect x="1010" y="182" width="5" height="24" rx="3" fill="#0071E3"/><text x="1470" y="201" font-size="22" fill="#1D1D1F" class="mono">0.01</text>
+<text x="1576" y="80" text-anchor="end" font-size="20" fill="#6E6E73" class="mono">confidence 0.84</text>
+<!-- 情绪 -->
+<rect x="900" y="254" width="700" height="190" rx="18" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="924" y="290" font-size="20" fill="#6E6E73" class="mono">情绪 · score</text>
+<text x="924" y="330" font-size="22" fill="#1D1D1F">0 平静</text><rect x="1100" y="312" width="355" height="24" rx="6" fill="#E8F0FE"/><text x="1470" y="331" font-size="22" fill="#A1A1A6" class="mono">0.00</text>
+<text x="924" y="370" font-size="22" fill="#1D1D1F">1 不满但克制</text><rect x="1100" y="352" width="355" height="24" rx="6" fill="#E8F0FE"/><rect x="1100" y="352" width="121" height="24" rx="6" fill="#0071E3"/><text x="1470" y="371" font-size="22" fill="#1D1D1F" class="mono">0.34</text>
+<text x="924" y="410" font-size="22" fill="#1D1D1F">2 非常愤怒</text><rect x="1100" y="392" width="355" height="24" rx="6" fill="#E8F0FE"/><rect x="1100" y="392" width="234" height="24" rx="6" fill="#0071E3"/><text x="1470" y="411" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.66</text>
+<text x="1576" y="290" text-anchor="end" font-size="20" fill="#6E6E73" class="mono">score 1.66 · confidence 0.49</text>
+<!-- noul -->
+<rect x="900" y="464" width="700" height="126" rx="18" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+<text x="924" y="500" font-size="20" fill="#6E6E73" class="mono">威胁投诉 · noul</text>
+<text x="924" y="556" font-size="22" fill="#1D1D1F">是</text><rect x="1010" y="538" width="445" height="24" rx="6" fill="#E8F0FE"/><rect x="1010" y="538" width="436" height="24" rx="6" fill="#0071E3"/><text x="1470" y="557" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.98</text>
+</svg></div>
+</section>
+<section data-origin-page="10" class="slide divider" data-sec="02 Motivation" data-title="过渡：动机">
+  <div class="num">02</div>
+  <div class="word">动机</div>
+</section>
+<section data-origin-page="11" class="slide" data-sec="02 Motivation" data-title="输出要人裁决 vs 输出自带把握">
+  <div class="kicker"><b>02</b>Motivation · Diogo Almeida · InstructGPT 作者</div>
+  <h1>「一个任务做对 95%，<span class="thin">但不说哪 5% 它不行，就没法自动化」</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- row 1 -->
+<text x="0" y="40" font-size="24" font-weight="600" fill="#1D1D1F">聊天模型</text><text x="130" y="40" font-size="20" fill="#6E6E73">RLHF · 优化的是人喜欢什么</text>
+<rect x="0" y="70" width="260" height="100" rx="20" fill="#F5F5F7"/><text x="130" y="112" text-anchor="middle" font-size="24" fill="#1D1D1F">输入</text><text x="130" y="144" text-anchor="middle" font-size="18" fill="#6E6E73">问题 · 材料</text>
+<line x1="270" y1="120" x2="330" y2="120" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="340" y="70" width="320" height="100" rx="20" fill="#F5F5F7"/><text x="500" y="112" text-anchor="middle" font-size="24" fill="#1D1D1F">LLM 逐 token 生成</text><text x="500" y="144" text-anchor="middle" font-size="18" fill="#6E6E73">秒级 · 按输出 token 计费</text>
+<line x1="670" y1="120" x2="730" y2="120" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="740" y="70" width="260" height="100" rx="20" fill="#F5F5F7"/><text x="870" y="112" text-anchor="middle" font-size="24" fill="#1D1D1F">文本</text><text x="870" y="144" text-anchor="middle" font-size="18" fill="#6E6E73">听起来对不对，不知道</text>
+<line x1="1010" y1="120" x2="1070" y2="120" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="1080" y="70" width="260" height="100" rx="20" fill="#FFFFFF" stroke="#D0342C" stroke-width="2.5"/><text x="1210" y="112" text-anchor="middle" font-size="24" font-weight="600" fill="#D0342C">人来裁决</text><text x="1210" y="144" text-anchor="middle" font-size="18" fill="#6E6E73">需按任务判断是否复核</text>
+<line x1="1350" y1="120" x2="1410" y2="120" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="1420" y="70" width="180" height="100" rx="20" fill="#F5F5F7"/><text x="1510" y="126" text-anchor="middle" font-size="24" fill="#1D1D1F">执行</text>
+<line x1="0" y1="230" x2="1600" y2="230" stroke="#E5E5EA" stroke-width="1.5"/>
+<!-- row 2 -->
+<text x="0" y="290" font-size="24" font-weight="600" fill="#0071E3">System One 模型</text><text x="210" y="290" font-size="20" fill="#6E6E73">RLCD · 优化的是概率诚实</text>
+<rect x="0" y="320" width="260" height="100" rx="20" fill="#F5F5F7"/><text x="130" y="362" text-anchor="middle" font-size="24" fill="#1D1D1F">程序状态</text><text x="130" y="394" text-anchor="middle" font-size="18" fill="#6E6E73">材料 + 选择题</text>
+<line x1="270" y1="370" x2="330" y2="370" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="340" y="320" width="320" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="500" y="362" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3">一次前向，不生成</text><text x="500" y="394" text-anchor="middle" font-size="18" fill="#1D1D1F">100 ms · 只按输入计费</text>
+<line x1="670" y1="370" x2="730" y2="370" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="740" y="320" width="260" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="870" y="362" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3">概率</text><text x="870" y="394" text-anchor="middle" font-size="18" fill="#1D1D1F">校准良好的同组预测约 80% 成立</text>
+<line x1="1010" y1="370" x2="1070" y2="370" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1080" y="320" width="260" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="1210" y="362" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3">代码按阈值裁决</text><text x="1210" y="394" text-anchor="middle" font-size="18" fill="#1D1D1F">示例策略：过线才自动，否则复核</text>
+<line x1="1350" y1="370" x2="1410" y2="370" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1420" y="320" width="180" height="100" rx="20" fill="#F5F5F7"/><text x="1510" y="376" text-anchor="middle" font-size="24" fill="#1D1D1F">执行</text>
+<!-- footer -->
+<text x="0" y="500" font-size="22" fill="#6E6E73">三条后训练路线</text>
+<text x="200" y="500" font-size="22" fill="#1D1D1F">RLHF 学人类偏好（ChatGPT）　·　RLVR 学可验证的对错（推理模型）　·　<tspan fill="#0071E3" font-weight="600">RLCD 学校准的决策（Jev）</tspan></text>
+</svg></div>
+</section>
+<section class="slide practice-v2" data-sec="02 动机 · 校准是什么" data-title="“报 0.8”描述一组预测的可靠性"><div class="kicker">02 动机 · 校准是什么</div><h1>“报 0.8”描述一组预测的可靠性</h1><div class="sub">校准概念 · 不是对某一条答案的保证</div><div class="statement"><div><span>80 / 100</span></div><p>同一概率组中，约 80 次事件实际成立</p><small>理想教学例；实际需足够样本、区间估计与分布稳定</small></div></section>
+<section data-origin-page="12" class="slide divider" data-sec="03 架构" data-title="过渡：架构">
+  <div class="num">03</div>
+  <div class="word">架构</div>
+</section>
+<section data-origin-page="13" class="slide" data-sec="03 架构" data-title="一份 state，三条互不相见的分支">
+  <div class="kicker"><b>03</b>架构 · 计算图 · 由 1 万次探针反推，非官方实现示意</div>
+  <h1>一份 state，<span class="thin">三条互不相见的分支，没有 decode</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- state -->
+<rect x="0" y="30" width="460" height="90" rx="20" fill="#F5F5F7"/>
+<text x="24" y="66" font-size="24" font-weight="600" fill="#1D1D1F">state 的 token</text>
+<text x="24" y="100" font-size="19" fill="#6E6E73">工单文本 · 只编码一次 · 每层 KV cache</text>
+<g fill="#D2D2D7"><rect x="24" y="130" width="34" height="20" rx="5"/><rect x="64" y="130" width="34" height="20" rx="5"/><rect x="104" y="130" width="34" height="20" rx="5"/><rect x="144" y="130" width="34" height="20" rx="5"/><rect x="184" y="130" width="34" height="20" rx="5"/><rect x="224" y="130" width="34" height="20" rx="5"/><rect x="264" y="130" width="34" height="20" rx="5"/><rect x="304" y="130" width="34" height="20" rx="5"/><rect x="344" y="130" width="34" height="20" rx="5"/><rect x="384" y="130" width="34" height="20" rx="5"/><rect x="424" y="130" width="34" height="20" rx="5"/></g>
+<text x="24" y="190" font-size="19" fill="#6E6E73">Transformer · 因果注意力 · ≈10B 激活</text>
+<!-- branches: each row = 题干 + opts + decide -->
+<g>
+  <line x1="470" y1="75" x2="530" y2="75" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="540" y="30" width="760" height="90" rx="20" fill="#F5F5F7"/>
+  <text x="564" y="66" font-size="21" font-weight="600" fill="#1D1D1F">分支 1 · 部门</text>
+  <rect x="740" y="44" width="80" height="26" rx="7" fill="#E5E5EA"/><text x="780" y="63" text-anchor="middle" font-size="15" fill="#1D1D1F">题干</text>
+  <rect x="828" y="44" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="876" y="63" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 计费</text>
+  <rect x="932" y="44" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="980" y="63" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 技术</text>
+  <rect x="1036" y="44" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="1084" y="63" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 销售</text>
+  <rect x="1140" y="44" width="136" height="26" rx="7" fill="#0071E3"/><text x="1208" y="63" text-anchor="middle" font-size="15" font-weight="600" fill="#FFFFFF">[decide]</text>
+  <text x="740" y="104" font-size="16" fill="#6E6E73">只能看到 state + 这一行自己的 token；看不到分支 2、3</text>
+  <line x1="1310" y1="75" x2="1370" y2="75" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+  <rect x="1380" y="30" width="220" height="90" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="1404" y="62" font-size="19" font-weight="600" fill="#0071E3">读出 · softmax</text>
+  <text x="1404" y="96" font-size="17" fill="#1D1D1F" class="mono">0.89 · 0.10 · 0.01</text>
+
+  <line x1="470" y1="75" x2="500" y2="75" stroke="#8E8E93" stroke-width="3"/><line x1="500" y1="75" x2="500" y2="215" stroke="#8E8E93" stroke-width="3"/><line x1="500" y1="215" x2="530" y2="215" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="540" y="170" width="760" height="90" rx="20" fill="#F5F5F7"/>
+  <text x="564" y="206" font-size="21" font-weight="600" fill="#1D1D1F">分支 2 · 情绪</text>
+  <rect x="740" y="184" width="80" height="26" rx="7" fill="#E5E5EA"/><text x="780" y="203" text-anchor="middle" font-size="15" fill="#1D1D1F">题干</text>
+  <rect x="828" y="184" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="876" y="203" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 0</text>
+  <rect x="932" y="184" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="980" y="203" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 1</text>
+  <rect x="1036" y="184" width="96" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="1084" y="203" text-anchor="middle" font-size="15" fill="#0071E3">[opt] 2</text>
+  <rect x="1140" y="184" width="136" height="26" rx="7" fill="#0071E3"/><text x="1208" y="203" text-anchor="middle" font-size="15" font-weight="600" fill="#FFFFFF">[decide]</text>
+  <text x="740" y="244" font-size="16" fill="#6E6E73">同一份 KV cache，位置编码从 state 末尾重新数</text>
+  <line x1="1310" y1="215" x2="1370" y2="215" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+  <rect x="1380" y="170" width="220" height="90" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="1404" y="202" font-size="19" font-weight="600" fill="#0071E3">读出 · 期望</text>
+  <text x="1404" y="236" font-size="17" fill="#1D1D1F" class="mono">0.34 · 0.66 → 1.66</text>
+
+  <line x1="500" y1="215" x2="500" y2="355" stroke="#8E8E93" stroke-width="3"/><line x1="500" y1="355" x2="530" y2="355" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="540" y="310" width="760" height="90" rx="20" fill="#F5F5F7"/>
+  <text x="564" y="346" font-size="21" font-weight="600" fill="#1D1D1F">分支 3 · 威胁投诉</text>
+  <rect x="740" y="324" width="80" height="26" rx="7" fill="#E5E5EA"/><text x="780" y="343" text-anchor="middle" font-size="15" fill="#1D1D1F">题干</text>
+  <rect x="828" y="324" width="304" height="26" rx="7" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="1.5"/><text x="980" y="343" text-anchor="middle" font-size="15" fill="#6E6E73">是非题没有选项</text>
+  <rect x="1140" y="324" width="136" height="26" rx="7" fill="#0071E3"/><text x="1208" y="343" text-anchor="middle" font-size="15" font-weight="600" fill="#FFFFFF">[decide]</text>
+  <text x="740" y="384" font-size="16" fill="#6E6E73">每条分支最后都是一个 [decide] token，决定在它身上做</text>
+  <line x1="1310" y1="355" x2="1370" y2="355" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+  <rect x="1380" y="310" width="220" height="90" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+  <text x="1404" y="342" font-size="19" font-weight="600" fill="#0071E3">读出 · sigmoid</text>
+  <text x="1404" y="376" font-size="17" fill="#1D1D1F" class="mono">0.98</text>
+</g>
+<!-- bottom facts -->
+<line x1="0" y1="440" x2="1600" y2="440" stroke="#E5E5EA" stroke-width="1.5"/>
+<g font-size="20" fill="#1D1D1F">
+  <text x="0" y="486"><tspan font-weight="600">state 只算一次</tspan>　token 计费可加：1 道题 268、2 道 276 · 单分支上限 32k、整请求 65k · 原测量中 100 题与 1 题延迟接近</text>
+  <text x="0" y="524"><tspan font-weight="600">分支互相隔离</tspan>　暗号写进兄弟问题的题干：识别概率 0.00；写进 state：0.90</text>
+  <text x="0" y="562"><tspan font-weight="600">没有 decode</tspan>　读出来是数，序列化成 JSON 返回；原探针中 255 与 2 选项延迟接近</text>
+</g>
+</svg></div>
+</section>
+<section class="slide practice-v2" data-sec="03 架构 · 读图辅助" data-title="共享的是材料，每道题仍有自己的条件"><div class="kicker">03 架构 · 读图辅助</div><h1>共享的是材料，每道题仍有自己的条件</h1><div class="sub">接口独立评估可以确认；KV cache / mask 图是解释性假设</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">公共 state</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">所有题都需要的事实</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">各题条件</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">题干 + 本题候选</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">独立输出</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">不能偷看另一题的答案</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">跨题依赖要由应用分轮组织，不能期待题目自行串成推理链</text></svg></div></section>
+<section data-origin-page="14" class="slide" data-sec="03 架构" data-title="每条分支的最后一个 token 做决定">
+  <div class="kicker"><b>03</b>架构 · 放大一条分支 · 部门这道题</div>
+  <h1>最后一个 token 做决定，<span class="thin">看得到本分支的一切</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 680" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- token row -->
+<g>
+  <rect x="0" y="150" width="300" height="70" rx="16" fill="#E5E5EA"/><text x="150" y="180" text-anchor="middle" font-size="20" fill="#1D1D1F">state 的 token</text><text x="150" y="206" text-anchor="middle" font-size="15" fill="#6E6E73">那条工单 · 共享，算过一次</text>
+  <rect x="316" y="150" width="200" height="70" rx="16" fill="#F5F5F7" stroke="#D2D2D7" stroke-width="1.5"/><text x="416" y="180" text-anchor="middle" font-size="20" fill="#1D1D1F">题干</text><text x="416" y="206" text-anchor="middle" font-size="15" fill="#6E6E73">转给哪个团队</text>
+  <rect x="532" y="150" width="200" height="70" rx="16" fill="#FFFFFF" stroke="#0071E3" stroke-width="2"/><text x="632" y="180" text-anchor="middle" font-size="20" fill="#0071E3">[opt] 计费</text><text x="632" y="206" text-anchor="middle" font-size="15" fill="#6E6E73">扣款、发票、退款</text>
+  <rect x="748" y="150" width="200" height="70" rx="16" fill="#FFFFFF" stroke="#0071E3" stroke-width="2"/><text x="848" y="180" text-anchor="middle" font-size="20" fill="#0071E3">[opt] 技术</text><text x="848" y="206" text-anchor="middle" font-size="15" fill="#6E6E73">故障、接口</text>
+  <rect x="964" y="150" width="200" height="70" rx="16" fill="#FFFFFF" stroke="#0071E3" stroke-width="2"/><text x="1064" y="180" text-anchor="middle" font-size="20" fill="#0071E3">[opt] 销售</text><text x="1064" y="206" text-anchor="middle" font-size="15" fill="#6E6E73">价格、套餐</text>
+  <rect x="1180" y="150" width="170" height="70" rx="16" fill="#0071E3"/><text x="1265" y="180" text-anchor="middle" font-size="20" font-weight="600" fill="#FFFFFF">[decide]</text><text x="1265" y="206" text-anchor="middle" font-size="15" fill="#E8F0FE">这条分支的最后一个</text>
+  <!-- attention arcs from decide back to everything before it -->
+  <path d="M1250,150 C1200,40 200,40 150,150" fill="none" stroke="#0071E3" stroke-width="2.5" marker-end="url(#arB)"/>
+  <path d="M1255,150 C1210,70 460,70 416,150" fill="none" stroke="#0071E3" stroke-width="2.5" marker-end="url(#arB)"/>
+  <path d="M1260,150 C1220,90 670,90 632,150" fill="none" stroke="#0071E3" stroke-width="2.5" marker-end="url(#arB)"/>
+  <path d="M1265,150 C1235,105 880,105 848,150" fill="none" stroke="#0071E3" stroke-width="2.5" marker-end="url(#arB)"/>
+  <path d="M1270,150 C1250,118 1085,118 1064,150" fill="none" stroke="#0071E3" stroke-width="2.5" marker-end="url(#arB)"/>
+  <text x="700" y="30" text-anchor="middle" font-size="19" fill="#0071E3">因果注意力：一个 token 看得到它前面的所有 token，[decide] 排最后，所以 state、题干、三个选项它全看得到</text>
+  <!-- cannot see other branches -->
+  <rect x="1400" y="150" width="200" height="70" rx="16" fill="#F5F5F7" stroke="#D2D2D7" stroke-width="1.5" stroke-dasharray="7 5"/><text x="1500" y="180" text-anchor="middle" font-size="18" fill="#A1A1A6">分支 2、3 的 token</text><text x="1500" y="206" text-anchor="middle" font-size="15" fill="#A1A1A6">mask 挡住，看不到</text>
+  <line x1="1350" y1="185" x2="1392" y2="185" stroke="#D0342C" stroke-width="2.5" stroke-dasharray="5 4"/><line x1="1364" y1="172" x2="1378" y2="198" stroke="#D0342C" stroke-width="3"/>
+</g>
+<!-- readout below decide -->
+<line x1="1265" y1="222" x2="1265" y2="262" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1110" y="270" width="310" height="60" rx="14" fill="#E8F0FE"/><text x="1265" y="308" text-anchor="middle" font-size="18" fill="#1D1D1F">[decide] 位置的隐状态 h（一个向量）</text>
+<line x1="1265" y1="332" x2="1265" y2="362" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1110" y="370" width="310" height="60" rx="14" fill="#E8F0FE"/><text x="1265" y="408" text-anchor="middle" font-size="18" fill="#1D1D1F">读出头：h → 3 个分数 → softmax</text>
+<line x1="1265" y1="432" x2="1265" y2="462" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1110" y="470" width="310" height="60" rx="14" fill="#0071E3"/><text x="1265" y="508" text-anchor="middle" font-size="19" font-weight="600" fill="#FFFFFF" class="mono">0.89 · 0.10 · 0.01</text>
+<!-- listwise evidence left-bottom -->
+<text x="0" y="292" font-size="22" font-weight="600" fill="#1D1D1F">三个选项不是三条分支：它们在同一行里，中间没有 mask</text>
+<text x="0" y="326" font-size="18" font-weight="600" fill="#6E6E73">算法 A · 各打各的 <tspan font-weight="400">（每个选项各开一行 · 与原探针行为不符）</tspan></text>
+<rect x="0" y="340" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="358" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="340" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="358" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="340" width="70" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="173" y="358" text-anchor="middle" font-size="14" fill="#0071E3">计费</text><rect x="214" y="340" width="80" height="26" rx="7" fill="#0071E3"/><text x="254" y="358" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="306" y="358" font-size="16" fill="#1D1D1F" class="mono">→ s₁</text>
+<rect x="0" y="372" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="390" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="372" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="390" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="372" width="70" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="173" y="390" text-anchor="middle" font-size="14" fill="#0071E3">技术</text><rect x="214" y="372" width="80" height="26" rx="7" fill="#0071E3"/><text x="254" y="390" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="306" y="390" font-size="16" fill="#1D1D1F" class="mono">→ s₂</text>
+<rect x="0" y="404" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="422" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="404" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="422" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="404" width="70" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="173" y="422" text-anchor="middle" font-size="14" fill="#0071E3">销售</text><rect x="214" y="404" width="80" height="26" rx="7" fill="#0071E3"/><text x="254" y="422" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="306" y="422" font-size="16" fill="#1D1D1F" class="mono">→ s₃</text>
+<rect x="0" y="436" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="454" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="436" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="454" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="436" width="70" height="26" rx="7" fill="#FFF3E0" stroke="#C2620A" stroke-width="1.5" stroke-dasharray="5 3"/><text x="173" y="454" text-anchor="middle" font-size="14" fill="#9A4B00">其他</text><rect x="214" y="436" width="80" height="26" rx="7" fill="#0071E3"/><text x="254" y="454" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="306" y="454" font-size="16" fill="#9A4B00" class="mono">→ s₄　加第四个选项 = 新开一行，s₁ s₂ s₃ 不变</text>
+<text x="0" y="494" font-size="18" font-weight="600" fill="#0071E3">算法 B · 一起看 <tspan font-weight="400" fill="#6E6E73">（三个选项排在一行 · 与原探针行为相容）</tspan></text>
+<rect x="0" y="508" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="526" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="508" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="526" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="508" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="168" y="526" text-anchor="middle" font-size="14" fill="#0071E3">计费</text><rect x="204" y="508" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="234" y="526" text-anchor="middle" font-size="14" fill="#0071E3">技术</text><rect x="270" y="508" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="300" y="526" text-anchor="middle" font-size="14" fill="#0071E3">销售</text><rect x="336" y="508" width="80" height="26" rx="7" fill="#0071E3"/><text x="376" y="526" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="428" y="526" font-size="16" fill="#1D1D1F" class="mono">→ s₁ s₂ s₃ 一次出</text>
+<rect x="0" y="540" width="70" height="26" rx="7" fill="#E5E5EA"/><text x="35" y="558" text-anchor="middle" font-size="14" fill="#1D1D1F">state</text><rect x="76" y="540" width="56" height="26" rx="7" fill="#E5E5EA"/><text x="104" y="558" text-anchor="middle" font-size="14" fill="#1D1D1F">题干</text><rect x="138" y="540" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="168" y="558" text-anchor="middle" font-size="14" fill="#0071E3">计费</text><rect x="204" y="540" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="234" y="558" text-anchor="middle" font-size="14" fill="#0071E3">技术</text><rect x="270" y="540" width="60" height="26" rx="7" fill="#FFFFFF" stroke="#0071E3" stroke-width="1.5"/><text x="300" y="558" text-anchor="middle" font-size="14" fill="#0071E3">销售</text><rect x="336" y="540" width="60" height="26" rx="7" fill="#FFF3E0" stroke="#C2620A" stroke-width="1.5" stroke-dasharray="5 3"/><text x="366" y="558" text-anchor="middle" font-size="14" fill="#9A4B00">其他</text><rect x="402" y="540" width="80" height="26" rx="7" fill="#0071E3"/><text x="442" y="558" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">[decide]</text><text x="494" y="558" font-size="16" fill="#9A4B00" class="mono">→ 整行变了，s₁ s₂ s₃ 可以变</text>
+<text x="0" y="600" font-size="17" fill="#1D1D1F">实测：加了「其他」之后，计费和技术之间的比例变了（log-odds +0.38 → +0.11）<tspan font-weight="600" fill="#0071E3">　→ 支持联合打分假设，不能唯一确定计算图</tspan></text>
+<text x="0" y="632" font-size="17" fill="#1D1D1F">mask 挡的是行与行之间（题与题）；一行内部，[decide] 看得到全部选项，后面的选项也看得到前面的</text>
+<text x="0" y="662" font-size="17" fill="#6E6E73">副作用：选项顺序会影响概率（顺序反转 0.84 → 0.95）；线索放在离 [decide] 近的末尾更容易被用上（16/16 vs 12/16）</text>
+</svg></div>
+</section>
+<section class="slide practice-v2" data-sec="03 架构 · 候选语义" data-title="改变选项，也改变了模型面对的问题"><div class="kicker">03 架构 · 候选语义</div><h1>改变选项，也改变了模型面对的问题</h1><div class="sub">联合候选效应 · 不应把黑盒现象当作唯一架构证明</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">原候选</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">计费 / 技术 / 销售</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">加入新候选</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">其他 / 无法判断</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">分布变化</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">已有选项的比例也可能变</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">固定选项说明与顺序做评测；记录候选集版本</text></svg></div></section>
+<section data-origin-page="15" class="slide" data-sec="03 架构" data-title="三种读出头">
+  <div class="kicker"><b>03</b>架构 · 返回值公式 + 读出头实现示意（架构未公开）</div>
+  <h1>三种头：<span class="thin">softmax · 期望 · sigmoid</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- col 1 choice -->
+<g>
+  <text x="0" y="34" font-size="26" font-weight="600" fill="#0071E3">choice</text><text x="110" y="34" font-size="20" fill="#6E6E73">2–255 个命名选项</text>
+  <rect x="0" y="60" width="490" height="150" rx="20" fill="#F5F5F7"/>
+  <text x="24" y="98" font-size="22" fill="#1D1D1F" class="mono">z = W·h + b</text>
+  <text x="24" y="134" font-size="22" fill="#1D1D1F" class="mono">p = softmax(z)</text>
+  <text x="24" y="170" font-size="19" fill="#6E6E73">或 pointer：h 与每个 [/opt] 的隐状态打分</text>
+  <text x="24" y="196" font-size="19" fill="#6E6E73">两种设计现有证据分不出</text>
+  <rect x="0" y="236" width="490" height="300" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+  <text x="24" y="276" font-size="20" fill="#6E6E73">部门</text>
+  <text x="24" y="318" font-size="22" fill="#1D1D1F">计费</text><rect x="110" y="300" width="300" height="24" rx="6" fill="#E8F0FE"/><rect x="110" y="300" width="267" height="24" rx="6" fill="#0071E3"/><text x="424" y="319" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.89</text>
+  <text x="24" y="358" font-size="22" fill="#1D1D1F">技术</text><rect x="110" y="340" width="300" height="24" rx="6" fill="#E8F0FE"/><rect x="110" y="340" width="30" height="24" rx="6" fill="#0071E3"/><text x="424" y="359" font-size="22" fill="#1D1D1F" class="mono">0.10</text>
+  <text x="24" y="398" font-size="22" fill="#1D1D1F">销售</text><rect x="110" y="380" width="300" height="24" rx="6" fill="#E8F0FE"/><rect x="110" y="380" width="4" height="24" rx="2" fill="#0071E3"/><text x="424" y="399" font-size="22" fill="#1D1D1F" class="mono">0.01</text>
+  <text x="24" y="452" font-size="20" fill="#1D1D1F" class="mono">choice = argmax = 计费</text>
+  <text x="24" y="488" font-size="20" fill="#1D1D1F" class="mono">confidence = (p_max − 1/K)/(1 − 1/K)</text>
+  <text x="24" y="518" font-size="20" fill="#0071E3" class="mono">= (0.89 − 0.33)/(1 − 0.33) = 0.84</text>
+</g>
+<!-- col 2 score -->
+<g>
+  <text x="555" y="34" font-size="26" font-weight="600" fill="#0071E3">score</text><text x="650" y="34" font-size="20" fill="#6E6E73">2–10 个有序档位</text>
+  <rect x="555" y="60" width="490" height="150" rx="20" fill="#F5F5F7"/>
+  <text x="579" y="98" font-size="22" fill="#1D1D1F" class="mono">p = softmax(z)  在档位上</text>
+  <text x="579" y="134" font-size="22" fill="#1D1D1F" class="mono">score = Σ l · p_l</text>
+  <text x="579" y="170" font-size="19" fill="#6E6E73">不是回归，是分类后取期望</text>
+  <text x="579" y="196" font-size="19" fill="#6E6E73">可以落在两档之间</text>
+  <rect x="555" y="236" width="490" height="300" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+  <text x="579" y="276" font-size="20" fill="#6E6E73">情绪</text>
+  <text x="579" y="318" font-size="22" fill="#1D1D1F">0 平静</text><rect x="720" y="300" width="245" height="24" rx="6" fill="#E8F0FE"/><text x="979" y="319" font-size="22" fill="#A1A1A6" class="mono">0.00</text>
+  <text x="579" y="358" font-size="22" fill="#1D1D1F">1 不满但克制</text><rect x="720" y="340" width="245" height="24" rx="6" fill="#E8F0FE"/><rect x="720" y="340" width="83" height="24" rx="6" fill="#0071E3"/><text x="979" y="359" font-size="22" fill="#1D1D1F" class="mono">0.34</text>
+  <text x="579" y="398" font-size="22" fill="#1D1D1F">2 非常愤怒</text><rect x="720" y="380" width="245" height="24" rx="6" fill="#E8F0FE"/><rect x="720" y="380" width="162" height="24" rx="6" fill="#0071E3"/><text x="979" y="399" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.66</text>
+  <text x="579" y="452" font-size="20" fill="#1D1D1F" class="mono">score = 0×0 + 1×0.34 + 2×0.66</text>
+  <text x="579" y="488" font-size="20" fill="#0071E3" class="mono">= 1.66</text>
+  <text x="579" y="518" font-size="20" fill="#1D1D1F" class="mono">confidence = (0.66 − 0.33)/(0.67) = 0.49</text>
+</g>
+<!-- col 3 noul -->
+<g>
+  <text x="1110" y="34" font-size="26" font-weight="600" fill="#0071E3">noul</text><text x="1190" y="34" font-size="20" fill="#6E6E73">一个命题</text>
+  <rect x="1110" y="60" width="490" height="150" rx="20" fill="#F5F5F7"/>
+  <text x="1134" y="98" font-size="22" fill="#1D1D1F" class="mono">p = sigmoid(w·h + b)</text>
+  <text x="1134" y="134" font-size="22" fill="#1D1D1F" class="mono">返回 p，没有 confidence</text>
+  <text x="1134" y="170" font-size="19" fill="#6E6E73">接口不同；以下为实现示意：</text>
+  <text x="1134" y="196" font-size="19" fill="#6E6E73">P(A) 与 1 − P(非 A) 不保证一致</text>
+  <rect x="1110" y="236" width="490" height="300" rx="20" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="2"/>
+  <text x="1134" y="276" font-size="20" fill="#6E6E73">威胁投诉</text>
+  <text x="1134" y="338" font-size="22" fill="#1D1D1F">是</text><rect x="1200" y="320" width="300" height="24" rx="6" fill="#E8F0FE"/><rect x="1200" y="320" width="294" height="24" rx="6" fill="#0071E3"/><text x="1514" y="339" font-size="22" font-weight="600" fill="#0071E3" class="mono">0.98</text>
+  <text x="1134" y="452" font-size="20" fill="#1D1D1F">概率精确到 0.01</text>
+  <text x="1134" y="488" font-size="20" fill="#1D1D1F">output_tokens 只是返回 JSON 的字数</text>
+  <text x="1134" y="518" font-size="20" fill="#1D1D1F">255 选项与 2 选项延迟相同</text>
+</g>
+</svg></div>
+</section>
+<section data-origin-page="16" class="slide" data-sec="03 架构" data-title="输入长度与问题批量都会影响延迟">
+  <div class="kicker"><b>03</b>架构 · 证据 · 服务端上报的中位耗时 · Archer Hume 测量</div>
+  <h1>state 变长会增加延迟，<span class="thin">大批量题目也会增加延迟</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- panel 1 -->
+<text x="90" y="34" font-size="24" font-weight="600" fill="#1D1D1F">一道题，state 越来越长</text>
+<line x1="90" y1="500" x2="700" y2="500" stroke="#D2D2D7" stroke-width="2"/><line x1="90" y1="500" x2="90" y2="60" stroke="#D2D2D7" stroke-width="2"/>
+<g font-size="17" fill="#6E6E73" class="mono">
+  <text x="90" y="530" text-anchor="middle">0</text><text x="293" y="530" text-anchor="middle">10k</text><text x="497" y="530" text-anchor="middle">20k</text><text x="700" y="530" text-anchor="middle">30k token</text>
+  <text x="78" y="505" text-anchor="end">0</text><text x="78" y="329" text-anchor="end">100</text><text x="78" y="153" text-anchor="end">200 ms</text>
+</g>
+<polyline points="97,399 128,352 190,357 289,343 396,231 505,174 621,148 697,116" fill="none" stroke="#0071E3" stroke-width="4" stroke-linejoin="round"/>
+<g fill="#0071E3"><circle cx="97" cy="399" r="7"/><circle cx="128" cy="352" r="7"/><circle cx="190" cy="357" r="7"/><circle cx="289" cy="343" r="7"/><circle cx="396" cy="231" r="7"/><circle cx="505" cy="174" r="7"/><circle cx="621" cy="148" r="7"/><circle cx="697" cy="116" r="7"/></g>
+<g font-size="18" fill="#1D1D1F" class="mono"><text x="112" y="430">360 token · 57.5 ms</text><text x="690" y="100" text-anchor="end">29,835 token · 218 ms</text></g>
+<!-- panel 2 -->
+<text x="890" y="34" font-size="24" font-weight="600" fill="#1D1D1F">短 state，问题越来越多</text>
+<line x1="890" y1="500" x2="1500" y2="500" stroke="#D2D2D7" stroke-width="2"/><line x1="890" y1="500" x2="890" y2="60" stroke="#D2D2D7" stroke-width="2"/>
+<g font-size="17" fill="#6E6E73" class="mono">
+  <text x="890" y="530" text-anchor="middle">1</text><text x="1093" y="530" text-anchor="middle">500</text><text x="1297" y="530" text-anchor="middle">1000</text><text x="1500" y="530" text-anchor="middle">1500 道题</text>
+  <text x="878" y="505" text-anchor="end">0</text><text x="878" y="298" text-anchor="end">300</text><text x="878" y="95" text-anchor="end">600 ms</text>
+</g>
+<polyline points="890,441 931,444 1093,377 1297,193 1500,87" fill="none" stroke="#0071E3" stroke-width="4" stroke-linejoin="round"/>
+<g fill="#0071E3"><circle cx="890" cy="441" r="7"/><circle cx="931" cy="444" r="7"/><circle cx="1093" cy="377" r="7"/><circle cx="1297" cy="193" r="7"/><circle cx="1500" cy="87" r="7"/></g>
+<g font-size="18" fill="#1D1D1F" class="mono"><text x="905" y="470">1 道 86.5 ms · 100 道 82 ms</text><text x="1490" y="70" text-anchor="end">1500 道 · 610 ms</text></g>
+</svg></div>
+</section>
+<section data-origin-page="17" class="slide" data-sec="03 架构" data-title="底座画像">
+  <div class="kicker"><b>03</b>架构 · 底座 · 官方两句话，其余是反推</div>
+  <h1>底座画像</h1>
+  <div class="stats">
+    <div class="stat text"><div class="n">Transformer<span class="acc">，对预训练 LM 做后训练</span></div><div class="l">TechCrunch 采访 · docs · <b>官方</b></div></div>
+    <div class="stat"><div class="n">≈10B</div><div class="l">激活参数 · 30k token 跑 160–220 ms 反推 · 70B dense 需要 1 秒多</div></div>
+    <div class="stat text"><div class="n">因果 decoder<span class="acc">，大概率 MoE</span></div><div class="l">前缀 KV cache + 后缀分支只在因果注意力下自然成立 · prefill-only 是算力瓶颈</div></div>
+    <div class="stat"><div class="n">84.6%</div><div class="l">MMLU-Pro · 14 个学科 1.2 万道 10 选 1 的知识题 · GPT-4o 72.6%、DeepSeek-R1 84.0%、8B 模型 40–55%</div></div>
+    <div class="stat text"><div class="n">自定义分词器</div><div class="l">192 个公开分词器全不匹配 · 数字逐个切 · 最接近 <b>Qwen</b>（348/415 探针一致）</div></div>
+    <div class="stat"><div class="n">64k<small>/ 32k</small></div><div class="l">整请求 / 单分支上限 · 纯文本 · 英文为主 · 不做按客户微调</div></div>
+  </div>
+</section>
+<section data-origin-page="18" class="slide divider" data-sec="04 训练" data-title="过渡：训练">
+  <div class="num">04</div>
+  <div class="word">训练</div>
+</section>
+<section class="slide practice-v2" data-sec="04 训练 · 逐步解释" data-title="RLHF、RLVR、RLCD：差别在优化目标"><div class="kicker">04 训练 · 逐步解释</div><h1>RLHF、RLVR、RLCD：差别在优化目标</h1><div class="sub">官方明确：Jev / TypeSafe 的训练路线是 RLCD</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">RLHF</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">人更偏好哪个回答</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">RLVR</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">生成的答案能否验证</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">RLCD</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">报出的概率是否可靠</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">三者可在复杂训练流程里组合，不是简单的替代关系</text></svg></div></section>
+<section data-origin-page="19" class="slide" data-sec="04 训练" data-title="三条后训练路线">
+  <div class="kicker"><b>04</b>训练 · 目标与反馈不同；Jev 路线是 RLCD，不是 RLVR</div>
+  <h1>三条后训练路线</h1>
+  <div class="tblwrap"><table class="tbl left wrap">
+    <tr><th></th><th>奖励来自</th><th>奖励作用在</th><th>目标倾向（有条件）</th><th>产物</th></tr>
+    <tr><td>RLHF<br><span style="font-size:18px;color:var(--muted);font-weight:400">Reinforcement Learning from Human Feedback · 人类反馈</span></td><td>reward model 的偏好分</td><td>采样出的文本</td><td>提高偏好响应的概率；可能收窄模式</td><td>偏好对齐的生成器</td></tr>
+    <tr><td>RLVR<br><span style="font-size:18px;color:var(--muted);font-weight:400">Reinforcement Learning with Verifiable Rewards · 可验证奖励</span></td><td>采样答案对不对，0 / 1</td><td>采样出的那一个动作</td><td>纯0/1目标倾向奖励高的答案</td><td>提高可验证任务正确率</td></tr>
+    <tr class="hi"><td>RLCD<br><span style="font-size:18px;font-weight:400">Reinforcement Learning for Calibrated Decisions · 校准的决策</span></td><td>校准目标；log / Brier 为教学示例</td><td>整个分布 p</td><td>理想充分条件下 p 接近真实比例</td><td>以校准为目标的判断器</td></tr>
+  </table></div>
+</section>
+<section class="slide practice-v2" data-sec="04 训练 · 逐步解释" data-title="RLHF：人类排序，训练奖励，再更新策略"><div class="kicker">04 训练 · 逐步解释</div><h1>RLHF：人类排序，训练奖励，再更新策略</h1><div class="sub">经典 InstructGPT 流程示意 · SFT → 偏好 → reward model → PPO + KL</div><div class="fig card"><video muted loop autoplay playsinline controls preload="auto" src="media/jev-training-rlhf-zh.mp4" poster="media/jev-training-rlhf-zh.png"></video></div></section>
+<section class="slide practice-v2" data-sec="04 训练 · 逐步解释" data-title="RLVR：答案先生成，再由规则验证"><div class="kicker">04 训练 · 逐步解释</div><h1>RLVR：答案先生成，再由规则验证</h1><div class="sub">可验证奖励示意 · 2 + 3 = 5 · 正确性奖励 1 / 0</div><div class="fig card"><video muted loop autoplay playsinline controls preload="auto" src="media/jev-training-rlvr-zh.mp4" poster="media/jev-training-rlvr-zh.png"></video></div></section>
+<section class="slide practice-v2" data-sec="04 训练 · 逐步解释" data-title="Jev 的 RLCD：让概率接受结果检验"><div class="kicker">04 训练 · 逐步解释</div><h1>Jev 的 RLCD：让概率接受结果检验</h1><div class="sub">官方路线 + 教学数学示意 · 具体损失和优化器未公开</div><div class="fig card"><video muted loop autoplay playsinline controls preload="auto" src="media/jev-training-rlcd-zh.mp4" poster="media/jev-training-rlcd-zh.png"></video></div></section>
+
+<section data-origin-page="20" class="slide divider" data-sec="05 数据" data-title="过渡：数据">
+  <div class="num">05</div>
+  <div class="word">数据</div>
+</section>
+<section data-origin-page="21" class="slide" data-sec="05 数据" data-title="创始人怎么说数据">
+  <div class="kicker"><b>05</b>数据 · 官方说法 · 原话</div>
+  <h1>创始人怎么说数据</h1>
+  <div class="quotes">
+    <div class="quote"><div class="q">训练数据 <span class="acc">100% 合成</span>，采访中的训练数据口径；不指预训练语料</div><div class="src">TechCrunch 2026-09-18："trained exclusively on synthetic data"</div></div>
+    <div class="quote"><div class="q">「我们很早就赌自己会造全部数据，这是我这辈子最好的一个赌注——<span class="acc">比这次发布好，比 RLHF 还好</span>」</div><div class="src">Diogo Almeida · TechCrunch 采访</div></div>
+    <div class="quote"><div class="q">公司<span class="acc">一半的人</span>在一个实验室里，专门做「统计上被充分理解的合成数据」</div><div class="src">TechCrunch："half its staff to a lab developing statistically well-understood synthetic data"</div></div>
+    <div class="quote"><div class="q">「数据比架构有意思得多」· 任务 &gt; 数据 &gt; 算力 &gt; 算法 · 客户数据不进训练</div><div class="src">HN 回复 · 博客 The Bitterest Lesson · docs Models 页</div></div>
+  </div>
+</section>
+<section data-origin-page="22" class="slide" data-sec="05 数据" data-title="倒果为因：先抽结果，再造材料">
+  <div class="kicker"><b>05</b>数据 · 采访：合成训练数据 · 以下生成流程是教学重构</div>
+  <h1>倒果为因：<span class="thin">先抽结果，再造材料</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- row 1: normal labeling -->
+<text x="0" y="40" font-size="24" font-weight="600" fill="#1D1D1F">正常打标</text><text x="120" y="40" font-size="20" fill="#6E6E73">先有材料，再猜答案</text>
+<rect x="0" y="70" width="420" height="120" rx="22" fill="#F5F5F7"/><text x="210" y="120" text-anchor="middle" font-size="26" fill="#1D1D1F">真实的工单</text><text x="210" y="158" text-anchor="middle" font-size="18" fill="#6E6E73">从系统里捞出来的文本</text>
+<line x1="432" y1="130" x2="558" y2="130" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="570" y="70" width="420" height="120" rx="22" fill="#F5F5F7"/><text x="780" y="120" text-anchor="middle" font-size="26" fill="#1D1D1F">人或大模型来猜</text><text x="780" y="158" text-anchor="middle" font-size="18" fill="#6E6E73">这条是 technical 吗</text>
+<line x1="1002" y1="130" x2="1128" y2="130" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="1140" y="70" width="460" height="120" rx="22" fill="#FFFFFF" stroke="#D0342C" stroke-width="2.5"/><text x="1370" y="120" text-anchor="middle" font-size="26" fill="#D0342C">一个标签</text><text x="1370" y="158" text-anchor="middle" font-size="18" fill="#6E6E73">可能猜错 · 拿不到「有多大比例是 technical」</text>
+<line x1="0" y1="250" x2="1600" y2="250" stroke="#E5E5EA" stroke-width="1.5"/>
+<!-- row 2: reverse -->
+<text x="0" y="310" font-size="24" font-weight="600" fill="#0071E3">倒果为因</text><text x="120" y="310" font-size="20" fill="#6E6E73">先抽答案，再造材料</text>
+<rect x="0" y="340" width="420" height="120" rx="22" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="210" y="390" text-anchor="middle" font-size="26" font-weight="600" fill="#0071E3">先抽结果</text><text x="210" y="428" text-anchor="middle" font-size="18" fill="#1D1D1F">technical · 很急 · 提到集成失败和重复扣款</text>
+<line x1="432" y1="400" x2="558" y2="400" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="570" y="340" width="420" height="120" rx="22" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="780" y="390" text-anchor="middle" font-size="26" font-weight="600" fill="#0071E3">模拟器写出工单</text><text x="780" y="428" text-anchor="middle" font-size="18" fill="#1D1D1F">LLM 只当打字员，不负责判断</text>
+<line x1="1002" y1="400" x2="1128" y2="400" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1140" y="340" width="460" height="120" rx="22" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="1370" y="390" text-anchor="middle" font-size="26" font-weight="600" fill="#0071E3">潜在标签已知</text><text x="1370" y="428" text-anchor="middle" font-size="18" fill="#1D1D1F">而且「有多大比例是 technical」算得出来</text>
+<text x="0" y="530" font-size="20" fill="#6E6E73">官方原话：「我们很早就赌自己会造全部数据，这是我这辈子最好的一个赌注」· 流程没公开，下面两页是重构</text>
+</svg></div>
+</section>
+<section data-origin-page="23" class="slide" data-sec="05 数据" data-title="模拟器怎么造一条数据">
+  <div class="kicker"><b>05</b>数据 · 模拟器 · 一条工单的四步 · 数字是示例</div>
+  <h1>模拟器怎么造一条数据</h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<rect x="0" y="30" width="370" height="440" rx="22" fill="#F5F5F7"/>
+<text x="24" y="76" font-size="26" font-weight="600" fill="#0071E3">① 抽结果</text>
+<text x="24" y="120" font-size="20" fill="#1D1D1F">部门　technical</text>
+<text x="24" y="156" font-size="20" fill="#1D1D1F">急不急　急</text>
+<text x="24" y="192" font-size="20" fill="#1D1D1F">情绪　不满但克制</text>
+<text x="24" y="228" font-size="20" fill="#1D1D1F">提到什么　集成失败 · 重复扣款</text>
+<line x1="24" y1="262" x2="346" y2="262" stroke="#D2D2D7" stroke-width="1.5"/>
+<text x="24" y="300" font-size="18" fill="#6E6E73">模拟器里的规矩（人定的）</text>
+<text x="24" y="334" font-size="18" fill="#6E6E73">三个部门 40 / 45 / 15</text>
+<text x="24" y="368" font-size="18" fill="#6E6E73">technical 提集成 0.8 · 提扣款 0.1</text>
+<text x="24" y="402" font-size="18" fill="#6E6E73">billing 提集成 0.1 · 提扣款 0.7</text>
+<line x1="380" y1="250" x2="426" y2="250" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="432" y="30" width="370" height="440" rx="22" fill="#F5F5F7"/>
+<text x="456" y="76" font-size="26" font-weight="600" fill="#0071E3">② 写文本</text>
+<text x="456" y="112" font-size="18" fill="#6E6E73">LLM 照着①写，只当打字员</text>
+<rect x="456" y="134" width="322" height="200" rx="14" fill="#FFFFFF" stroke="#D2D2D7" stroke-width="1.5"/>
+<g font-size="17" fill="#1D1D1F"><text x="472" y="168">"Hi, I've been trying to connect</text><text x="472" y="196">my Stripe account for 3 days and</text><text x="472" y="224">the integration keeps failing, and</text><text x="472" y="252">I also got charged twice. I'm losing</text><text x="472" y="280">sales. Please help ASAP."</text></g>
+<text x="456" y="380" font-size="18" fill="#6E6E73">同一个①写 N 遍：措辞、长度、</text>
+<text x="456" y="410" font-size="18" fill="#6E6E73">JSON 结构、选项顺序都换</text>
+<line x1="812" y1="250" x2="858" y2="250" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="864" y="30" width="370" height="440" rx="22" fill="#F5F5F7"/>
+<text x="888" y="76" font-size="26" font-weight="600" fill="#0071E3">③ 算比例</text>
+<text x="888" y="112" font-size="18" fill="#6E6E73">长成这样的工单，各部门占多少</text>
+<g font-size="19" fill="#1D1D1F" class="mono"><text x="888" y="160">technical 0.45×0.8×0.1</text><text x="888" y="188">          = 0.036</text><text x="888" y="228">billing   0.40×0.1×0.7</text><text x="888" y="256">          = 0.028</text></g>
+<line x1="888" y1="282" x2="1210" y2="282" stroke="#D2D2D7" stroke-width="1.5"/>
+<text x="888" y="330" font-size="28" font-weight="600" fill="#0071E3" class="mono">0.56 : 0.44</text>
+<text x="888" y="380" font-size="18" fill="#6E6E73">算不出闭式时：造十万条，</text>
+<text x="888" y="410" font-size="18" fill="#6E6E73">按内容分组，数一数</text>
+<line x1="1244" y1="250" x2="1290" y2="250" stroke="#0071E3" stroke-width="3" marker-end="url(#arB)"/>
+<rect x="1296" y="30" width="304" height="440" rx="22" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/>
+<text x="1320" y="76" font-size="26" font-weight="600" fill="#0071E3">④ 训练行</text>
+<g font-size="19" fill="#1D1D1F" class="mono"><text x="1320" y="130">state: ②的文本</text><text x="1320" y="180">部门:</text><text x="1320" y="212">  [0.44, 0.56, 0]</text><text x="1320" y="262">急不急: 1.0</text><text x="1320" y="312">情绪: 档 1</text></g>
+<text x="1320" y="380" font-size="18" fill="#0071E3">目标是一个分布，</text>
+<text x="1320" y="410" font-size="18" fill="#0071E3">不是 one-hot</text>
+<text x="0" y="530" font-size="20" fill="#6E6E73">「统计上被充分理解的合成数据」：每条数据的正确比例，是模拟器里一个算得出来的量</text>
+</svg></div>
+</section>
+<section data-origin-page="24" class="slide" data-sec="05 数据" data-title="三种样本，一个代价">
+  <div class="kicker"><b>05</b>数据 · 转模拟器的旋钮 · 目标分布</div>
+  <h1>三种样本，<span class="thin">一个代价</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- three mini charts -->
+<g>
+  <rect x="0" y="30" width="500" height="330" rx="22" fill="#F5F5F7"/>
+  <text x="24" y="72" font-size="24" font-weight="600" fill="#1D1D1F">清楚的样本</text>
+  <text x="24" y="104" font-size="18" fill="#6E6E73">只提集成，不提扣款</text>
+  <text x="60" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">计费</text><rect x="35" y="270" width="50" height="8" rx="3" fill="#0071E3"/>
+  <text x="250" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">技术</text><rect x="225" y="86" width="50" height="192" rx="6" fill="#0071E3"/>
+  <text x="440" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">销售</text><rect x="415" y="276" width="50" height="2" rx="1" fill="#0071E3"/>
+  <text x="250" y="340" text-anchor="middle" font-size="20" fill="#0071E3" class="mono">[0.04, 0.96, 0]</text>
+</g>
+<g>
+  <rect x="550" y="30" width="500" height="330" rx="22" fill="#F5F5F7"/>
+  <text x="574" y="72" font-size="24" font-weight="600" fill="#1D1D1F">模糊的样本</text>
+  <text x="574" y="104" font-size="18" fill="#6E6E73">两个部门的话题拉近，既提集成又提扣款</text>
+  <text x="610" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">计费</text><rect x="585" y="190" width="50" height="88" rx="6" fill="#0071E3"/>
+  <text x="800" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">技术</text><rect x="775" y="166" width="50" height="112" rx="6" fill="#0071E3"/>
+  <text x="990" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">销售</text><rect x="965" y="276" width="50" height="2" rx="1" fill="#0071E3"/>
+  <text x="800" y="340" text-anchor="middle" font-size="20" fill="#0071E3" class="mono">[0.44, 0.56, 0]</text>
+</g>
+<g>
+  <rect x="1100" y="30" width="500" height="330" rx="22" fill="#F5F5F7"/>
+  <text x="1124" y="72" font-size="24" font-weight="600" fill="#1D1D1F">不可知的样本</text>
+  <text x="1124" y="104" font-size="18" fill="#6E6E73">把能区分的话题全删掉，只剩「你们产品有问题」</text>
+  <text x="1160" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">计费</text><rect x="1135" y="198" width="50" height="80" rx="6" fill="#0071E3"/>
+  <text x="1350" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">技术</text><rect x="1325" y="188" width="50" height="90" rx="6" fill="#0071E3"/>
+  <text x="1540" y="300" text-anchor="middle" font-size="17" fill="#1D1D1F">销售</text><rect x="1515" y="248" width="50" height="30" rx="6" fill="#0071E3"/>
+  <text x="1350" y="340" text-anchor="middle" font-size="20" fill="#0071E3" class="mono">[0.40, 0.45, 0.15] = 先验</text>
+</g>
+<g font-size="20" fill="#1D1D1F">
+  <text x="0" y="420"><tspan font-weight="600">能造什么</tspan>　规则一致时标签可控 · 比例可算 · 量无限 · 想要多少「六成把握」的样本就造多少</text>
+  <text x="0" y="462"><tspan font-weight="600">代价</tspan>　模拟器里的每个数字是人拍的：「technical 工单 80% 提集成」真实世界是 60% 的话，校准就系统性地偏了</text>
+  <text x="0" y="504" fill="#6E6E73">不使用客户请求训练；仍需独立跨域验证——第三方实测：域内 ECE 0.02–0.03，分布外 0.107，规则不在文本里的题 0.325</text>
+</g>
+</svg></div>
+</section>
+<section class="slide practice-v2" data-sec="05 数据 · 信息边界" data-title="模拟器知道标签，模型未必看见全部信息"><div class="kicker">05 数据 · 信息边界</div><h1>模拟器知道标签，模型未必看见全部信息</h1><div class="sub">保留原版“倒果为因”示例，同时区分潜在状态与可见文本</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">潜在状态</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">生成时已知</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">观测材料</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">可能丢信息、引入噪声</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">条件分布</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">根据可见信息评估</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">合成数据可以控制规则；仍需验证语言生成和真实分布的差异</text></svg></div></section>
+<section data-origin-page="25" class="slide divider" data-sec="06 实验" data-title="过渡：实验">
+  <div class="num">06</div>
+  <div class="word">实验</div>
+</section>
+<section data-origin-page="26" class="slide" data-sec="06 实验" data-title="官方评测：Pareto 前沿">
+  <div class="kicker"><b>06</b>实验 · 官方 evals · 四个工作流平均 · 标签 = GPT-6 Astra 与 Fable 5.1 高推理档答案的平均</div>
+  <h1>四个工作流平均：<span class="acc">67.8%</span> <span class="thin">· $0.0004 · 0.4 s</span></h1>
+  <div class="fig card"><img src="media/blog_pareto.png" alt=""></div>
+</section>
+<section data-origin-page="27" class="slide" data-sec="06 实验" data-title="官方评测：分工作流">
+  <div class="kicker"><b>06</b>实验 · 官方 evals · 准确率 / 每条成本 · 延迟 · 其他模型按供应商默认推理设置</div>
+  <h1>客服和告警持平或胜出，<span class="thin">发票输 13–17 个点</span></h1>
+  <div class="tblwrap"><table class="tbl num two">
+    <tr><th>工作流</th><th>Jev</th><th>GPT-5.6 Terra</th><th>GPT-5.6 Sol</th><th>Opus 5</th></tr>
+    <tr><td>安全告警</td><td class="acc"><b>61.7%</b><br><small>$0.0001 · 0.3 s</small></td><td><b>51.2%</b><br><small>$0.0119 · 5.7 s</small></td><td><b>62.5%</b><br><small>$0.0295 · 8.5 s</small></td><td><b>66.2%</b><br><small>$0.0574 · 15.1 s</small></td></tr>
+    <tr><td>Agent trace 审核</td><td class="acc"><b>71.6%</b><br><small>$0.0003 · 0.5 s</small></td><td><b>73.0%</b><br><small>$0.0209 · 11.4 s</small></td><td><b>76.6%</b><br><small>$0.0575 · 40.3 s</small></td><td><b>75.2%</b><br><small>$0.1033 · 27.4 s</small></td></tr>
+    <tr><td>发票处理</td><td class="acc"><b>61.8%</b><br><small>$0.0011 · 0.5 s</small></td><td><b>74.7%</b><br><small>$0.0778 · 17.3 s</small></td><td><b>79.1%</b><br><small>$0.2152 · 34.3 s</small></td><td><b>78.4%</b><br><small>$0.4856 · 92.1 s</small></td></tr>
+    <tr><td>客服</td><td class="acc"><b>76.0%</b><br><small>$0.0001 · 0.4 s</small></td><td><b>72.7%</b><br><small>$0.0111 · 6.0 s</small></td><td><b>78.3%</b><br><small>$0.0323 · 10.1 s</small></td><td><b>72.4%</b><br><small>$0.0579 · 16.6 s</small></td></tr>
+    <tr><td>平均</td><td class="acc"><b>67.8%</b><br><small>$0.0004 · 0.4 s</small></td><td><b>67.9%</b><br><small>$0.0304 · 10.1 s</small></td><td><b>74.1%</b><br><small>$0.0836 · 23.3 s</small></td><td><b>73.1%</b><br><small>$0.1761 · 37.8 s</small></td></tr>
+  </table></div>
+</section>
+<section data-origin-page="28" class="slide" data-sec="06 实验" data-title="两端可信，中间不可信">
+  <div class="kicker"><b>06</b>实验 · 独立评测 · 校准 · 左：18,514 封邮件的垃圾率按 Jev 报的概率分桶（Arize）</div>
+  <h1>两端可信，<span class="thin">中间不可信</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- bars -->
+<line x1="90" y1="470" x2="760" y2="470" stroke="#D2D2D7" stroke-width="2"/>
+<g font-size="20" fill="#6E6E73" class="mono"><text x="78" y="475" text-anchor="end">0%</text><text x="78" y="275" text-anchor="end">50%</text><text x="78" y="75" text-anchor="end">100%</text></g>
+<line x1="90" y1="270" x2="760" y2="270" stroke="#E5E5EA" stroke-width="1.5" stroke-dasharray="6 5"/>
+<rect x="150" y="466" width="150" height="4" rx="2" fill="#0071E3"/><text x="225" y="440" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3" class="mono">0.1%</text>
+<rect x="350" y="318" width="150" height="152" rx="8" fill="#0071E3"/><text x="425" y="298" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3" class="mono">38%</text>
+<rect x="550" y="70" width="150" height="400" rx="8" fill="#0071E3"/><text x="625" y="52" text-anchor="middle" font-size="24" font-weight="600" fill="#0071E3" class="mono">99.9%</text>
+<g font-size="20" fill="#1D1D1F" text-anchor="middle">
+  <text x="225" y="510">报 &lt; 0.1</text><text x="425" y="510">报 0.5–0.6</text><text x="625" y="510">报 ≥ 0.9</text>
+</g>
+<text x="425" y="545" text-anchor="middle" font-size="18" fill="#6E6E73">实际是垃圾邮件的比例</text>
+<!-- right: numbers -->
+<g font-size="21" fill="#1D1D1F">
+  <text x="860" y="70" font-size="24" font-weight="600">ECE（期望校准误差，越小越好）</text>
+  <text x="860" y="116">域内公开集　OpenBookQA 0.024 · CommonsenseQA 0.032</text>
+  <text x="860" y="152">HellaSwag 0.029 · MMLU（1200 题）0.031　　前沿 LLM 同类任务 0.14–0.18</text>
+  <text x="860" y="204" fill="#D0342C">分布外 900 条规则生成的工单　0.107（噪声底 0.024）</text>
+  <text x="860" y="240" fill="#D0342C">规则不在文本里的优先级题　准确率 44.7% · ECE 0.325 · 平均报 0.74</text>
+  <text x="860" y="276" fill="#D0342C">同一批数据换一种问法　ECE 在 0.21–0.52 之间波动</text>
+  <text x="860" y="330" font-size="24" font-weight="600">按报出的概率分桶的准确率（4 个公开集 + 3300 条生产数据）</text>
+  <text x="860" y="376">≥ 0.9　对 90–99.6%　　　&lt; 0.9　对 55–72%</text>
+  <text x="860" y="430" font-size="24" font-weight="600">按类型 · 按语言</text>
+  <text x="860" y="476">choice / score 一致偏自信，noul 一致偏保守</text>
+  <text x="860" y="512">俄语　准确率 88.3% → 77.3%　ECE 0.032 → 0.096</text>
+</g>
+</svg></div>
+</section>
+<section data-origin-page="29" class="slide" data-sec="06 实验" data-title="短文本持平小模型，要推理的输前沿">
+  <div class="kicker"><b>06</b>实验 · 独立评测 · 准确率 · 每集 200–300 条</div>
+  <h1>短文本持平小模型，<span class="thin">要推理的输给前沿模型</span></h1>
+  <div class="tblwrap"><table class="tbl num">
+    <tr><th>任务</th><th>Jev</th><th>对手</th><th>来源</th></tr>
+    <tr><td>Enron 垃圾邮件 · 2 类</td><td class="acc">98.7%</td><td>gpt-5.6-luna 98.0% · gpt-5.4-mini 97.7%</td><td class="dim">amankumar</td></tr>
+    <tr><td>SST-2 情感 · 2 类</td><td class="acc">95.7%</td><td>93.0% · 92.7%</td><td class="dim">amankumar</td></tr>
+    <tr><td>AG News 主题 · 4 类</td><td class="acc">91.3%</td><td>89.7% · 88.3%</td><td class="dim">amankumar</td></tr>
+    <tr><td>Banking77 意图 · 77 类</td><td>76.0% / 0.832</td><td>luna 81.7% · 监督 encoder 0.933 · Terra 0.875</td><td class="dim">amankumar · ickma</td></tr>
+    <tr><td>CLINC150 意图 · 150 类</td><td>0.870</td><td>Terra 0.915 · nano 0.795</td><td class="dim">ickma</td></tr>
+    <tr><td>钓鱼邮件 · 2000 封</td><td>62.6%</td><td>Claude Haiku 4.5 81.3%</td><td class="dim">XenoSpectrum</td></tr>
+    <tr><td>49 任务综合 vs GPT-5.6-Luna</td><td class="acc">42 / 49 赢或平</td><td>105 ms vs 710–808 ms · ECE 0.07 vs 0.14–0.18</td><td class="dim">jev-decision-bench</td></tr>
+    <tr><td>18,514 封垃圾邮件 · 零样本</td><td class="acc">98.3%</td><td>= 用 1.48 万条标注训的 TF-IDF</td><td class="dim">Arize</td></tr>
+  </table></div>
+</section>
+<section class="slide practice-v2" data-sec="06 实验 · 营销演示 vs 代码" data-title="反例：minecraft-agent 营销演示 vs 代码事实"><div class="kicker">04 训练 · 营销演示 vs 代码</div><h1>Jev 通关我的世界？<span class="thin">—— 营销演示 vs 代码事实</span></h1><div class="sub">rmalde/minecraft-agent 静态分析 · commit 78b40ed · 详见 experiment/jev_practice/results/minecraft-agent-debunk.md</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><text x="0" y="34" font-size="22" font-weight="600" fill="#D0342C">营销说法</text><text x="160" y="34" font-size="15" fill="#6E6E73">2026-09 中文网络流传版本</text><text x="800" y="34" font-size="22" font-weight="600" fill="#0071E3">代码事实</text><text x="960" y="34" font-size="15" fill="#6E6E73">rmalde/minecraft-agent · commit 78b40ed</text><line x1="0" y1="55" x2="1600" y2="55" stroke="#D2D2D7" stroke-width="1.5"/><rect x="0" y="75" width="780" height="90" rx="14" fill="#FFFFFF" stroke="#D0342C" stroke-width="1.5"/><text x="20" y="103" font-size="19" font-weight="600" fill="#D0342C">「Kimi 做规划，Jev 做决策」</text><text x="20" y="133" font-size="17" fill="#1D1D1F">「8 分钟击败末影龙，成本不到 1 美元」</text><text x="20" y="153" font-size="15" fill="#6E6E73">流传最广的两个数字</text><rect x="800" y="75" width="780" height="90" rx="14" fill="#E8F0FE" stroke="#0071E3" stroke-width="1.5"/><text x="820" y="103" font-size="19" font-weight="600" fill="#0071E3">GPT-6 Astra 规划 + typesafe/jev-1.13 决策</text><text x="820" y="133" font-size="17" fill="#1D1D1F">8m 43.300s · 131 Jev + 35 Astra ≈ 166 调用</text><text x="820" y="153" font-size="15" fill="#6E6E73">models.mjs:2 · README L7、L11 · Kimi 名误传</text><rect x="0" y="180" width="780" height="90" rx="14" fill="#FFFFFF" stroke="#D0342C" stroke-width="1.5"/><text x="20" y="208" font-size="19" font-weight="600" fill="#D0342C">「Jev 看着屏幕即时决策」</text><text x="20" y="238" font-size="17" fill="#1D1D1F">「支持视觉输入」是营销核心叙事</text><text x="20" y="258" font-size="15" fill="#6E6E73">3D 游戏画面驱动</text><rect x="800" y="180" width="780" height="90" rx="14" fill="#E8F0FE" stroke="#0071E3" stroke-width="1.5"/><text x="820" y="208" font-size="19" font-weight="600" fill="#0071E3">Jev 不接收任何图像</text><text x="820" y="238" font-size="17" fill="#1D1D1F">请求体仅 state + questions.criteria</text><text x="820" y="258" font-size="15" fill="#6E6E73">models.mjs:17 · /api/alpha/decisions 协议</text><rect x="0" y="285" width="780" height="90" rx="14" fill="#FFFFFF" stroke="#D0342C" stroke-width="1.5"/><text x="20" y="313" font-size="19" font-weight="600" fill="#D0342C">「165 次决策模型贡献大」</text><text x="20" y="343" font-size="17" fill="#1D1D1F">「Jev 每秒做出有意义的决策」</text><text x="20" y="363" font-size="15" fill="#6E6E73">营销最常引用的数字</text><rect x="800" y="285" width="780" height="90" rx="14" fill="#E8F0FE" stroke="#0071E3" stroke-width="1.5"/><text x="820" y="313" font-size="19" font-weight="600" fill="#0071E3">78.2% 调用是单选项</text><text x="820" y="343" font-size="17" fill="#1D1D1F">harness 算好唯一动作，Jev 点头</text><text x="820" y="363" font-size="15" fill="#6E6E73">nether-agent.mjs:32-61 · end-combat.mjs:9-66</text><rect x="0" y="390" width="780" height="90" rx="14" fill="#FFFFFF" stroke="#D0342C" stroke-width="1.5"/><text x="20" y="418" font-size="19" font-weight="600" fill="#D0342C">「Jev 发现路线」</text><text x="20" y="448" font-size="17" fill="#1D1D1F">「模型在跑通一个未知的 Minecraft 世界」</text><text x="20" y="468" font-size="15" fill="#6E6E73">叙事关键</text><rect x="800" y="390" width="780" height="90" rx="14" fill="#E8F0FE" stroke="#0071E3" stroke-width="1.5"/><text x="820" y="418" font-size="19" font-weight="600" fill="#0071E3">路线在 harness 里写死</text><text x="820" y="448" font-size="17" fill="#1D1D1F">config.json 含种子、村庄、3 宝箱、8 床、地狱门、末地门</text><text x="820" y="468" font-size="15" fill="#6E6E73">optimization/nether/config.json · 系统提示词复述</text><line x1="0" y1="500" x2="1600" y2="500" stroke="#D2D2D7" stroke-width="1"/><text x="0" y="528" font-size="20" font-weight="600" fill="#1D1D1F">代码事实：营销演示夸大了模型贡献。30+ 个 .mjs 模块 + Java observer + 预勘坐标承担所有工程。</text><text x="0" y="552" font-size="15" fill="#6E6E73">仓库未做 4 路消融（Astra+Jev / No Astra / 确定性 / 随机）· Issue #4 提议被忽略</text></svg></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="NanoJev 把“小判断”做成可训练模型"><div class="kicker">03 唯一实战 · NanoJev</div><h1>NanoJev 把“小判断”做成可训练模型</h1><div class="sub">0.6B 开源实现 · 此图描述 NanoJev，不代表 Jev 的内部结构</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">局部状态 + 问题</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">给定候选方向</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">Qwen3-0.6B</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">编码候选路径</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">决策头</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">输出方向安全概率</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">迷宫里四个概率相互独立，不要求加起来等于 1</text></svg></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="同一张迷宫，NanoJev 先到终点"><div class="kicker">03 唯一实战 · NanoJev</div><h1>同一张迷宫，NanoJev 先到终点</h1><div class="sub">同一控制器 · 同一步数播放 · 上游录制轨迹</div><div class="maze-panels"><article class="maze-panel"><h2>Jev</h2><canvas width="440" height="440" aria-label="Jev 迷宫轨迹"></canvas><div class="maze-readout"></div></article><article class="maze-panel"><h2>NanoJev</h2><canvas width="440" height="440" aria-label="NanoJev 迷宫轨迹"></canvas><div class="maze-readout"></div></article></div><div class="maze-controls" data-interactive><button id="maze-play">播放轨迹</button><button id="maze-reset">从头开始</button><input id="maze-step" type="range" min="0" max="2738" step="1" value="225"><span id="maze-position"></span></div><p class="maze-note">蓝点：当前位置　黑点：终点　浅蓝线：已走路径　·　尝试包含撞墙</p></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="少的是尝试次数：2,738 → 225"><div class="kicker">03 唯一实战 · NanoJev</div><h1>少的是尝试次数：2,738 → 225</h1><div class="sub">约为 1 / 12.17 · 没有测量推理延迟或端到端耗时</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>所选轨迹</th><th>总尝试</th><th>撞墙</th><th>成功移动</th></tr></thead><tbody><tr><td>Jev</td><td>2,738</td><td>1,044</td><td>1,694</td></tr><tr><td>NanoJev</td><td>225</td><td>77</td><td>148</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="控制器先过门槛，再优先靠近终点"><div class="kicker">03 唯一实战 · NanoJev</div><h1>控制器先过门槛，再优先靠近终点</h1><div class="sub">原代码顺序 · 记录实际反馈，避免重复尝试已知墙壁</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">候选筛选</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">未试过且 p ≥ 0.5</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">方向排序</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">距离 → 访问次数 → p</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">实际尝试</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">记下通路或墙壁</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">没有方向过线就试低分方向；当前无新边就沿已知通路回退</text></svg></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="这次，NanoJev 把所有方向都放过了"><div class="kicker">03 唯一实战 · NanoJev</div><h1>这次，NanoJev 把所有方向都放过了</h1><div class="sub">143 个访问位置 × 4 个方向 · 最低概率仍为 0.688</div><div class="statement"><div><span>572 / 572</span></div><p>记录中的方向概率全部超过 0.5</p><small>筛选不再排除方向；距离、访问记录和概率细微差异决定路线</small></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="移除模型判断，同一控制器只用 162 次"><div class="kicker">03 唯一实战 · NanoJev</div><h1>移除模型判断，同一控制器只用 162 次</h1><div class="sub">新增离线消融 · 所有方向固定 p = 0.5 · 同地图、同预算、同排序规则</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>判断来源</th><th>尝试次数</th><th>撞墙次数</th></tr></thead><tbody><tr><td>Jev 上游录制</td><td>2,738</td><td>1,044</td></tr><tr><td>NanoJev 上游录制</td><td>225</td><td>77</td></tr><tr><td>本地常数对照：无模型</td><td>162</td><td>34</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="03 唯一实战 · NanoJev" data-title="单条展示，不能替代成功率评估"><div class="kicker">03 唯一实战 · NanoJev</div><h1>单条展示，不能替代成功率评估</h1><div class="sub">上游独立 Maze test：10 个案例 · 与展示使用不同控制设置</div><div class="statement"><div><span>4 / 10</span>　vs　7 / 10</div><p>NanoJev　　　　　　　　　Jev</p><small>这页比较独立测试的成功数；不与前页的尝试次数混成一个排名</small></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="迁移到定位：每一步都要减少无效排查"><div class="kicker">04 kernel 定位设计</div><h1>迁移到定位：每一步都要减少无效排查</h1><div class="sub">设计观点 · 把定位过程看成不断收集证据、修正候选的闭环</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">提出候选</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">保留多种可能</text><path d="M500.0 250 L541.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="555.0" y="165" width="490.0" height="170" rx="20" fill="#F5F5F7"/><text x="583.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">选择取证</text><text x="583.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">优先能区分假设的证据</text><path d="M1055.0 250 L1096.0 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1110.0" y="165" width="490.0" height="170" rx="20" fill="#E8F0FE"/><text x="1138.0" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">更新判断</text><text x="1138.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">验证、反驳、补缺</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">概率用于分配调查顺序；根因需要证据闭环</text></svg></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="当前工作台已成形，分析核心仍是模拟"><div class="kicker">04 kernel 定位设计</div><h1>当前工作台已成形，分析核心仍是模拟</h1><div class="sub">基于 AI4-Loc 实际代码核查 · 不是生产定位能力评测</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>已经存在</th><th>当前实现</th><th>拟接入位置</th></tr></thead><tbody><tr><td>日志 / 符号包上传</td><td>/api/analyze 创建任务</td><td>上传后建立可追踪输入清单</td></tr><tr><td>任务进度与报告</td><td>runMockAnalysis 定时推进</td><td>替换为真实 worker + 证据链</td></tr><tr><td>评分与门禁界面</td><td>固定报告与示例分数</td><td>接真实 benchmark 与 evaluator</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="Jev 放在取证之后、动作之前"><div class="kicker">04 kernel 定位设计</div><h1>Jev 放在取证之后、动作之前</h1><div class="sub">拟议接入：研发分析 worker；先以影子建议运行</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">本地取证</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">解析 / 符号 / 检索</text><path d="M361.25 250 L402.25 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="416.25" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="444.25" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">Jev 判断</text><text x="444.25" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">相关性 / 支持度</text><path d="M777.5 250 L818.5 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="832.5" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="860.5" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">代码策略</text><text x="860.5" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">校验 / 预算 / 路由</text><path d="M1193.75 250 L1234.75 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1248.75" y="165" width="351.25" height="170" rx="20" fill="#E8F0FE"/><text x="1276.75" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">工具与工程师</text><text x="1276.75" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">取证 / 复现 / 审核</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">生成模型负责假设与报告；原始证据始终可追溯</text></svg></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="先把证据变成“可定位、可核对”的状态"><div class="kicker">04 kernel 定位设计</div><h1>先把证据变成“可定位、可核对”的状态</h1><div class="sub">建议 state 契约 · 原始日志与关键上下文保持关联</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>字段组</th><th>必须回答的问题</th></tr></thead><tbody><tr><td>版本</td><td>kernel commit / build ID / config / 模块符号是否匹配？</td></tr><tr><td>现场</td><td>故障类型、时间窗、CPU / 任务、调用栈来自哪里？</td></tr><tr><td>证据</td><td>每个 E-ID 是否带文件哈希、行号、抽取器版本？</td></tr><tr><td>上下文</td><td>已做哪些检查？哪些假设被否定？还缺什么？</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="候选要先找全，再让模型调整顺序"><div class="kicker">04 kernel 定位设计</div><h1>候选要先找全，再让模型调整顺序</h1><div class="sub">拟议候选集 · 栈帧、相关代码、变更、历史问题分别召回</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0" y="30" width="440" height="145" rx="20" fill="#F5F5F7"/><text x="28" y="90" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">符号与调用栈</text><text x="28" y="142" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">精确映射</text><rect x="0" y="215" width="440" height="145" rx="20" fill="#F5F5F7"/><text x="28" y="275" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">代码与变更</text><text x="28" y="327" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">版本约束检索</text><rect x="0" y="400" width="440" height="145" rx="20" fill="#F5F5F7"/><text x="28" y="460" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">历史故障</text><text x="28" y="512" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">相似现场</text><path d="M470 280 L595 280" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="630" y="175" width="450" height="205" rx="20" fill="#F5F5F7"/><text x="658" y="235" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">候选池 + OTHER</text><text x="658" y="287" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">去重，保留来源</text><path d="M1110 280 L1210 280" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1240" y="175" width="360" height="205" rx="20" fill="#E8F0FE"/><text x="1268" y="235" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">优先调查列表</text><text x="1268" y="287" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">不删除低分原件</text></svg></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="把“谁是根因”改成三类可核验小问题"><div class="kicker">04 kernel 定位设计</div><h1>把“谁是根因”改成三类可核验小问题</h1><div class="sub">题目设计草案 · 每题只问一个判断，保留“不足以判断”</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>判断</th><th>题目示例</th><th>应用动作</th></tr></thead><tbody><tr><td>相关性</td><td>E17 是否与当前故障时间窗和调用路径相关？</td><td>排序证据</td></tr><tr><td>支持 / 冲突</td><td>这段持锁记录是否支持 H1 中的具体命题？</td><td>补支持证据或寻找反证</td></tr><tr><td>下一步</td><td>查持锁者、查 I/O 栈、补符号，先做哪项？</td><td>从允许的取证动作中选择</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="每次取证后更新状态，避免原地打转"><div class="kicker">04 kernel 定位设计</div><h1>每次取证后更新状态，避免原地打转</h1><div class="sub">拟议 worker 循环 · 工具反馈优先于模型建议</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="70" y="45" width="600" height="155" rx="20" fill="#F5F5F7"/><text x="98" y="105" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">证据状态 vN</text><text x="98" y="157" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">已验证 / 已否定 / 待补充</text><path d="M700 120 L880 120" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="925" y="45" width="600" height="155" rx="20" fill="#E8F0FE"/><text x="953" y="105" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">选择下一个检查</text><text x="953" y="157" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">受预算和工具能力约束</text><path d="M1225 220 L1225 345" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="925" y="365" width="600" height="155" rx="20" fill="#F5F5F7"/><text x="953" y="425" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">工具执行并留痕</text><text x="953" y="477" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">带参数、输入版本与输出 ID</text><path d="M900 442 L720 442" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="70" y="365" width="600" height="155" rx="20" fill="#F5F5F7"/><text x="98" y="425" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">核对新证据</text><text x="98" y="477" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">没有新信息就补证据或退出</text><path d="M370 345 L370 220" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/></svg></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="例如：hung task，先区分等待发生在哪里"><div class="kicker">04 kernel 定位设计</div><h1>例如：hung task，先区分等待发生在哪里</h1><div class="sub">合成教学示例 · 没有真实模型分数，不对应实际客户故障</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0" y="60" width="455" height="175" rx="20" fill="#F5F5F7"/><text x="28" y="120" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">E1：任务等待超时</text><text x="28" y="172" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">现场尚缺持锁者信息</text><path d="M480 145 L605 145" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="640" y="60" width="450" height="175" rx="20" fill="#F5F5F7"/><text x="668" y="120" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">H1 锁等待 / H2 I/O</text><text x="668" y="172" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">两种假设都保留</text><path d="M1115 145 L1230 145" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1260" y="60" width="340" height="175" rx="20" fill="#E8F0FE"/><text x="1288" y="120" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">建议补取证据</text><text x="1288" y="172" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">锁 / 等待队列</text><text x="60" y="345" font-size="38" fill="#1D1D1F" font-weight="400" text-anchor="start">新增 E2：记录持锁者身份、相关栈与时间关系</text><text x="60" y="425" font-size="32" fill="#6E6E73" font-weight="400" text-anchor="start">若仍无法排除 I/O → 保留并行假设，继续取证</text><text x="60" y="500" font-size="31" fill="#0071E3" font-weight="600" text-anchor="start">证据支持假设 ≠ 已证明缺陷起因</text></svg></div></section>
+<section class="slide practice-v2" data-sec="04 kernel 定位设计" data-title="高分只是建议，停止条件由代码定义"><div class="kicker">04 kernel 定位设计</div><h1>高分只是建议，停止条件由代码定义</h1><div class="sub">拟议策略 · 证据不足、候选缺失、服务失败均有明确出口</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>情形</th><th>系统行为</th></tr></thead><tbody><tr><td>证据充分且判断一致</td><td>推荐候选与下一步，展示证据链</td></tr><tr><td>支持与反证冲突 / 缺关键材料</td><td>扩检或补取证据，标为待确认</td></tr><tr><td>预算耗尽 / 超时 / 输出异常</td><td>保留现场，回退原流程并转人工</td></tr><tr><td>需要复现、修改或修复</td><td>走工程验证流程，确认后再形成结论</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="05 验证与推进" data-title="是否值得接入，用整条定位流程验收"><div class="kicker">05 验证与推进</div><h1>是否值得接入，用整条定位流程验收</h1><div class="sub">建议评估协议 · 案例、标注、预算与目标阈值仍待确定</div><div class="tblwrap"><table class="tbl left wrap"><thead><tr><th>对照 / 指标</th><th>要证明什么</th></tr></thead><tbody><tr><td>规则 + 检索 / 现有 Agent / 加 Jev</td><td>Jev 在相同输入与预算下有净增益</td></tr><tr><td>候选召回、Top-k 命中、严重误导率</td><td>更快找到正确方向，且不漏掉关键问题</td></tr><tr><td>取证次数、人工确认耗时、总成本 p50 / p95</td><td>少走弯路，而非只减少一条 API 延迟</td></tr><tr><td>按故障家族和版本留出，统计失败与拒答</td><td>重复样本不泄漏，跨版本结果可复核</td></tr></tbody></table></div></section>
+<section class="slide practice-v2" data-sec="05 验证与推进" data-title="先把“候选排序”做成最小试点"><div class="kicker">05 验证与推进</div><h1>先把“候选排序”做成最小试点</h1><div class="sub">建议顺序 · 每一阶段都有可以退出的判断依据</div><div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560"><rect x="0.0" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="28.0" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">准备</text><text x="28.0" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">真实 worker + 案例</text><path d="M361.25 250 L402.25 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="416.25" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="444.25" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">离线</text><text x="444.25" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">固定输入配对评估</text><path d="M777.5 250 L818.5 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="832.5" y="165" width="351.25" height="170" rx="20" fill="#F5F5F7"/><text x="860.5" y="225" font-size="34" fill="#1D1D1F" font-weight="600" text-anchor="start">影子</text><text x="860.5" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">只记录建议与反馈</text><path d="M1193.75 250 L1234.75 250" stroke="#A1A1A6" stroke-width="4" fill="none" marker-end="url(#ar)"/><rect x="1248.75" y="165" width="351.25" height="170" rx="20" fill="#E8F0FE"/><text x="1276.75" y="225" font-size="34" fill="#0071E3" font-weight="600" text-anchor="start">有限采纳</text><text x="1276.75" y="277" font-size="25" fill="#6E6E73" font-weight="400" text-anchor="start">质量达标再接动作</text><text x="800" y="440" font-size="29" fill="#6E6E73" font-weight="400" text-anchor="middle">首个落点：panic / hung task 的证据候选排序；下一步取证随后评估</text></svg></div></section>
+<section data-origin-page="40" class="slide" data-sec="09 未来" data-title="一个 agent 任务里，判断点比生成点多">
+  <div class="kicker"><b>09</b>未来 · LangChain / Vercel / 官方 cookbook 里已经接上的位置</div>
+  <h1>一个 agent 任务里，<span class="acc">判断点</span><span class="thin">比生成点多</span></h1>
+  <div class="diagbox pad"><svg class="sv" viewBox="0 0 1600 560" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+<!-- loop of nodes -->
+<g>
+  <rect x="0" y="230" width="200" height="100" rx="20" fill="#F5F5F7"/><text x="100" y="272" text-anchor="middle" font-size="22" fill="#1D1D1F">用户任务</text><text x="100" y="302" text-anchor="middle" font-size="17" fill="#6E6E73">输入</text>
+  <line x1="210" y1="280" x2="256" y2="280" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="266" y="230" width="220" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="376" y="266" text-anchor="middle" font-size="22" font-weight="600" fill="#0071E3">路由</text><text x="376" y="296" text-anchor="middle" font-size="17" fill="#1D1D1F">选模型 · 选工具 · 选子任务</text><text x="376" y="320" text-anchor="middle" font-size="16" fill="#6E6E73">choice</text>
+  <line x1="496" y1="280" x2="542" y2="280" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="552" y="230" width="220" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="662" y="266" text-anchor="middle" font-size="22" font-weight="600" fill="#0071E3">护栏</text><text x="662" y="296" text-anchor="middle" font-size="17" fill="#1D1D1F">调用工具前：危险吗</text><text x="662" y="320" text-anchor="middle" font-size="16" fill="#6E6E73">noul · 越权吗</text>
+  <line x1="782" y1="280" x2="828" y2="280" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="838" y="230" width="200" height="100" rx="20" fill="#F5F5F7" stroke="#D2D2D7" stroke-width="2"/><text x="938" y="272" text-anchor="middle" font-size="22" fill="#1D1D1F">LLM 生成</text><text x="938" y="302" text-anchor="middle" font-size="17" fill="#6E6E73">写代码 · 写回复</text>
+  <line x1="1048" y1="280" x2="1094" y2="280" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="1104" y="230" width="220" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="1214" y="266" text-anchor="middle" font-size="22" font-weight="600" fill="#0071E3">验证</text><text x="1214" y="296" text-anchor="middle" font-size="17" fill="#1D1D1F">输出对不对 · 引用真不真</text><text x="1214" y="320" text-anchor="middle" font-size="16" fill="#6E6E73">noul · score</text>
+  <line x1="1334" y1="280" x2="1380" y2="280" stroke="#8E8E93" stroke-width="3" marker-end="url(#ar)"/>
+  <rect x="1390" y="230" width="210" height="100" rx="20" fill="#E8F0FE" stroke="#0071E3" stroke-width="2"/><text x="1495" y="266" text-anchor="middle" font-size="22" font-weight="600" fill="#0071E3">继续 / 重试 / 转人</text><text x="1495" y="296" text-anchor="middle" font-size="17" fill="#1D1D1F">按置信度分流</text><text x="1495" y="320" text-anchor="middle" font-size="16" fill="#6E6E73">choice + 阈值</text>
+  <!-- loop back -->
+  <path d="M1495,340 L1495,400 L376,400 L376,340" fill="none" stroke="#A1A1A6" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#ar)"/>
+  <text x="935" y="392" text-anchor="middle" font-size="18" fill="#6E6E73">循环，直到完成</text>
+</g>
+<!-- top: other judgment jobs -->
+<g font-size="20" fill="#1D1D1F">
+  <text x="0" y="60" font-size="22" font-weight="600" fill="#1D1D1F">循环之外，同一类判断</text>
+  <text x="0" y="104">工单分流 · 内容审核 · 垃圾邮件 · 发票核对 · 告警分级 · 重排序 · 数据打标 · 兴趣过滤</text>
+  <text x="0" y="144" fill="#6E6E73">共同点：答案空间封闭、量大、要快、要知道自己有几成把握</text>
+</g>
+<!-- bottom -->
+<line x1="0" y1="450" x2="1600" y2="450" stroke="#E5E5EA" stroke-width="1.5"/>
+<g font-size="20" fill="#1D1D1F">
+  <text x="0" y="494"><tspan fill="#0071E3" font-weight="600">蓝色</tspan>：不需要生成一个字的位置 · <tspan fill="#6E6E73">灰色</tspan>：需要生成的位置</text>
+  <text x="0" y="534" fill="#6E6E73">OpenRouter 已加 Decisions API · LangChain TypeSafeClassifier · Vercel 用它换掉了自己的安全分类模型</text>
+</g>
+</svg></div>
+</section>
+<section data-origin-page="41" class="slide" data-sec="09 未来" data-title="发现问题的重要性">
+  <div class="kicker"><b>09</b>未来 · 启示</div>
+  <h1>发现问题的重要性</h1>
+  <div class="bigline">
+    <div class="row"><span class="thin">创始人的排序：</span>任务 <span class="thin">&gt;</span> 数据 <span class="thin">&gt;</span> 算力 <span class="thin">&gt;</span> 算法</div>
+    <div class="row"><span class="thin">结构：</span>一周内被复现 15 次 <span class="thin">— 不是护城河</span></div>
+    <div class="row"><span class="thin">数据与校准：</span>是否追平需同协议验证 <span class="thin">— 是护城河，但也只是执行</span></div>
+    <div class="row"><span class="thin">问题：</span><span class="acc">软件里的判断，不需要生成，需要把握</span> <span class="thin">— 将这一需求产品化</span></div>
+    <div class="row small">InstructGPT 的配方是「换任务」；Jev 又换了一次任务。</div>
+  </div>
+</section>
+<section data-origin-page="42" class="slide end" data-sec="收尾" data-title="收尾">
+  <h1>Jev</h1>
+  <div class="big"><b>材料 + 选择题 → 每个选项一个校准过的概率</b><br>结构化接口 · 时延、费用、校准都要按任务验证 · 用自己的数据验一遍</div>
+  
+</section></div><div id="deck-controls" data-interactive><button id="deck-prev" aria-label="上一页">‹</button><span id="deck-count"></span><button id="deck-next" aria-label="下一页">›</button><button id="deck-menu" aria-expanded="false">☰ 目录</button><button id="deck-fullscreen">全屏</button></div><nav id="deck-toc" hidden></nav><div id="deck-hint">滚轮 / 滑动 / ← → 翻页 · G 目录 · F 全屏</div><script id="maze-data" type="application/json">{"size":50,"initial":{"walls":[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9],[0,10],[0,11],[0,12],[0,13],[0,14],[0,15],[0,16],[0,17],[0,18],[0,19],[0,20],[0,21],[0,22],[0,23],[0,24],[0,25],[0,26],[0,27],[0,28],[0,29],[0,30],[0,31],[0,32],[0,33],[0,34],[0,35],[0,36],[0,37],[0,38],[0,39],[0,40],[0,41],[0,42],[0,43],[0,44],[0,45],[0,46],[0,47],[0,48],[0,49],[1,0],[1,26],[1,46],[1,48],[1,49],[2,0],[2,2],[2,4],[2,6],[2,8],[2,10],[2,11],[2,12],[2,14],[2,15],[2,16],[2,17],[2,18],[2,20],[2,22],[2,24],[2,26],[2,28],[2,29],[2,30],[2,32],[2,33],[2,34],[2,35],[2,36],[2,38],[2,39],[2,40],[2,43],[2,44],[2,46],[2,48],[2,49],[3,0],[3,4],[3,12],[3,14],[3,20],[3,22],[3,24],[3,30],[3,32],[3,34],[3,38],[3,44],[3,46],[3,48],[3,49],[4,0],[4,2],[4,6],[4,7],[4,8],[4,9],[4,10],[4,12],[4,16],[4,17],[4,18],[4,19],[4,20],[4,24],[4,25],[4,26],[4,28],[4,30],[4,32],[4,34],[4,36],[4,37],[4,38],[4,40],[4,41],[4,42],[4,44],[4,48],[4,49],[5,0],[5,2],[5,4],[5,6],[5,12],[5,18],[5,22],[5,24],[5,28],[5,30],[5,34],[5,36],[5,40],[5,44],[5,46],[5,48],[5,49],[6,0],[6,2],[6,4],[6,5],[6,6],[6,8],[6,9],[6,11],[6,12],[6,14],[6,16],[6,17],[6,18],[6,20],[6,22],[6,26],[6,27],[6,28],[6,30],[6,31],[6,32],[6,33],[6,34],[6,36],[6,38],[6,40],[6,41],[6,42],[6,43],[6,44],[6,46],[6,48],[6,49],[7,0],[7,2],[7,8],[7,12],[7,14],[7,16],[7,20],[7,48],[7,49],[8,0],[8,2],[8,3],[8,4],[8,5],[8,6],[8,8],[8,10],[8,12],[8,14],[8,16],[8,18],[8,19],[8,20],[8,22],[8,23],[8,24],[8,26],[8,28],[8,29],[8,30],[8,31],[8,33],[8,34],[8,35],[8,36],[8,38],[8,40],[8,42],[8,43],[8,45],[8,46],[8,48],[8,49],[9,0],[9,4],[9,10],[9,14],[9,16],[9,20],[9,26],[9,28],[9,38],[9,40],[9,48],[9,49],[10,0],[10,2],[10,4],[10,6],[10,8],[10,9],[10,10],[10,11],[10,12],[10,14],[10,15],[10,16],[10,17],[10,18],[10,20],[10,21],[10,22],[10,24],[10,25],[10,26],[10,28],[10,30],[10,31],[10,32],[10,36],[10,38],[10,40],[10,42],[10,44],[10,45],[10,46],[10,48],[10,49],[11,0],[11,2],[11,4],[11,10],[11,18],[11,26],[11,36],[11,40],[11,48],[11,49],[12,0],[12,4],[12,6],[12,8],[12,10],[12,12],[12,13],[12,14],[12,15],[12,16],[12,18],[12,19],[12,20],[12,22],[12,23],[12,24],[12,28],[12,29],[12,31],[12,32],[12,33],[12,34],[12,36],[12,37],[12,38],[12,40],[12,42],[12,44],[12,45],[12,46],[12,48],[12,49],[13,0],[13,2],[13,8],[13,12],[13,24],[13,26],[13,34],[13,38],[13,42],[13,44],[13,48],[13,49],[14,0],[14,2],[14,3],[14,4],[14,6],[14,8],[14,9],[14,12],[14,14],[14,18],[14,20],[14,21],[14,22],[14,23],[14,24],[14,26],[14,28],[14,29],[14,31],[14,32],[14,34],[14,35],[14,36],[14,38],[14,40],[14,41],[14,42],[14,44],[14,46],[14,47],[14,48],[14,49],[15,0],[15,4],[15,14],[15,16],[15,18],[15,22],[15,26],[15,28],[15,32],[15,36],[15,38],[15,40],[15,48],[15,49],[16,0],[16,2],[16,4],[16,5],[16,6],[16,8],[16,10],[16,12],[16,14],[16,16],[16,18],[16,20],[16,21],[16,22],[16,24],[16,25],[16,26],[16,28],[16,30],[16,31],[16,32],[16,34],[16,35],[16,36],[16,38],[16,40],[16,42],[16,44],[16,46],[16,48],[16,49],[17,0],[17,2],[17,10],[17,14],[17,16],[17,24],[17,28],[17,38],[17,42],[17,48],[17,49],[18,0],[18,2],[18,4],[18,5],[18,6],[18,7],[18,8],[18,10],[18,12],[18,14],[18,15],[18,16],[18,17],[18,18],[18,20],[18,22],[18,23],[18,24],[18,26],[18,27],[18,28],[18,29],[18,30],[18,31],[18,32],[18,36],[18,37],[18,38],[18,39],[18,40],[18,44],[18,46],[18,47],[18,48],[18,49],[19,0],[19,2],[19,6],[19,10],[19,22],[19,24],[19,34],[19,36],[19,40],[19,42],[19,44],[19,48],[19,49],[20,0],[20,2],[20,3],[20,4],[20,6],[20,8],[20,10],[20,12],[20,14],[20,16],[20,18],[20,19],[20,20],[20,22],[20,24],[20,26],[20,29],[20,30],[20,32],[20,33],[20,34],[20,36],[20,38],[20,40],[20,42],[20,44],[20,45],[20,46],[20,48],[20,49],[21,0],[21,4],[21,8],[21,14],[21,18],[21,32],[21,38],[21,40],[21,42],[21,48],[21,49],[22,0],[22,2],[22,4],[22,6],[22,7],[22,8],[22,10],[22,11],[22,12],[22,14],[22,16],[22,18],[22,20],[22,21],[22,22],[22,23],[22,24],[22,26],[22,27],[22,28],[22,30],[22,32],[22,34],[22,37],[22,38],[22,40],[22,42],[22,43],[22,44],[22,46],[22,48],[22,49],[23,0],[23,2],[23,4],[23,14],[23,20],[23,30],[23,34],[23,38],[23,42],[23,46],[23,48],[23,49],[24,0],[24,4],[24,6],[24,7],[24,8],[24,9],[24,10],[24,11],[24,12],[24,16],[24,17],[24,18],[24,19],[24,20],[24,22],[24,23],[24,24],[24,25],[24,26],[24,28],[24,29],[24,30],[24,31],[24,32],[24,33],[24,34],[24,36],[24,38],[24,40],[24,42],[24,44],[24,46],[24,47],[24,48],[24,49],[25,0],[25,2],[25,4],[25,8],[25,26],[25,32],[25,36],[25,38],[25,44],[25,48],[25,49],[26,0],[26,4],[26,6],[26,8],[26,10],[26,12],[26,14],[26,15],[26,16],[26,17],[26,18],[26,19],[26,20],[26,22],[26,23],[26,24],[26,25],[26,26],[26,27],[26,28],[26,29],[26,30],[26,32],[26,34],[26,35],[26,36],[26,38],[26,39],[26,40],[26,42],[26,43],[26,44],[26,45],[26,46],[26,48],[26,49],[27,0],[27,12],[27,20],[27,26],[27,32],[27,36],[27,46],[27,48],[27,49],[28,0],[28,2],[28,4],[28,6],[28,8],[28,10],[28,12],[28,13],[28,14],[28,15],[28,17],[28,19],[28,20],[28,22],[28,23],[28,24],[28,26],[28,28],[28,29],[28,30],[28,31],[28,32],[28,33],[28,34],[28,36],[28,37],[28,38],[28,40],[28,41],[28,42],[28,44],[28,45],[28,46],[28,48],[28,49],[29,0],[29,4],[29,12],[29,22],[29,26],[29,36],[29,38],[29,44],[29,48],[29,49],[30,0],[30,2],[30,3],[30,4],[30,6],[30,7],[30,9],[30,10],[30,12],[30,14],[30,15],[30,18],[30,19],[30,20],[30,21],[30,22],[30,26],[30,28],[30,29],[30,30],[30,31],[30,32],[30,33],[30,34],[30,35],[30,36],[30,38],[30,39],[30,40],[30,42],[30,44],[30,46],[30,48],[30,49],[31,0],[31,2],[31,6],[31,12],[31,18],[31,20],[31,24],[31,26],[31,32],[31,38],[31,40],[31,42],[31,48],[31,49],[32,0],[32,2],[32,4],[32,5],[32,6],[32,7],[32,8],[32,10],[32,11],[32,12],[32,13],[32,14],[32,16],[32,18],[32,20],[32,22],[32,24],[32,26],[32,28],[32,30],[32,32],[32,33],[32,34],[32,36],[32,40],[32,42],[32,44],[32,45],[32,46],[32,48],[32,49],[33,0],[33,2],[33,8],[33,20],[33,22],[33,26],[33,32],[33,36],[33,38],[33,40],[33,48],[33,49],[34,0],[34,2],[34,6],[34,8],[34,9],[34,10],[34,11],[34,12],[34,13],[34,14],[34,16],[34,17],[34,18],[34,20],[34,22],[34,23],[34,24],[34,26],[34,27],[34,29],[34,30],[34,32],[34,34],[34,35],[34,36],[34,38],[34,40],[34,41],[34,42],[34,44],[34,46],[34,48],[34,49],[35,0],[35,2],[35,6],[35,12],[35,16],[35,18],[35,22],[35,26],[35,30],[35,34],[35,44],[35,46],[35,48],[35,49],[36,0],[36,2],[36,4],[36,6],[36,8],[36,9],[36,10],[36,12],[36,14],[36,15],[36,16],[36,18],[36,20],[36,21],[36,22],[36,24],[36,26],[36,28],[36,30],[36,31],[36,33],[36,34],[36,36],[36,38],[36,39],[36,40],[36,41],[36,42],[36,44],[36,48],[36,49],[37,0],[37,2],[37,6],[37,10],[37,28],[37,46],[37,48],[37,49],[38,0],[38,2],[38,3],[38,4],[38,5],[38,6],[38,7],[38,8],[38,10],[38,11],[38,12],[38,13],[38,14],[38,16],[38,22],[38,24],[38,25],[38,26],[38,28],[38,29],[38,30],[38,31],[38,32],[38,33],[38,34],[38,35],[38,36],[38,40],[38,41],[38,42],[38,43],[38,44],[38,46],[38,48],[38,49],[39,0],[39,10],[39,16],[39,20],[39,22],[39,28],[39,36],[39,42],[39,48],[39,49],[40,0],[40,1],[40,2],[40,4],[40,6],[40,8],[40,9],[40,10],[40,12],[40,14],[40,16],[40,18],[40,20],[40,22],[40,23],[40,24],[40,25],[40,26],[40,28],[40,30],[40,33],[40,34],[40,36],[40,38],[40,39],[40,40],[40,42],[40,44],[40,45],[40,46],[40,48],[40,49],[41,0],[41,4],[41,6],[41,14],[41,24],[41,36],[41,40],[41,44],[41,46],[41,48],[41,49],[42,0],[42,1],[42,2],[42,6],[42,8],[42,9],[42,10],[42,11],[42,12],[42,14],[42,15],[42,16],[42,18],[42,19],[42,20],[42,22],[42,24],[42,26],[42,27],[42,30],[42,32],[42,34],[42,36],[42,37],[42,38],[42,40],[42,42],[42,44],[42,48],[42,49],[43,0],[43,4],[43,12],[43,22],[43,26],[43,30],[43,40],[43,46],[43,48],[43,49],[44,0],[44,2],[44,4],[44,5],[44,6],[44,7],[44,8],[44,9],[44,10],[44,12],[44,14],[44,16],[44,17],[44,18],[44,20],[44,21],[44,22],[44,23],[44,24],[44,25],[44,26],[44,28],[44,30],[44,31],[44,34],[44,36],[44,38],[44,39],[44,40],[44,42],[44,44],[44,45],[44,46],[44,48],[44,49],[45,0],[45,2],[45,4],[45,10],[45,12],[45,14],[45,16],[45,26],[45,28],[45,34],[45,40],[45,48],[45,49],[46,0],[46,2],[46,4],[46,6],[46,8],[46,9],[46,10],[46,12],[46,14],[46,16],[46,17],[46,18],[46,20],[46,22],[46,24],[46,26],[46,28],[46,29],[46,30],[46,32],[46,33],[46,34],[46,35],[46,36],[46,37],[46,38],[46,40],[46,42],[46,44],[46,46],[46,48],[46,49],[47,0],[47,14],[47,20],[47,24],[47,30],[47,48],[47,49],[48,0],[48,1],[48,2],[48,3],[48,4],[48,5],[48,6],[48,7],[48,8],[48,9],[48,10],[48,11],[48,12],[48,13],[48,14],[48,15],[48,16],[48,17],[48,18],[48,19],[48,20],[48,21],[48,22],[48,23],[48,24],[48,25],[48,26],[48,27],[48,28],[48,29],[48,30],[48,31],[48,32],[48,33],[48,34],[48,35],[48,36],[48,37],[48,38],[48,39],[48,40],[48,41],[48,42],[48,43],[48,44],[48,45],[48,46],[48,47],[48,48],[48,49],[49,0],[49,1],[49,2],[49,3],[49,4],[49,5],[49,6],[49,7],[49,8],[49,9],[49,10],[49,11],[49,12],[49,13],[49,14],[49,15],[49,16],[49,17],[49,18],[49,19],[49,20],[49,21],[49,22],[49,23],[49,24],[49,25],[49,26],[49,27],[49,28],[49,29],[49,30],[49,31],[49,32],[49,33],[49,34],[49,35],[49,36],[49,37],[49,38],[49,39],[49,40],[49,41],[49,42],[49,43],[49,44],[49,45],[49,46],[49,47],[49,48],[49,49]],"position":[1,47],"goal":[47,1]},"systems":[{"name":"Jev","id":"jev","summary":{"steps":2738,"score":1,"collisions":1044,"outcome":"goal"},"positions":[[1,47],[1,47],[2,47],[3,47],[4,47],[4,46],[4,45],[3,45],[3,45],[2,45],[1,45],[1,44],[1,43],[1,42],[1,41],[1,40],[1,39],[1,38],[1,37],[1,36],[1,35],[1,34],[1,33],[1,32],[1,31],[1,30],[1,29],[1,28],[1,27],[1,27],[2,27],[3,27],[3,26],[3,26],[3,25],[2,25],[1,25],[1,24],[1,23],[1,22],[1,21],[1,20],[1,19],[1,18],[1,17],[1,16],[1,15],[1,14],[1,13],[1,12],[1,11],[1,10],[1,9],[1,8],[1,7],[1,6],[1,5],[1,4],[1,3],[1,2],[1,2],[1,1],[2,1],[3,1],[3,2],[3,2],[3,2],[3,3],[2,3],[2,3],[1,3],[1,3],[1,4],[1,4],[1,4],[1,5],[2,5],[2,5],[3,5],[4,5],[4,4],[4,3],[3,3],[3,3],[2,3],[2,3],[1,3],[1,2],[1,2],[1,1],[1,1],[1,1],[2,1],[2,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[7,1],[8,1],[9,1],[9,2],[9,2],[9,3],[10,3],[10,3],[11,3],[12,3],[12,2],[12,1],[13,1],[13,1],[14,1],[15,1],[15,2],[15,2],[15,3],[16,3],[17,3],[18,3],[19,3],[19,4],[19,5],[20,5],[21,5],[21,5],[21,6],[21,6],[21,7],[20,7],[20,7],[19,7],[19,8],[19,8],[19,8],[19,9],[18,9],[17,9],[17,8],[17,7],[17,6],[17,5],[17,4],[17,3],[17,3],[16,3],[16,3],[16,3],[15,3],[15,3],[15,3],[15,2],[15,2],[15,1],[16,1],[17,1],[18,1],[19,1],[19,1],[20,1],[21,1],[21,2],[21,2],[21,3],[22,3],[23,3],[24,3],[24,2],[24,1],[25,1],[26,1],[27,1],[27,2],[27,3],[28,3],[29,3],[29,2],[29,1],[28,1],[27,1],[27,1],[26,1],[26,2],[27,2],[27,2],[26,2],[26,2],[26,3],[27,3],[27,4],[27,5],[27,6],[27,7],[27,8],[27,9],[27,10],[27,11],[28,11],[29,11],[29,10],[29,9],[29,8],[29,7],[29,6],[29,6],[29,5],[28,5],[28,5],[27,5],[26,5],[25,5],[25,6],[25,7],[26,7],[27,7],[28,7],[28,7],[29,7],[29,7],[28,7],[28,7],[27,7],[26,7],[26,7],[26,7],[25,7],[25,7],[25,7],[25,6],[25,6],[25,6],[25,5],[24,5],[23,5],[23,6],[23,7],[23,8],[23,9],[23,10],[23,11],[23,12],[23,12],[23,13],[22,13],[21,13],[21,12],[21,11],[21,10],[21,10],[21,9],[21,9],[20,9],[20,9],[19,9],[19,9],[18,9],[18,9],[18,9],[17,9],[16,9],[16,9],[15,9],[15,8],[15,7],[15,6],[15,6],[15,5],[14,5],[14,5],[13,5],[13,4],[13,4],[13,3],[12,3],[12,3],[11,3],[11,3],[11,3],[10,3],[10,3],[9,3],[9,3],[9,3],[9,2],[9,2],[9,1],[10,1],[11,1],[12,1],[12,1],[11,1],[11,1],[11,1],[10,1],[10,1],[10,1],[9,1],[9,1],[8,1],[8,1],[8,1],[7,1],[7,1],[6,1],[6,1],[6,1],[5,1],[5,1],[5,1],[4,1],[4,1],[4,1],[3,1],[3,1],[3,2],[3,3],[4,3],[4,3],[5,3],[6,3],[7,3],[7,4],[7,5],[7,6],[7,7],[6,7],[5,7],[5,8],[5,9],[5,10],[5,10],[5,11],[4,11],[4,11],[3,11],[3,10],[3,9],[3,8],[3,7],[3,6],[3,6],[3,5],[3,5],[2,5],[2,5],[1,5],[1,5],[1,6],[1,6],[1,6],[1,7],[2,7],[2,7],[3,7],[3,7],[2,7],[2,7],[1,7],[1,7],[1,8],[1,8],[1,8],[1,9],[2,9],[2,9],[3,9],[3,9],[2,9],[2,9],[1,9],[1,9],[1,10],[1,10],[1,10],[1,11],[1,11],[1,11],[1,12],[1,12],[1,12],[1,13],[2,13],[3,13],[4,13],[5,13],[5,14],[5,15],[5,16],[5,17],[5,17],[5,17],[5,17],[5,16],[5,16],[5,16],[5,15],[4,15],[4,14],[5,14],[5,14],[4,14],[4,13],[4,13],[3,13],[3,13],[3,13],[2,13],[2,13],[2,13],[1,13],[1,13],[1,14],[1,14],[1,14],[1,15],[1,15],[1,15],[1,16],[1,16],[1,16],[1,17],[1,17],[1,17],[1,18],[1,18],[1,18],[1,19],[2,19],[3,19],[3,18],[3,17],[3,16],[3,15],[4,15],[4,15],[3,15],[3,15],[3,15],[3,16],[3,16],[3,16],[3,17],[3,17],[3,17],[3,18],[3,18],[3,18],[3,19],[3,19],[3,19],[2,19],[2,19],[2,19],[1,19],[1,19],[1,20],[1,20],[1,20],[1,21],[2,21],[2,21],[3,21],[3,21],[4,21],[5,21],[5,20],[5,19],[5,19],[5,19],[6,19],[7,19],[7,18],[7,18],[7,17],[8,17],[9,17],[9,18],[9,19],[10,19],[11,19],[11,20],[11,21],[12,21],[13,21],[13,20],[13,19],[13,18],[13,17],[13,16],[13,15],[13,14],[13,14],[13,13],[14,13],[14,13],[15,13],[15,12],[15,11],[15,10],[15,9],[15,9],[15,10],[14,10],[13,10],[13,10],[13,11],[14,11],[15,11],[16,11],[16,11],[17,11],[17,12],[17,12],[17,12],[17,13],[18,13],[19,13],[19,12],[19,11],[18,11],[17,11],[17,11],[16,11],[16,11],[15,11],[14,11],[14,10],[14,10],[13,10],[13,9],[12,9],[12,9],[11,9],[11,8],[11,7],[11,6],[11,5],[10,5],[10,5],[9,5],[9,6],[9,7],[9,8],[9,8],[9,9],[8,9],[8,9],[7,9],[7,10],[6,10],[5,10],[5,11],[5,11],[5,11],[4,11],[4,11],[3,11],[3,11],[3,11],[3,10],[3,10],[3,10],[3,9],[3,8],[3,8],[3,8],[3,7],[3,6],[3,6],[3,5],[4,5],[5,5],[5,5],[5,5],[5,5],[4,5],[4,5],[4,4],[4,4],[4,4],[4,3],[5,3],[5,3],[5,3],[6,3],[6,3],[6,3],[7,3],[7,3],[7,3],[7,4],[7,4],[7,4],[7,5],[7,5],[7,5],[7,6],[7,6],[7,6],[7,7],[8,7],[9,7],[10,7],[10,7],[11,7],[12,7],[12,7],[13,7],[13,6],[13,5],[12,5],[12,5],[11,5],[11,5],[10,5],[10,5],[9,5],[9,5],[9,5],[9,6],[9,6],[9,6],[9,7],[8,7],[8,7],[8,7],[7,7],[7,7],[6,7],[6,7],[6,7],[5,7],[5,7],[5,7],[5,8],[5,8],[5,8],[5,9],[5,9],[5,9],[5,10],[6,10],[6,10],[6,10],[7,10],[7,11],[8,11],[9,11],[9,12],[9,12],[9,13],[10,13],[11,13],[11,12],[11,12],[11,11],[12,11],[12,11],[13,11],[13,11],[12,11],[12,11],[11,11],[11,11],[11,11],[11,12],[11,12],[11,13],[11,14],[11,15],[11,16],[11,17],[11,17],[12,17],[13,17],[14,17],[14,16],[14,15],[13,15],[13,15],[13,16],[14,16],[14,16],[13,16],[13,16],[13,17],[12,17],[12,17],[12,17],[11,17],[11,17],[11,16],[11,16],[11,16],[11,15],[11,15],[11,15],[11,14],[11,14],[11,14],[11,13],[11,13],[10,13],[10,13],[10,13],[9,13],[8,13],[8,13],[7,13],[7,13],[6,13],[5,13],[5,13],[6,13],[6,13],[6,13],[7,13],[7,13],[8,13],[8,13],[9,13],[9,13],[9,12],[9,12],[9,11],[9,11],[9,11],[8,11],[8,11],[8,11],[7,11],[7,11],[7,11],[7,10],[7,10],[7,9],[7,9],[7,9],[8,9],[8,9],[9,9],[9,9],[9,9],[9,8],[9,8],[9,7],[10,7],[10,7],[11,7],[11,8],[11,8],[11,8],[11,9],[11,9],[11,9],[12,9],[12,9],[13,9],[13,9],[13,9],[13,10],[13,11],[14,11],[14,11],[15,11],[15,12],[15,12],[15,12],[15,13],[16,13],[16,13],[17,13],[17,13],[16,13],[16,13],[15,13],[15,13],[14,13],[14,13],[13,13],[13,13],[13,13],[13,14],[13,14],[13,15],[14,15],[14,15],[15,15],[15,15],[16,15],[16,15],[17,15],[17,15],[17,15],[17,15],[16,15],[16,15],[15,15],[15,15],[14,15],[14,16],[14,17],[15,17],[15,17],[16,17],[17,17],[17,18],[17,19],[17,20],[17,21],[17,22],[17,23],[16,23],[15,23],[15,23],[15,24],[15,24],[15,25],[14,25],[14,25],[13,25],[13,25],[12,25],[12,26],[12,26],[12,27],[13,27],[13,28],[13,29],[13,30],[14,30],[15,30],[15,29],[16,29],[17,29],[17,30],[17,31],[17,32],[17,33],[17,34],[18,34],[18,33],[19,33],[19,32],[19,31],[19,30],[19,29],[19,28],[19,27],[19,26],[19,26],[19,26],[19,25],[18,25],[17,25],[17,26],[17,26],[17,27],[16,27],[16,27],[15,27],[15,27],[14,27],[13,27],[13,27],[12,27],[11,27],[11,27],[11,28],[11,29],[11,30],[11,31],[11,32],[11,33],[11,34],[10,34],[10,33],[11,33],[11,33],[10,33],[9,33],[9,32],[9,31],[9,30],[9,30],[9,29],[10,29],[10,29],[11,29],[11,29],[10,29],[10,29],[9,29],[9,29],[9,29],[9,30],[9,30],[9,31],[9,31],[9,31],[9,32],[8,32],[7,32],[7,31],[7,30],[7,29],[7,28],[7,27],[7,26],[7,25],[7,24],[7,23],[7,22],[7,22],[7,21],[6,21],[6,21],[5,21],[5,21],[4,21],[4,22],[4,22],[4,23],[5,23],[6,23],[7,23],[7,23],[6,23],[6,24],[7,24],[7,24],[6,24],[6,24],[6,25],[7,25],[8,25],[9,25],[9,24],[9,23],[9,22],[9,21],[8,21],[7,21],[7,21],[6,21],[6,21],[5,21],[4,21],[4,21],[3,21],[3,21],[2,21],[2,21],[1,21],[1,21],[1,22],[1,22],[1,22],[1,23],[2,23],[2,23],[3,23],[4,23],[4,23],[3,23],[3,23],[3,23],[2,23],[2,23],[1,23],[1,23],[1,24],[1,24],[1,24],[1,25],[1,25],[1,25],[2,25],[2,25],[2,25],[3,25],[3,25],[3,25],[3,26],[3,26],[3,27],[3,28],[3,29],[3,29],[4,29],[5,29],[5,29],[6,29],[7,29],[7,29],[6,29],[6,29],[6,29],[5,29],[5,29],[4,29],[4,29],[4,29],[3,29],[3,29],[3,28],[3,28],[3,28],[3,27],[4,27],[5,27],[5,26],[5,25],[6,25],[6,25],[5,25],[5,25],[5,25],[5,26],[5,26],[5,26],[5,27],[5,27],[5,27],[4,27],[4,27],[4,27],[3,27],[2,27],[2,27],[2,27],[1,27],[1,27],[1,28],[1,28],[1,28],[1,29],[1,29],[1,29],[1,30],[1,30],[1,30],[1,31],[2,31],[3,31],[3,31],[4,31],[5,31],[5,32],[5,32],[5,33],[4,33],[4,33],[3,33],[3,33],[3,33],[3,33],[4,33],[4,33],[5,33],[5,33],[5,33],[5,32],[5,32],[5,31],[5,31],[5,31],[4,31],[4,31],[4,31],[3,31],[3,31],[2,31],[2,31],[2,31],[1,31],[1,31],[1,32],[1,32],[1,32],[1,33],[1,33],[1,33],[1,34],[1,34],[1,34],[1,35],[1,35],[1,35],[1,36],[1,36],[1,36],[1,37],[2,37],[3,37],[3,36],[3,36],[3,35],[3,35],[3,35],[4,35],[4,35],[5,35],[6,35],[7,35],[7,34],[7,33],[7,32],[7,32],[7,33],[7,33],[7,33],[7,34],[7,34],[7,34],[7,35],[7,36],[7,37],[7,38],[7,39],[7,40],[7,41],[7,42],[7,43],[7,44],[7,45],[7,46],[7,47],[6,47],[6,47],[5,47],[5,47],[4,47],[4,47],[3,47],[3,47],[3,47],[2,47],[2,47],[2,47],[1,47],[1,47],[1,47],[2,47],[3,47],[4,47],[5,47],[5,47],[6,47],[6,47],[7,47],[8,47],[9,47],[9,46],[9,45],[9,44],[9,43],[9,42],[9,42],[9,41],[8,41],[7,41],[7,41],[7,42],[7,42],[7,42],[7,43],[7,43],[7,43],[7,44],[7,44],[8,44],[9,44],[9,44],[8,44],[8,44],[8,44],[7,44],[7,45],[6,45],[6,45],[5,45],[4,45],[4,45],[3,45],[3,45],[2,45],[2,45],[2,45],[1,45],[1,45],[1,45],[1,44],[1,44],[1,44],[1,43],[1,43],[1,43],[1,42],[2,42],[3,42],[3,41],[3,40],[3,40],[3,39],[4,39],[5,39],[5,38],[5,38],[5,38],[5,37],[5,37],[6,37],[7,37],[8,37],[9,37],[9,36],[9,35],[9,34],[10,34],[10,35],[11,35],[12,35],[13,35],[13,36],[13,37],[13,37],[14,37],[15,37],[15,37],[16,37],[17,37],[17,36],[17,35],[18,35],[18,34],[18,34],[17,34],[17,35],[17,35],[17,36],[17,36],[17,36],[17,37],[17,37],[17,37],[16,37],[16,37],[16,37],[15,37],[15,37],[14,37],[14,37],[14,37],[13,37],[13,37],[13,36],[13,36],[13,36],[13,35],[13,35],[13,35],[12,35],[12,35],[12,35],[11,35],[11,34],[11,34],[11,35],[11,35],[10,35],[9,35],[9,35],[9,36],[9,36],[9,36],[9,37],[10,37],[11,37],[11,38],[11,38],[11,39],[10,39],[10,39],[9,39],[9,39],[8,39],[8,39],[7,39],[6,39],[6,39],[5,39],[5,39],[4,39],[4,39],[4,39],[3,39],[3,39],[3,39],[3,40],[3,40],[3,41],[2,41],[1,41],[1,41],[1,42],[1,42],[2,42],[2,41],[2,41],[2,42],[2,42],[3,42],[3,43],[3,43],[4,43],[5,43],[5,42],[5,42],[5,41],[5,41],[5,41],[5,41],[5,42],[5,42],[5,43],[5,43],[5,43],[4,43],[4,43],[4,43],[3,43],[3,43],[3,42],[3,42],[3,41],[3,41],[2,41],[1,41],[1,40],[1,40],[1,40],[1,39],[1,39],[1,39],[1,38],[1,38],[1,38],[1,37],[1,37],[2,37],[2,37],[2,37],[3,37],[3,37],[3,37],[3,36],[3,36],[3,35],[4,35],[4,35],[5,35],[5,35],[5,35],[6,35],[6,35],[6,35],[7,35],[7,35],[7,36],[7,36],[7,36],[7,37],[6,37],[6,37],[6,37],[5,37],[5,37],[5,38],[5,39],[6,39],[6,39],[7,39],[7,40],[7,40],[7,40],[7,41],[8,41],[8,41],[8,41],[9,41],[9,41],[10,41],[11,41],[11,42],[11,43],[12,43],[12,43],[13,43],[13,43],[14,43],[15,43],[15,42],[15,42],[15,41],[15,41],[16,41],[16,41],[17,41],[17,40],[17,39],[16,39],[16,39],[15,39],[15,39],[14,39],[14,39],[13,39],[13,39],[13,40],[13,40],[13,41],[12,41],[12,41],[11,41],[11,41],[10,41],[10,41],[10,41],[9,41],[9,42],[9,42],[9,43],[9,43],[10,43],[10,43],[11,43],[11,44],[11,45],[11,46],[11,46],[11,47],[12,47],[13,47],[13,46],[13,46],[13,45],[14,45],[15,45],[15,44],[15,43],[16,43],[17,43],[18,43],[18,42],[18,42],[18,41],[17,41],[17,41],[16,41],[16,41],[15,41],[15,41],[15,42],[15,42],[15,43],[14,43],[14,43],[14,43],[13,43],[13,43],[12,43],[12,43],[11,43],[10,43],[10,43],[11,43],[11,44],[11,44],[11,44],[11,45],[11,45],[11,45],[11,46],[11,46],[11,47],[10,47],[9,47],[9,47],[8,47],[8,47],[8,47],[7,47],[7,47],[7,46],[7,46],[7,46],[7,45],[7,45],[6,45],[6,45],[5,45],[5,45],[5,45],[4,45],[4,46],[4,46],[4,46],[4,47],[5,47],[6,47],[7,47],[8,47],[9,47],[10,47],[10,47],[10,47],[11,47],[11,47],[12,47],[12,47],[12,47],[13,47],[13,47],[13,47],[13,46],[13,46],[13,45],[13,45],[13,45],[14,45],[14,45],[14,45],[15,45],[15,46],[15,47],[16,47],[16,47],[17,47],[17,46],[17,45],[17,44],[17,43],[17,43],[16,43],[16,43],[16,43],[15,43],[15,44],[15,44],[15,44],[15,45],[16,45],[16,45],[17,45],[18,45],[19,45],[19,46],[19,47],[20,47],[21,47],[21,46],[21,45],[21,44],[21,43],[20,43],[20,43],[19,43],[19,43],[18,43],[18,43],[19,43],[19,43],[20,43],[20,43],[21,43],[21,43],[21,43],[21,44],[21,44],[21,44],[21,45],[22,45],[23,45],[23,44],[23,43],[23,43],[23,43],[24,43],[24,43],[25,43],[25,42],[25,41],[25,40],[25,39],[24,39],[23,39],[23,39],[23,40],[23,40],[23,40],[23,41],[22,41],[22,41],[21,41],[21,41],[20,41],[20,41],[19,41],[19,41],[18,41],[18,41],[18,42],[18,42],[18,41],[19,41],[19,41],[20,41],[20,41],[21,41],[21,41],[22,41],[22,41],[23,41],[24,41],[25,41],[26,41],[27,41],[27,40],[27,39],[27,38],[27,37],[26,37],[25,37],[24,37],[23,37],[23,36],[22,36],[22,35],[23,35],[23,36],[23,36],[22,36],[21,36],[21,35],[21,34],[21,34],[21,34],[21,33],[21,33],[22,33],[22,33],[23,33],[23,32],[23,32],[23,31],[22,31],[22,31],[21,31],[21,30],[21,29],[21,28],[21,27],[21,26],[21,25],[21,24],[21,23],[21,22],[21,21],[21,20],[21,20],[21,19],[22,19],[23,19],[23,18],[23,17],[23,16],[23,15],[24,15],[24,14],[25,14],[25,13],[25,12],[25,11],[25,10],[25,10],[25,9],[25,9],[26,9],[26,9],[27,9],[28,9],[28,9],[29,9],[29,9],[28,9],[28,9],[27,9],[26,9],[26,9],[25,9],[25,9],[25,10],[25,10],[25,11],[25,11],[26,11],[26,11],[27,11],[27,11],[26,11],[26,11],[25,11],[25,12],[25,12],[25,12],[25,13],[24,13],[24,14],[24,14],[24,15],[25,15],[25,14],[25,14],[25,15],[25,16],[25,17],[25,18],[25,19],[25,20],[25,21],[26,21],[27,21],[28,21],[29,21],[29,20],[29,19],[29,18],[29,17],[29,16],[29,15],[29,14],[29,14],[29,13],[30,13],[31,13],[31,14],[31,15],[31,16],[30,16],[30,16],[30,17],[31,17],[31,16],[31,16],[30,16],[29,16],[28,16],[28,16],[27,16],[27,15],[27,14],[27,14],[27,13],[27,13],[26,13],[26,13],[25,13],[24,13],[23,13],[23,13],[22,13],[22,13],[22,13],[21,13],[20,13],[20,13],[19,13],[19,14],[19,15],[19,16],[19,17],[19,18],[19,19],[19,20],[19,20],[19,21],[20,21],[21,21],[21,21],[20,21],[20,21],[20,21],[19,21],[18,21],[18,21],[17,21],[17,21],[17,22],[17,22],[17,22],[17,23],[17,23],[17,23],[16,23],[16,23],[16,23],[15,23],[15,23],[15,24],[15,24],[15,25],[15,25],[15,25],[14,25],[14,25],[13,25],[13,25],[12,25],[11,25],[11,24],[11,23],[11,22],[11,21],[11,21],[11,22],[11,22],[11,22],[11,23],[10,23],[9,23],[9,23],[9,24],[9,24],[9,24],[9,25],[9,25],[9,25],[8,25],[8,25],[8,25],[7,25],[7,26],[7,26],[7,26],[7,27],[7,27],[8,27],[8,27],[9,27],[9,27],[10,27],[11,27],[10,27],[10,27],[10,27],[9,27],[9,27],[8,27],[8,27],[7,27],[7,28],[7,28],[7,28],[7,29],[7,30],[7,30],[7,30],[7,31],[7,31],[7,31],[7,32],[8,32],[8,32],[8,32],[9,32],[9,32],[9,33],[9,34],[9,34],[9,33],[9,33],[10,33],[10,33],[10,34],[10,35],[10,35],[9,35],[9,36],[9,37],[9,37],[8,37],[8,37],[8,37],[7,37],[7,38],[7,38],[7,38],[7,39],[8,39],[8,39],[9,39],[9,39],[10,39],[10,39],[11,39],[12,39],[13,39],[12,39],[12,39],[12,39],[11,39],[11,39],[11,38],[11,38],[11,37],[11,37],[11,37],[10,37],[10,37],[10,37],[11,37],[11,38],[11,39],[12,39],[13,39],[13,40],[13,40],[13,41],[13,41],[13,41],[12,41],[12,41],[11,41],[11,42],[11,42],[11,42],[11,43],[10,43],[9,43],[9,44],[9,45],[9,45],[9,45],[9,46],[9,46],[9,46],[9,47],[10,47],[11,47],[12,47],[13,47],[13,46],[13,45],[14,45],[15,45],[15,46],[15,46],[15,46],[15,47],[15,47],[15,47],[16,47],[16,47],[17,47],[17,47],[17,47],[17,46],[17,46],[17,46],[17,45],[16,45],[16,45],[17,45],[18,45],[18,45],[18,45],[19,45],[19,45],[19,45],[19,46],[19,46],[19,46],[19,47],[19,47],[19,47],[20,47],[20,47],[20,47],[21,47],[22,47],[22,47],[23,47],[23,47],[23,47],[23,47],[22,47],[22,47],[21,47],[21,47],[21,46],[21,46],[21,46],[21,45],[21,45],[22,45],[22,45],[22,45],[23,45],[24,45],[25,45],[25,46],[25,47],[26,47],[27,47],[28,47],[29,47],[29,46],[29,45],[29,45],[29,45],[30,45],[31,45],[31,44],[31,44],[31,43],[32,43],[33,43],[33,42],[33,41],[32,41],[32,41],[31,41],[31,41],[30,41],[29,41],[29,40],[29,39],[28,39],[27,39],[27,39],[27,40],[27,40],[27,40],[27,41],[27,42],[27,43],[27,44],[27,45],[27,45],[27,45],[27,45],[27,44],[27,44],[27,44],[27,43],[28,43],[29,43],[29,42],[29,41],[29,41],[29,42],[29,42],[29,42],[29,43],[30,43],[31,43],[31,43],[30,43],[30,43],[30,43],[29,43],[29,43],[28,43],[28,43],[28,43],[27,43],[27,43],[27,42],[27,42],[27,42],[27,41],[27,41],[26,41],[26,41],[26,41],[25,41],[24,41],[24,41],[24,41],[23,41],[23,41],[23,40],[23,39],[22,39],[21,39],[20,39],[20,39],[19,39],[19,38],[19,37],[20,37],[20,37],[21,37],[21,36],[21,36],[21,37],[21,37],[21,37],[20,37],[20,37],[19,37],[19,37],[19,37],[19,38],[19,38],[19,38],[19,39],[19,39],[19,39],[20,39],[20,39],[21,39],[21,39],[21,39],[22,39],[22,39],[22,39],[23,39],[24,39],[24,39],[24,39],[25,39],[25,39],[25,39],[25,40],[25,40],[25,40],[25,41],[25,42],[25,42],[25,42],[25,43],[25,43],[25,43],[24,43],[24,43],[23,43],[23,44],[23,44],[23,44],[23,45],[23,45],[24,45],[24,45],[24,45],[25,45],[25,45],[25,45],[25,46],[25,46],[25,46],[25,47],[25,47],[25,47],[26,47],[26,47],[26,47],[27,47],[27,47],[27,47],[28,47],[28,47],[28,47],[29,47],[30,47],[31,47],[31,46],[31,45],[31,45],[30,45],[30,45],[30,45],[29,45],[29,46],[29,46],[29,46],[29,47],[29,47],[30,47],[30,47],[30,47],[31,47],[32,47],[33,47],[33,46],[33,45],[33,44],[33,43],[34,43],[35,43],[35,42],[35,41],[35,40],[35,39],[35,38],[35,37],[35,36],[35,36],[35,35],[35,35],[35,35],[36,35],[37,35],[37,34],[37,33],[37,32],[37,31],[37,30],[37,30],[37,29],[36,29],[36,29],[35,29],[35,28],[34,28],[33,28],[33,27],[32,27],[31,27],[31,28],[31,29],[31,30],[31,30],[31,31],[32,31],[33,31],[33,30],[33,29],[33,28],[33,28],[33,29],[32,29],[32,29],[31,29],[31,29],[31,30],[31,30],[31,31],[31,31],[31,31],[32,31],[32,31],[32,31],[33,31],[34,31],[35,31],[35,32],[36,32],[37,32],[37,32],[36,32],[36,32],[36,32],[35,32],[35,32],[35,33],[34,33],[34,33],[33,33],[33,34],[33,34],[33,35],[32,35],[32,35],[31,35],[31,34],[31,33],[31,33],[31,33],[31,33],[31,34],[31,34],[31,34],[31,35],[31,36],[31,36],[31,37],[32,37],[32,38],[32,38],[32,39],[33,39],[33,39],[34,39],[34,39],[35,39],[35,39],[34,39],[34,39],[33,39],[33,39],[32,39],[31,39],[31,39],[31,39],[31,39],[32,39],[32,39],[32,38],[32,38],[32,37],[32,37],[33,37],[34,37],[35,37],[36,37],[37,37],[37,36],[37,35],[37,35],[36,35],[36,35],[36,35],[35,35],[35,36],[35,36],[35,37],[34,37],[34,37],[34,37],[33,37],[33,37],[33,37],[32,37],[31,37],[30,37],[29,37],[29,37],[29,37],[29,37],[30,37],[30,37],[30,37],[31,37],[31,37],[31,36],[31,36],[31,35],[31,35],[32,35],[32,35],[33,35],[33,35],[33,35],[33,34],[33,34],[33,33],[33,33],[33,33],[34,33],[34,33],[35,33],[35,33],[35,33],[35,32],[35,31],[35,31],[35,31],[34,31],[34,31],[34,31],[33,31],[33,31],[33,30],[33,30],[33,30],[33,29],[33,29],[32,29],[32,29],[31,29],[31,28],[31,28],[31,28],[31,27],[30,27],[29,27],[29,28],[29,29],[29,30],[29,31],[29,32],[29,33],[29,34],[29,35],[28,35],[27,35],[27,34],[27,33],[26,33],[25,33],[25,33],[25,34],[25,34],[25,35],[24,35],[23,35],[23,35],[22,35],[22,35],[21,35],[20,35],[19,35],[19,35],[18,35],[18,35],[19,35],[19,35],[20,35],[20,35],[20,35],[21,35],[21,36],[22,36],[22,36],[23,36],[23,37],[23,37],[23,37],[24,37],[24,37],[24,37],[25,37],[25,37],[25,37],[26,37],[26,37],[26,37],[27,37],[27,37],[27,37],[27,38],[27,38],[27,38],[27,39],[28,39],[28,39],[28,39],[29,39],[29,39],[29,39],[29,40],[29,40],[29,40],[29,41],[30,41],[30,41],[30,41],[31,41],[31,41],[32,41],[32,41],[33,41],[33,41],[33,41],[33,42],[33,42],[33,42],[33,43],[32,43],[32,43],[32,43],[31,43],[31,44],[31,44],[31,45],[31,46],[31,46],[31,46],[31,47],[31,47],[32,47],[32,47],[32,47],[33,47],[34,47],[34,47],[35,47],[36,47],[36,46],[36,45],[37,45],[37,44],[37,43],[37,42],[37,41],[37,40],[37,39],[37,38],[38,38],[39,38],[39,39],[39,40],[39,41],[40,41],[41,41],[41,42],[41,42],[41,42],[41,43],[40,43],[40,43],[39,43],[39,44],[39,45],[39,46],[39,47],[38,47],[38,47],[37,47],[37,47],[36,47],[36,47],[35,47],[35,47],[35,47],[34,47],[34,47],[33,47],[33,47],[33,46],[33,46],[33,46],[33,45],[33,45],[34,45],[34,45],[35,45],[36,45],[36,45],[35,45],[35,45],[35,45],[34,45],[34,45],[33,45],[33,44],[33,44],[33,44],[33,43],[34,43],[34,43],[34,43],[35,43],[36,43],[37,43],[37,43],[36,43],[36,43],[36,43],[35,43],[35,43],[35,42],[35,42],[35,42],[35,41],[35,41],[35,41],[35,40],[35,40],[35,40],[35,39],[35,38],[35,38],[35,38],[35,37],[36,37],[36,37],[36,37],[37,37],[37,38],[37,38],[37,39],[38,39],[38,38],[38,37],[37,37],[38,37],[39,37],[39,38],[39,38],[39,39],[38,39],[38,39],[37,39],[37,39],[37,40],[37,40],[37,40],[37,41],[37,41],[37,41],[37,42],[37,42],[37,42],[37,43],[37,44],[37,44],[37,44],[37,45],[38,45],[39,45],[39,45],[38,45],[38,45],[38,45],[37,45],[37,45],[36,45],[36,46],[36,46],[36,46],[36,47],[37,47],[37,47],[38,47],[38,47],[39,47],[40,47],[41,47],[41,47],[42,47],[42,46],[42,45],[43,45],[43,44],[43,43],[43,42],[43,41],[42,41],[42,41],[41,41],[41,41],[40,41],[40,41],[40,41],[39,41],[39,41],[39,41],[39,40],[39,40],[39,40],[39,39],[39,39],[39,38],[39,37],[40,37],[41,37],[41,38],[41,39],[42,39],[43,39],[43,38],[43,37],[43,36],[43,35],[43,34],[43,33],[43,32],[43,32],[44,32],[45,32],[45,31],[45,30],[45,30],[45,29],[44,29],[44,29],[43,29],[43,28],[42,28],[42,28],[41,28],[41,27],[41,26],[41,26],[41,25],[41,25],[42,25],[43,25],[43,24],[43,24],[43,23],[43,23],[42,23],[41,23],[41,22],[41,21],[41,20],[41,19],[41,18],[41,17],[41,16],[41,16],[41,15],[40,15],[40,15],[39,15],[39,14],[39,13],[39,12],[39,11],[40,11],[41,11],[41,10],[41,9],[41,8],[41,7],[42,7],[43,7],[43,6],[43,6],[43,5],[43,5],[42,5],[42,4],[42,3],[43,3],[43,2],[43,2],[43,1],[43,1],[44,1],[45,1],[46,1],[47,1]]},{"name":"NanoJev","id":"nanojev","summary":{"steps":225,"score":1,"collisions":77,"outcome":"goal"},"positions":[[1,47],[1,47],[2,47],[2,47],[3,47],[3,47],[4,47],[4,46],[4,45],[4,45],[5,45],[5,45],[6,45],[6,45],[7,45],[7,44],[7,43],[7,42],[7,41],[7,40],[7,39],[7,38],[7,37],[7,36],[7,35],[7,34],[7,33],[7,32],[7,31],[7,30],[7,29],[7,28],[7,27],[7,26],[7,25],[7,24],[7,23],[7,22],[7,22],[7,21],[8,21],[9,21],[9,21],[9,21],[9,22],[9,22],[9,22],[9,23],[10,23],[10,23],[11,23],[11,22],[11,21],[11,20],[11,20],[11,19],[11,19],[11,19],[10,19],[10,19],[9,19],[9,18],[9,17],[9,17],[9,17],[8,17],[8,17],[7,17],[7,17],[7,17],[7,18],[7,18],[7,18],[7,19],[7,19],[6,19],[6,19],[5,19],[5,19],[5,19],[5,20],[5,20],[5,20],[5,21],[6,21],[6,21],[7,21],[7,21],[6,21],[6,21],[5,21],[4,21],[4,21],[3,21],[3,21],[2,21],[2,21],[1,21],[1,20],[1,20],[1,19],[2,19],[2,19],[3,19],[3,18],[3,17],[3,16],[3,15],[3,15],[4,15],[4,14],[5,14],[5,14],[5,13],[6,13],[7,13],[8,13],[9,13],[10,13],[11,13],[11,12],[11,12],[11,11],[11,11],[12,11],[12,11],[13,11],[13,10],[13,9],[13,9],[13,9],[12,9],[12,9],[11,9],[11,8],[11,7],[11,6],[11,6],[11,5],[12,5],[12,5],[13,5],[14,5],[14,5],[15,5],[15,5],[15,5],[15,6],[15,6],[15,6],[15,7],[16,7],[16,7],[17,7],[17,6],[17,5],[17,4],[17,3],[17,3],[18,3],[18,3],[19,3],[19,3],[19,3],[19,4],[19,4],[19,4],[19,5],[20,5],[20,5],[21,5],[21,5],[22,5],[22,5],[23,5],[23,5],[24,5],[24,5],[25,5],[25,5],[26,5],[26,5],[27,5],[27,4],[27,3],[27,2],[27,1],[28,1],[29,1],[30,1],[31,1],[32,1],[33,1],[34,1],[35,1],[36,1],[37,1],[38,1],[39,1],[39,1],[39,1],[39,2],[39,2],[39,2],[39,3],[40,3],[40,3],[41,3],[41,2],[41,1],[41,1],[41,1],[41,1],[41,2],[41,2],[41,2],[41,3],[42,3],[42,3],[43,3],[43,2],[43,1],[44,1],[45,1],[46,1],[47,1]]}]}</script><script>(() => {
+  'use strict';
+  const stage=document.getElementById('stage'),slides=[...document.querySelectorAll('section.slide')];
+  const toc=document.getElementById('deck-toc'),count=document.getElementById('deck-count');
+  let current=-1, suppressClick=0, digits='',digitTimer;
+  const interactive=target=>target instanceof Element && target.closest('button,a,input,select,textarea,video,audio,[contenteditable],[data-interactive],#deck-toc,#deck-controls');
+  function fitFigures(slide){
+    slide.querySelectorAll(':scope > .fig.card,:scope > .fig.plain').forEach(fig=>{
+      const media=fig.querySelector('img,video');if(!media)return;
+      const w=media.naturalWidth||media.videoWidth,h=media.naturalHeight||media.videoHeight;if(!w||!h)return;
+      fig.style.flex='';fig.style.width='';fig.style.height='';fig.style.margin='';
+      const maxW=fig.clientWidth,maxH=fig.clientHeight,pad=fig.classList.contains('card')?60:0;
+      let width=maxW,height=(width-pad)*h/w+pad;if(height>maxH){height=maxH;width=(height-pad)*w/h+pad;}
+      fig.style.flex='0 0 auto';fig.style.width=Math.round(width)+'px';fig.style.height=Math.round(height)+'px';fig.style.margin='auto';
+    });
+  }
+  function fit(){stage.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/1920,innerHeight/1080)})`;if(current>=0)fitFigures(slides[current]);}
+  function show(index){
+    index=Math.max(0,Math.min(slides.length-1,Math.trunc(index)));if(index===current){if(location.hash!=='#'+(index+1))history.replaceState(null,'','#'+(index+1));return;}
+    slides.forEach((slide,i)=>{
+      const active=i===index;slide.classList.toggle('active',active);slide.setAttribute('aria-hidden',String(!active));
+      slide.querySelectorAll('video').forEach(video=>{if(active){video.currentTime=0;video.play().catch(()=>{});}else video.pause();});
+    });
+    current=index;history.replaceState(null,'','#'+(index+1));count.textContent=`${index+1} / ${slides.length}`;
+    document.getElementById('deck-prev').disabled=index===0;document.getElementById('deck-next').disabled=index===slides.length-1;
+    toc.querySelectorAll('[data-index]').forEach(button=>button.classList.toggle('chosen',Number(button.dataset.index)===index));
+    fitFigures(slides[index]);document.dispatchEvent(new CustomEvent('deckchange',{detail:{index,slide:slides[index]}}));
+  }
+  function menu(open){toc.hidden=open===undefined?!toc.hidden:!open;document.getElementById('deck-menu').setAttribute('aria-expanded',String(!toc.hidden));}
+  let section='';slides.forEach((slide,index)=>{
+    if(slide.dataset.sec!==section){section=slide.dataset.sec;const label=document.createElement('p');label.textContent=section;toc.append(label);}
+    const b=document.createElement('button');b.type='button';b.dataset.index=index;b.textContent=`${index+1}  ${slide.dataset.title||slide.querySelector('h1')?.textContent||section}`;b.onclick=()=>{show(index);menu(false);};toc.append(b);
+  });
+  document.getElementById('deck-prev').onclick=()=>show(current-1);document.getElementById('deck-next').onclick=()=>show(current+1);
+  document.getElementById('deck-menu').onclick=()=>menu();
+  document.getElementById('deck-fullscreen').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{});};
+  addEventListener('keydown',event=>{
+    if(event.ctrlKey||event.metaKey||event.altKey)return;
+    if(event.key==='Escape'){menu(false);return;}
+    const key=event.key;
+    if(event.target instanceof Element && event.target.closest('input,select,textarea,video,audio,[contenteditable]'))return;
+    if(interactive(event.target)&&[' ','Enter'].includes(key))return;
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(key)){event.preventDefault();show(current+1);}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(key)){event.preventDefault();show(current-1);}
+    else if(key==='Home'){event.preventDefault();show(0);}else if(key==='End'){event.preventDefault();show(slides.length-1);}
+    else if(key.toLowerCase()==='g')menu();
+    else if(key.toLowerCase()==='c')document.getElementById('deck-hint').hidden=!document.getElementById('deck-hint').hidden;
+    else if(key.toLowerCase()==='f')document.getElementById('deck-fullscreen').click();
+    else if(['j','k'].includes(key.toLowerCase())&&slides[current].querySelector('[data-mechanism]')){document.getElementById(key.toLowerCase()==='j'?'mechanism-step':'mechanism-back').click();}
+    else if(/^\d$/.test(key)){digits=(digits+key).slice(-3);clearTimeout(digitTimer);digitTimer=setTimeout(()=>{const n=Number(digits);digits='';if(n>0&&n<=slides.length)show(n-1);},450);}
+  });
+  // Lock until the wheel gesture has been quiet; inertial tail cannot skip slides.
+  let wheelTotal=0,wheelLocked=false,wheelQuiet;
+  addEventListener('wheel',event=>{
+    if(event.ctrlKey||event.metaKey||interactive(event.target)||!toc.hidden)return;
+    event.preventDefault();clearTimeout(wheelQuiet);wheelQuiet=setTimeout(()=>{wheelTotal=0;wheelLocked=false;},220);
+    if(wheelLocked)return;
+    const delta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
+    wheelTotal+=delta*(event.deltaMode===1?18:event.deltaMode===2?innerHeight:1);
+    if(Math.abs(wheelTotal)>=70){show(current+(wheelTotal>0?1:-1));wheelTotal=0;wheelLocked=true;}
+  },{passive:false});
+  let touch=null;
+  addEventListener('touchstart',event=>{
+    if(event.touches.length!==1||interactive(event.target)||!toc.hidden){touch=null;return;}
+    touch={x:event.touches[0].clientX,y:event.touches[0].clientY};
+  },{passive:true});
+  addEventListener('touchmove',event=>{if(touch)event.preventDefault();},{passive:false});
+  addEventListener('touchend',event=>{
+    if(!touch||!event.changedTouches.length)return;const t=event.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;touch=null;
+    const distance=Math.abs(dx)>=Math.abs(dy)?dx:dy;
+    if(Math.abs(distance)>65){suppressClick=performance.now()+650;show(current+(distance<0?1:-1));}
+  },{passive:true});
+  addEventListener('touchcancel',()=>touch=null);
+  addEventListener('click',event=>{if(performance.now()<suppressClick||interactive(event.target))return;if(!toc.hidden){menu(false);return;}show(current+(event.clientX/innerWidth<.2?-1:1));});
+  function fromHash(){const n=Number(location.hash.slice(1));if(Number.isInteger(n)&&n>0)show(n-1);}
+  addEventListener('hashchange',fromHash);addEventListener('popstate',fromHash);addEventListener('resize',fit);
+  slides.forEach(slide=>slide.querySelectorAll('img,video').forEach(m=>m.addEventListener(m.tagName==='VIDEO'?'loadedmetadata':'load',()=>{if(slide.classList.contains('active'))fitFigures(slide);})));
+  window.jevDeck={show,get current(){return current;},count:slides.length};
+  fit();const initial=Number(location.hash.slice(1));show(Number.isInteger(initial)&&initial>0?initial-1:0);if(location.search.includes('nav=1'))menu(true);
+})();
+</script><script>(() => {
+  const replay=JSON.parse(document.getElementById('maze-data').textContent),canvases=[...document.querySelectorAll('.maze-panel canvas')];
+  let frame=225,playing=false,lastTick=0;const max=Math.max(...replay.systems.map(s=>s.positions.length-1));
+  function maze(){
+    canvases.forEach((canvas,index)=>{
+      const ctx=canvas.getContext('2d'),system=replay.systems[index],k=Math.min(frame,system.positions.length-1),u=canvas.width/replay.size;
+      ctx.fillStyle='#f8f9f6';ctx.fillRect(0,0,440,440);ctx.fillStyle='#d1d8cc';replay.initial.walls.forEach(([y,x])=>ctx.fillRect(x*u,y*u,Math.ceil(u),Math.ceil(u)));
+      ctx.strokeStyle='#a5bee4';ctx.lineWidth=u*.4;ctx.beginPath();system.positions.slice(0,k+1).forEach(([y,x],i)=>{if(i===0)ctx.moveTo((x+.5)*u,(y+.5)*u);else ctx.lineTo((x+.5)*u,(y+.5)*u);});ctx.stroke();
+      const [gy,gx]=replay.initial.goal;ctx.fillStyle='#1d1d1f';ctx.fillRect(gx*u+1,gy*u+1,u-1,u-1);
+      const [y,x]=system.positions[k];ctx.fillStyle='#0071e3';ctx.fillRect(x*u,y*u,u,u);ctx.strokeStyle='#0071e3';ctx.lineWidth=2;ctx.strokeRect(x*u-2,y*u-2,u+4,u+4);
+      canvas.parentElement.querySelector('.maze-readout').textContent=`${k.toLocaleString()} / ${system.summary.steps.toLocaleString()} 次尝试${k===system.positions.length-1?' · 已到达':''}`;
+    });
+    document.getElementById('maze-step').value=frame;document.getElementById('maze-position').textContent=`${frame.toLocaleString()} / ${max.toLocaleString()}`;
+    document.getElementById('maze-play').textContent=playing?'暂停轨迹':'播放轨迹';
+  }
+  function tick(now){if(!playing)return;const steps=Math.floor((now-lastTick)/1000*180);if(steps>0){frame=Math.min(max,frame+steps);lastTick=now;if(frame===max)playing=false;maze();}if(playing)requestAnimationFrame(tick);}
+  document.getElementById('maze-play').onclick=()=>{playing=!playing;if(playing){if(frame===max)frame=0;lastTick=performance.now();requestAnimationFrame(tick);}maze();};
+  document.getElementById('maze-reset').onclick=()=>{playing=false;frame=0;maze();};document.getElementById('maze-step').oninput=event=>{playing=false;frame=Number(event.target.value);maze();};maze();
+  document.addEventListener('deckchange',event=>{if(!event.detail.slide.querySelector('.maze-panels')){playing=false;maze();}});
+})();
+</script></body></html>

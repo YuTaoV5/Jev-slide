@@ -1,0 +1,80 @@
+# Python runtime and local environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Local secrets and environment settings
+.env
+.env.*
+!.env.example
+
+# Source datasets: keep directory structure, exclude raw + transient logs
+DataSet/raw/*
+!DataSet/raw/.gitkeep
+DataSet/interim/*
+!DataSet/interim/.gitkeep
+
+# Experiment logs (transient)
+experiment/logs/*
+!experiment/logs/.gitkeep
+
+# Editor / IDE / workspace state
+.codex/
+.codex-finalizer/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Office temporary lock files
+~$*.pptx
+~$*.docx
+~$*.xlsx
+~*.pptx
+~*.docx
+~*.xlsx
+
+# OpenCode runtime
+.opencode/
+
+# Local HTTP server runtime artifacts
+*.pid
+server.log
+
+# --- Iteration intermediate files (excluded per user request) ---
+
+# Iteration backups of the deck (before-v* variants)
+related_work/**/slides/*.before-*.html
+related_work/**/slides/*before*.html
+
+# Old speaker notes drafts (kept locally for reference, not pushed)
+related_work/**/演讲稿与领导问答.md
+related_work/**/演讲稿与领导问答.before-*.md
+
+# Old README drafts
+related_work/**/README.before-*.md
+
+# --- Reference projects: keep minecraft-agent (referenced from deck page 39),
+#     exclude the 4 unrelated Jev-related OSS projects under projects/ ---
+related_work/projects/
+
+# Inside minecraft-agent, exclude its own .git (it's a separate cloned repo)
+# and its transient run artifacts
+related_work/minecraft-agent/.git/
+related_work/minecraft-agent/runs/
+
+# --- Keep: architecture (directories), literature (jev_papers/, comparison_models/),
+#            presentation (08-第30期...), analyses (开源项目分析.md), deliverables ---
+
+# Whitelist overrides for key directories (negate exclusions above)
+!related_work/jev_papers/
+!related_work/comparison_models/
+!related_work/presentations/
+!related_work/minecraft-agent/

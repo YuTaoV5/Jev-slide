@@ -1,0 +1,21 @@
+\begin{table*}[t]
+    \centering
+    \fontsize{8pt}{10pt}\selectfont
+%    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.0}
+    \begin{tabular}{cccc}\toprule
+        Hyperparameter & BERT\textsubscript{\textit{base}} & BERT\textsubscript{\textit{large}} & DeBERTa\textsubscript{\textit{xlarge}} \\\midrule
+        Batch size & 32 & 32 & 32  \\
+        Learning rate & 1e-5, 2e-5, 3e-5, \textbf{5e-5}  & 1e-5, \textbf{2e-5}, 3e-5, 5e-5 & 5e-6, 8e-6, 9e-6, \textbf{1e-5}  \\
+        AdamW's $\epsilon$ & 1e-8 & 1e-8 & 1e-6  \\
+        Weight decay & 0.0, \textbf{0.1} & \textbf{0.0}, 0.1 & 0.01  \\
+        Max. gradient norm & 1.0 & 1.0 & 1.0  \\
+        Warmup steps & 0, \textbf{1000} & 0, \textbf{1000} & \textbf{50}, 100, 500, 1000  \\
+        \# epochs & \textbf{3}, 4, 5 & \textbf{3}, 4, 5 & 3, \textbf{4}, 5  \\\midrule
+        Min. \# surrounding tokens $n$ & \textbf{64}, 128 & 64, \textbf{128} & \textbf{64}, 128 \\
+        Loss weight $\lambda$ & 0.05, 0.1, \textbf{0.2}, 0.4 & \textbf{0.05}, 0.1, 0.2, 0.4 & 0.05, 0.1, 0.2, \textbf{0.4} \\
+        Use weighted NLI & \textbf{\texttt{True}}, \texttt{False} & \textbf{\texttt{True}}, \texttt{False} & \textbf{\texttt{True}}, \texttt{False} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Hyperparameter search space. The hyperparameters below the middle line are the hyperparameters specific to Span NLI BERT. The bold values denote the best hyperparameters in our experiment.}\label{tab:hyperparameters}
+\end{table*}

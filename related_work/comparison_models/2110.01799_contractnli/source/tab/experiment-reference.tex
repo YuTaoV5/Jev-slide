@@ -1,0 +1,23 @@
+\begin{table}[t]
+    \centering
+    \begin{threeparttable}
+        \centering
+        \fontsize{8pt}{10pt}\selectfont
+        \setlength{\tabcolsep}{3pt}
+        \renewcommand{\arraystretch}{.6}
+        \begin{tabular}{lcccc}\toprule
+            & \multicolumn{3}{c}{NLI Accuracy} & \\\cmidrule{2-4}
+            Condition & Majority & Minority & Weighted & \% minority label \\\midrule
+            w/o Reference & .91 & .88 & .89 & 26 \\
+            w/ Reference & .93 &  --- & --- & 0 \\
+            \bottomrule
+        \end{tabular}
+        \makeatletter\def\TPT@hsize{}\makeatletter
+        \begin{tablenotes}[para,flushleft]
+            \raggedright
+            \fontsize{7pt}{7pt}\selectfont
+            Accuracy has been calculated for majority and minority ground-truth NLI labels separately in order to rule out the effect of the label distribution. ``Weighted'' denotes an average of the two accuracy scores that are weighted disproportionally to the number of occurances of each label. Only the hypotheses that exhibit references are used in this experiment (\#5 and 6).
+        \end{tablenotes}
+    \end{threeparttable}
+    \caption{NLI accuracy on documents with and without references to definitions}\label{tab:experiment-reference}
+\end{table}

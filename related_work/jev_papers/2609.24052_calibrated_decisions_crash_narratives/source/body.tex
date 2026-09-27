@@ -1,0 +1,1632 @@
+%% =====================================================================================
+\section{Introduction}
+\label{sec:intro}
+
+The investigator narrative is the richest field in a crash database and the one that safety
+analysis uses least. The Texas Crash Records Information System (CRIS) holds \Nrecords{}
+crash records for \FirstYear{} to \LastYear{}, of which \Ncorpus{} carry a narrative longer
+than \MinChars{} characters, which is about \TexasPerYear{} new narratives every year. The
+coded fields of a crash report are fixed by the design of the form, so they record what the
+form asks and nothing else. The narrative is where the officer writes that the driver had a
+seizure, fell asleep, hydroplaned, was pregnant, was chased by another motorist, or lost a
+wheel. Several of these events have no coded field at all, and others have a field that is
+filled inconsistently. Text mining of narratives has already recovered hydroplaning crashes
+that no field records \citep{das2020hydroplaning}, work-zone crashes that the coded fields
+misclassified \citep{sayed2021identifica}, agricultural crashes hidden in general categories
+\citep{kim2021crash}, and speeding designations that the coded flag missed
+\citep{fitzpatrick2017an}. Each of those studies treated the narrative as a record of
+circumstances that the coded fields do not carry, which is the premise of the present work.
+What a narrative supplies is the officer's written account, so the quantity this paper measures
+is what the narrative states rather than what occurred, and every claim below is framed that
+way.
+
+Three obstacles have kept narrative coding out of routine agency practice despite this
+evidence, and the first of them is cost. Running a frontier language model over a state's
+full narrative corpus is expensive enough that it is not done, so studies code a few thousand
+records and extrapolate. The largest recent benchmark of frontier models against official crash coding
+used some four thousand matched Arkansas fatal crashes \citep{bharati2026benchmarking}, and the Kentucky secondary-crash audit worked on a single variable in some sixteen thousand manually reviewed narratives \citep{zhang2025secondary}. A method that cannot be afforded at population scale cannot
+replace or supplement coded fields at population scale, whatever its accuracy on a sample.
+
+The second obstacle is the verification of generated output. A generative model asked to
+return labels or a JSON object can invent option values, omit fields, and answer a question that was not asked, so
+every output needs a parser and a validity check. When such a model is asked how confident it is, the stated number is a piece of generated text rather than a measured probability. Whether that number is calibrated depends on how it is elicited \citep{kadavath2022know,tian2023just}, and verbalized confidence tends toward over-confidence \citep{xiong2024express}. A
+coding pipeline whose confidence values cannot be trusted forces an agency either to check
+everything or to check nothing.
+
+The third obstacle, and the one this paper is built around, is that no published study tells
+a safety office how much human checking a narrative-derived variable needs. Agreement with
+coded fields is the usual evaluation, and it answers a different question. A classifier that
+is right most of the time does not tell an analyst which records to open. A probability that
+is right as often as it claims to be does, because a target precision can then be converted
+into a share of flagged records that a person must read. That conversion is only
+valid if the probabilities are calibrated, and calibration is a property that has to be
+measured against an external reference rather than assumed from a vendor's description.
+
+The situation changed with the arrival of typed decision models. In September 2026 TypeSafe
+released Jev, which its developer describes as a System One model
+\citep{typesafe2026launch,typesafe2026systemone}. Such a model takes a state object and a set
+of typed questions and returns, for each question, an answer from a fixed option set together
+with a probability, in one pass and with no generated text. The developer states that the training
+objective optimizes probabilities against outcomes and prices the model at
+\$\JevPricePerM{} per million input tokens with no charge for output
+\citep{typesafe2026models}. If those probabilities are calibrated, the review budget of a
+narrative-derived variable becomes a computable quantity and the cost of computing it over a whole state corpus is measured in hundreds of dollars. Whether they are calibrated is an
+empirical question on which the developer has published no metrics, and it is the question
+this paper answers independently.
+
+No published work combines the four elements that such an answer requires. None uses a
+non-generative typed-decision model for crash-narrative coding. None audits the calibration
+of narrative-derived probabilities variable by variable against both a large administrative
+reference and a human reference with known sampling weights. None converts calibration into
+a human-review budget defined over the records an agency would actually examine. And none
+does these things at the scale of a state corpus with a cost model measured rather than
+projected. The nearest studies evaluate generative models on attributes the database already
+codes and report agreement \citep{bharati2026benchmarking,zhang2025secondary}, which is a
+sound design for what it measures but leaves the calibration and the review budget
+untouched.
+
+Those gaps define the four research questions that this paper answers. The first asks whether
+a typed decision model can code narratives at the scale of a state corpus with a schema written
+by a safety analyst, and at what cost, so that large-scale coding can replace designs that code
+a sample and extrapolate. The second asks whether the probabilities such a model returns are
+calibrated, measured first against the coded fields and then against human judgment of the same
+narratives, and whether the answer holds for frontier generative models run on the same
+records. The third asks how much human review a narrative-derived variable needs once its
+calibration is known, expressed per variable in records an agency must read each year. The
+fourth asks what changes in a safety diagnosis when calibrated narrative variables are added to
+the coded contributing-factor fields, which is the question that decides whether any of the
+rest is worth an agency's attention. The paper answers the first affirmatively and reports the
+executed sizes rather than a projection. For the second it finds that the typed model and one
+frontier arm are not calibrated as delivered, while the other frontier arm is. It answers the
+third with a budget defined over flagged records and certified out of fold, and the fourth by
+measuring the injury and fatal crashes that the coded fields miss and the narratives supply.
+
+This paper makes five connected contributions to the coding of crash narratives. It first
+formulates narrative coding as a set of gated, typed decisions, in which presence questions
+open detail questions and named entities are selected from a closed option set rather than
+generated. The effect of each design rule is measured instead of asserted, including a paired
+before-and-after test of an exclusion rule on a fixed sample. The paper then runs that
+decomposition at scale, screening \StageOneCoded{} Texas narratives with a
+\NLeanQuestions{}-question schema and coding \NstageTwo{} of them with the full
+\NQuestions{}-question schema, at a measured cost of \$\CostPerThousand{} per thousand
+narratives. Applied to the whole corpus of \Ncorpus{} narratives at that rate the projected
+cost is \$\CostWholeCorpus{}, and the corpus itself was not coded. The fitted cost model shows
+that spend is governed by the size of the question schema rather than by the length of the
+text, which reverses the premise behind two-stage screening designs.
+
+The third contribution is an independent calibration and selective-prediction audit of every
+variable, against coded CRIS fields as a large agreement reference and against a
+cell-stratified human reference set with calibration weights. That second reference measures
+fidelity to the narrative rather than the facts of the crash, because a coder is asked what the
+narrative says and not what probably happened. The audit finds that the model returns
+probabilities on a discrete two-decimal grid whose floor exceeds the base rate of several
+target variables, which places a floor on the attainable calibration error that no improvement
+in ranking can remove. The fourth contribution is a reformulation of the review budget.
+Accuracy-based selective risk carries little information when the positive class is rare,
+because abstaining on nothing already satisfies conventional risk targets. The budget is
+therefore defined over flagged records at a target precision, certified on narratives that did
+not select the threshold, and reported per variable per year. The fifth contribution joins the
+audit to a transportation outcome. It measures how the injury and fatal crashes attributed to
+each contributing factor change when the calibrated narrative variables are added to the coded
+fields, and the rate at which coders confirm narrative-only flags decides which of those
+changes can be believed. Two frontier generative models are run on the same human-labeled
+records as an accuracy comparison, and the schema, the runner, the metric code and every
+aggregated output behind a figure or table are released.
+
+The rest of the paper proceeds as follows. Section~\ref{sec:background} places the work in
+the literatures on narrative coding, calibration and selective prediction, and typed decision
+models. Section~\ref{sec:methods} describes the corpus, the schema, the reference sets and
+the evaluation, and states the quantities the analysis computes as numbered equations.
+Section~\ref{sec:results} reports the population run, the calibration audit, the review
+budgets and the comparison with keyword rules and frontier models. Section~\ref{sec:discussion}
+compares the findings with the closest published studies, and Section~\ref{sec:conclusion}
+summarizes the contributions, states the boundaries of the study and sets out the work that
+follows from them.
+
+%% =====================================================================================
+\section{Background}
+\label{sec:background}
+
+\subsection{Crash narratives and narrative coding in safety research}
+\label{sec:bg-narratives}
+
+Work on crash narratives has moved from keyword rules, through topic models and fine-tuned
+encoders, to zero-shot prompting of large language models, and the coded field has served as
+the reference at every stage. Rule-based and feature-based methods identified work-zone
+crashes that the coded fields misclassified \citep{sayed2021identifica}, agricultural crashes
+that a curated keyword list could recover from general categories \citep{kim2021crash}, and
+contributory factors beyond the single code a form permits \citep{zou2024crashcausi}. They
+also identified hydroplaning involvement, which no CRIS field records and which interpretable
+models could associate with vehicle characteristics only after the narrative supplied the
+label \citep{das2020hydroplaning}. Topic modeling exposed latent themes across a decade of fatal
+crash narratives \citep{kwayu2021}, and fine-tuned encoders extended the approach to pedal
+misapplication \citep{bareiss2021finding} and to severity classification on Texas narratives
+\citep{oliaee2023using}. The same progression occurred in adjacent domains, with construction-accident narratives classified by support vector machines and other classical learners \citep{goh2017construction} and railway-accident narratives by deep networks
+\citep{heidarysafa2018railway}. Two properties recur across this literature and carry into the present design. The narrative
+is reliable enough to serve as the standard against which a coded field is judged, as in the
+speeding-designation review of \citet{fitzpatrick2017an}, and it exposes under-reporting in
+the coded fields themselves, which \citet{arteaga2025a} used a language-model framework to
+quantify.
+
+Two recent studies bracket the current state of practice with language models and together
+motivate this paper. \citet{bharati2026benchmarking} evaluated six frontier language models
+against official Arkansas fatal-crash coding on some four thousand matched crashes over six attributes
+the database already codes. They found that a keyword-rule baseline performed comparably to
+the best model and that differences across attributes exceeded differences across models,
+from which they recommended attribute-specific evaluation and human review. This paper takes
+that recommendation as its starting point, evaluates every variable separately, and
+quantifies the human review the recommendation calls for. \citet{zhang2025secondary} audited
+a single variable, secondary-crash involvement, in Kentucky narratives and showed that a
+fine-tuned transformer beat prompted language models at a fraction of their cost, which sets
+the cost bar a new method has to clear. Earlier comparative work on ChatGPT, BARD and GPT-4
+was qualitative and small \citep{mumtarin2023llm}, and more recent frameworks generate
+explanations and causal chains rather than audited probabilities
+\citep{crashsage2025,su2026llmdriven}. Fine-tuning a language model to infer hazardous driver actions from narratives improved on inconsistent manual coding and produced probabilistic outputs, but it required labeled training data and reported no calibration audit \citep{hazardous2025}. Instruction-tuned models have been prompted for vulnerability indicators in police text without a confidence audit \citep{vulnerability2024}. A recent systematic review of natural language processing applied to crash reports covers severity, duration and causation and reports no calibrated, selective coding \citep{nlpsafety2026review}. Outside transportation, language models have been evaluated as text annotators \citep{gilardi2023chatgpt,ding2023annotator,ziems2024css}
+and for structured extraction from scientific prose \citep{dagdelen2024structured}, and
+those studies report agreement with human labels rather than calibration. The
+clinical-text literature, which is several years ahead on validating model-extracted
+variables, reaches a consistent verdict that carries over here. Agreement with expert adjudication is high on a binary progression question assessed from radiology reports \citep{kristjnsson2026prompting}. It is also high on the presence and grade of adverse events extracted from oncology notes but degrades on their finer attributes \citep{guillot2026extracting}, and it degrades on the finer grades of postoperative complications classified from discharge letters \citep{warmer2026zeroshot}.
+That literature also supplies three cautions that shaped the schema design. Extraction performance depends heavily on how
+the prompt is constructed \citep{wu2026automated}, prompt architecture induces order and
+label biases that survive an instruction that the options were shuffled
+\citep{brucks2025prompt}, and the largest model is not always the right one, since
+fine-tuned encoders beat decoder-only models on overdose-death classification
+\citep{funnell2026improving}. A typed interface with a fixed option set narrows the surface those two cautions apply to,
+because the model selects from an option set the analyst fixes and returns no free text, so no
+answer can be invalid and none has to be parsed. Whether the option order or the criteria
+wording still moves the returned probabilities is a separate question, and this study does not
+test it, so the claim made here is about output validity rather than about the absence of
+order or wording effects.
+
+The injury-surveillance literature on auto-coding narratives is the same problem in a
+neighboring field and is more mature on two points that this paper needs. It confronted the division of labor between machine and human early, with Bayesian classifiers coding narratives into cause groups \citep{lehto2009bayesian} and human-machine ensembles routing the narratives coded with low confidence to manual review \citep{marucciwellm2017classifyin}. The same group developed
+semi-automated coding of short injury narratives from large administrative databases
+\citep{marucciwellman2015practical}, and Naive Bayes coding was applied to workers'
+compensation claims and to near-miss narratives from the fire service
+\citep{bertke2012naive,taylor2014nearmiss}. It also confronted rare categories
+explicitly, asking whether more training data or filtering rescues them
+\citep{nanda2018improving} and comparing auto-coding methods on the same causation task
+\citep{bertke2016comparison}, with factorization models as one answer
+\citep{chen2015factorization}. Early work showed that computerized coding of narrative text improves surveillance when a
+human remains in the loop \citep{wellman2004computerized}, and a systematic review surveys the machine-learning approaches to that surveillance text \citep{vallmuur2015review}. What that line did not do is measure
+whether the confidence that governs the routing is calibrated, which is what distinguishes
+a review threshold from a review budget.
+
+The coded fields that narrative studies use as their reference carry documented error, and
+the direction of that error matters for the audit reported here. The validity of police-reported crash data has been examined since \citet{shinar1983validity}, and \citet{austin1995mistakes} showed that mistakes in the locational variables of accident records can be identified by comparing the report with accurate highway data from other sources. Under-reporting of crashes and injuries to police is large and uneven across countries, severities and road users \citep{elvik1999incomplete,alsop2001underreporting,amoros2006underreporting}. Linked police and hospital records show that the police file misses injured people it should contain \citep{watson2015underreporting,janstrup2016underreporting}, and police-reported injury codes are an inadequate proxy for the injury severity that in-depth investigation records \citep{farmer2003reliability}. Under-reporting also biases the parameters of severity
+models \citep{yamamoto2008underreporting,ye2011underreporting}, and a review of crash data
+quality for road-safety research lists incompleteness of contributing-factor fields among
+its open problems \citep{imprialou2019quality}. The common pattern across these studies is omission, because a coded field fails to record a
+factor far more often than it records one that did not occur, and that is the one-sided error
+structure that Section~\ref{sec:evaluation} formalizes. De-identification is the last concern
+the narrative literatures share. Automated removal of identifiers from free text has a long record in
+clinical narratives \citep{uzuner2007deid,neamatullah2008deid,meystre2010deid,stubbs2015i2b2},
+and \citet{ma2026pii} address it for crash narratives with a local agentic workflow that
+reaches high recall. This paper applies a simpler regular-expression pass and a model-based
+screen, and reports residual-identifier rates rather than claiming removal.
+
+\subsection{Calibration, selective prediction, and label-efficient evaluation}
+\label{sec:bg-calibration}
+
+A probabilistic classifier is calibrated when, among the cases it assigns probability $p$, a
+fraction $p$ are positive, and the tools for assessing that property come from forecast
+verification. The Brier score \citep{brier1950verification} is a strictly proper scoring rule
+\citep{gneiting2007strictly}, and its decomposition into reliability, resolution and
+uncertainty \citep{murphy1973new} separates calibration from discrimination. Subjective
+probability forecasts of weather were the first to be assessed this way
+\citep{murphy1977reliability}, and \citet{degroot1983forecasters} formalized the comparison of forecasters by calibration and refinement, which is why the forecasting literature frames the target as maximizing sharpness subject to calibration \citep{gneiting2007probabilis}.
+Reliability diagrams make calibration visible, and their binning has been put on a firmer
+footing by consistency bands \citep{brocker2007diagrams}, by the decomposition of proper
+scores \citep{brocker2009reliability}, and by binning-free estimators that make the diagram
+reproducible \citep{dimitriadis2021stable,gneiting2023regression,dimitriadis2024evaluating}.
+In machine learning the same quantity is summarized by expected calibration error
+\citep{naeini2015obtaining}, which is sensitive to its binning \citep{nixon2019measuring},
+whose estimation properties were examined by \citet{vaicenavicius2019evaluating}, and whose
+verified estimation requires discretized outputs \citep{kumar2019verified}. Modern neural classifiers are usually poorly calibrated \citep{guo2017calibration}, which is why calibration has to be measured rather than assumed. Post-hoc recalibration by logistic scaling
+\citep{platt1999probabilistic}, isotonic regression \citep{zadrozny2002transformi}, and
+their comparison across learners \citep{niculescumiz2005predicting} remain the standard
+remedies, extended by beta calibration \citep{kull2017beta} and Dirichlet calibration
+\citep{kull2019dirichlet}.
+
+The clinical prediction-model literature adds the operational reading that this paper adopts.
+Calibration is assessed by a logistic regression of the outcome on the logit of the prediction,
+whose slope and intercept were introduced by \citet{cox1958two}, and by the test statistic of
+\citet{spiegelhalter1986probabilistic}. \citet{van2016a} defined a hierarchy of calibration
+from the mean level through the slope to moderate and strong calibration, and
+\citet{van2019calibratio} argue that poorly calibrated algorithms are misleading and potentially harmful for decision-making. The quantity that matters for a decision is the net benefit
+at the threshold actually used \citep{vickers2006decision,steyerberg2010assessing}, and the
+textbook of \citet{steyerberg2009book} treats recalibration as a routine step in model
+updating. This paper carries that view to a review budget, where the decision threshold is a
+target precision and the benefit is the share of flagged records that need not be read.
+
+Selective classification supplies the decision-theoretic frame for abstention. The optimum
+error-reject trade-off was characterized by \citet{chow1970on}, and the modern formulation
+traces selective risk against coverage as the abstention threshold moves
+\citep{elyaniv2010foundations,geifman2017selective}. Theoretical guarantees exist for
+pointwise-competitive selection \citep{wiener2015agnostic}, hinge-loss and support-vector
+formulations of the reject option \citep{bartlett2008reject,wegkamp2011support}, and a
+general learning theory of rejection \citep{cortes2016rejection}. Deep networks have been
+given an integrated reject option \citep{geifman2019selectivenet}, with the maximum softmax
+probability as the baseline confidence score \citep{hendrycks2017baseline}. That literature
+was developed for balanced problems, and its risk targets assume them. Narrative-derived safety variables are rare, and the precision-recall literature
+has long observed that error rates dominated by the negative class conceal what happens on
+the positive class \citep{davis2006prroc,saito2015prplot}. Section~\ref{sec:evaluation}
+shows that the standard formulation becomes vacuous in that regime and defines the budget
+over flagged records instead.
+
+Label-efficient evaluation is the last ingredient of the design. The Horvitz--Thompson
+estimator
+\citep{horvitz1952generalization} makes population estimates from a sample with unequal
+inclusion probabilities, with the design-based variance theory of survey sampling behind it
+\citep{kish1965survey,sarndal1992model} and the bootstrap as a general interval method
+\citep{efron1993bootstrap}. Active evaluation applies the same idea to classifier assessment,
+choosing which items to label so that a performance estimate is precise at a fixed labeling
+cost. It has been developed for F-measures \citep{sawade2010fmeasure},
+for classifiers at web scale \citep{bennett2010stratified,katariya2012active}, for entity
+resolution \citep{marchant2017oasis}, for rare categories \citep{poms2021lowshot}, and for
+model evaluation in general \citep{kossen2021activetesting}. The reference set of this paper
+follows that design, stratifying on the model's own probability so that the middle of the
+range, where calibration is informative and cases are scarce, is estimable at all. Agreement
+between coders is measured with Cohen's kappa \citep{cohen1960coefficient} on the scale of
+\citet{landis1977measurement}, with the cautions of \citet{mchugh2012kappa}, and exact
+binomial intervals \citep{clopper1934use} and the paired test of \citet{mcnemar1947note}
+complete the toolkit.
+
+\subsection{Decision models without text generation and the calibration of language-model confidence}
+\label{sec:bg-decision}
+
+The model audited here belongs to a class its developer calls System One models
+\citep{typesafe2026systemone}. Such a model takes an unstructured state and a set of typed
+questions and returns, for each question, an answer from the option set the analyst defined
+together with a probability, in a single parallel pass and with no generated text. The developer describes the
+training objective as reinforcement learning for calibrated decisions and states that the
+probabilities are optimized against outcomes, that the model never makes a type error, and
+that higher confidence means higher accuracy \citep{typesafe2026launch}. Three question types
+exist, a binary presence question, a choice among named options, and an ordered score, and
+the model is priced per input token with output free \citep{typesafe2026models}. These
+claims are quoted here rather than adopted. The documentation states no numeric precision,
+granularity or bounds for the returned probabilities, and the developer has published no
+calibration metrics, so the output grid reported in Section~\ref{sec:res-population} and the
+calibration reported in Section~\ref{sec:res-calibration} are measurements of this paper
+rather than documented properties.
+
+The contrast with generative models is in how a probability is obtained, and the distinction
+has three levels that are easily conflated. A generative model does produce token likelihoods,
+which are well defined and describe the words it selected, but a label's probability is not
+one of them and the likelihood of the token ``yes'' is not the model's belief that the answer
+is yes. A second level is self-evaluation, in which the model is asked whether its own answer
+is correct. A third is verbalized confidence, in which the model is asked to state a number.
+The second and third have been studied intensively, and the third is what the frontier arms of
+this paper supply. Pre-trained transformers were found to be reasonably calibrated in domain out of the box \citep{desai2020calibration}, and generative language models answering factual questions were found to be poorly calibrated \citep{jiang2021calibration}. Large
+models can predict whether they know an answer when asked directly, but the property
+degrades with fine-tuning \citep{kadavath2022know}, and models can be trained to state
+uncertainty in words \citep{lin2022words}. Conversational agents were over-confident until
+linguistically calibrated \citep{mielke2022reducing}, and eliciting usable confidence from a
+model tuned with human feedback requires deliberate strategies \citep{tian2023just}. An empirical comparison of elicitation methods found that verbalized confidence tends to be over-confident \citep{xiong2024express}. Semantic entropy over sampled answers has been proposed as an alternative \citep{kuhn2023semantic}, and a survey of the field catalogs the confidence-estimation and calibration methods proposed to date together with their open challenges \citep{geng2024survey}. \citet{zhou2024reliable}
+report that larger and more instructable models become less reliable in the sense that
+they answer more and are wrong more often on hard items. A typed interface that returns a
+probability directly sidesteps elicitation, which is exactly why its calibration has to be
+audited rather than inferred.
+
+Structured-output and cascade designs are the engineering context. Constrained decoding
+guarantees that a generated string matches a grammar \citep{willard2023guided}, which
+removes type errors but says nothing about confidence, and cascades route inputs to a
+cheaper model first and escalate on low confidence \citep{chen2023frugalgpt}, which
+presupposes that the confidence is meaningful. Selective prediction for language models
+follows the same logic, abstaining on domain shift \citep{kamath2020selective}, across
+settings \citep{varshney2022selective}, and after self-evaluation
+\citep{chen2023selfeval}. The vendor's own examples of confidence-gated fallback use
+small demonstrations without an external reference \citep{typesafe2026systemone}.
+
+Taken together, the three literatures leave a specific gap. Narrative coding has reached
+population scale with rules and sample scale with generative models, and it validates
+against coded fields whose error is one-sided. Calibration and selective prediction supply
+the estimators and the decision frame, and both were developed for continuous outputs and for
+classes that are not extremely rare. Neither assumption is a flaw in that literature, and
+neither holds here, so each has to be replaced with something specific to this setting. A
+discrete output grid admits an exact calibration error and imposes a bound on how small that
+error can be, which is a property of the model's interface rather than of its skill. A rare
+positive class makes an error-rate target uninformative and calls instead for a measure of the
+workload a precision requirement implies. Typed decision models return probabilities cheaply
+and without elicitation, but no independent measurement of those probabilities exists on any
+safety corpus. This paper fills that gap on four fronts. It audits a typed decision model against both an
+administrative and a human reference, and it derives the grid bound and applies the exact
+estimator that bound permits. It defines the review budget over the records an agency would
+read, and it measures what the resulting variables change in a safety diagnosis.
+
+%% =====================================================================================
+\section{Data and methods}
+\label{sec:methods}
+
+Figure~\ref{fig:framework} gives the shape of the pipeline before the parts are defined. A
+crash narrative enters as program state, a typed schema of \NPresence{} presence, \NChoice{}
+categorical and \NScore{} ordinal questions is put to the model in one call, and the model,
+which is fixed and never trained here, returns a probability per question. Those
+probabilities form a table in which every cell carries its own uncertainty, and the only
+fitted object in the whole pipeline is the one-dimensional recalibration map that turns the
+returned probabilities into calibrated ones. Two references, drawn below the pipeline, decide
+what a probability means. The coded CRIS fields are compared against, at the scale of the random stratum, but never
+fitted on, and the human reference set supplies the labels on which the recalibration map is
+fitted and on which accuracy is measured. The right-hand block of the figure is the
+deliverable of the audit, the share of flagged records a person must open to reach a target
+precision, which the results report as \GoldBudgetNinety\% at the \PrecTargetNinety\% target.
+Table~\ref{tab:notation} collects the notation used in this section, and Table~\ref{tab:eqmap}
+in Appendix~\ref{app:proofs} maps every numbered equation to the script and result file that
+computes it. The section first describes the corpus and its de-identification, then the
+schema and the two-stage coding design with its cost model, then the three reference sets
+against which the model is scored, and finally the evaluation quantities.
+
+\begin{figure}[pos=t]\centering
+\includegraphics[width=\textwidth]{figs/F1_framework.pdf}
+\caption{The framework. The pipeline runs from left to right, starting with the corpus of
+\Ncorpus{} screened narratives and the typed schema, a grid of questions in which filled
+squares are asked of every narrative and pale squares wait on a presence question. The
+snowflake marks the model as fixed and never trained, the flame marks the recalibration map
+as the only fitted object, and the grid at the right is the review budget, its dark squares
+the records a person must check. The coded CRIS fields (gray) join by a dashed line because
+they are only compared against; the human reference set (orange) joins by a solid line
+because it supplies the labels the map is fitted on.}
+\label{fig:framework}
+\end{figure}
+
+\begin{table}[pos=!htbp]
+\centering
+\small
+\caption{Notation. Inclusion probabilities carry one index and answer distributions carry two,
+and the target precision carries a star, so the three uses of $\pi$ do not collide.}
+\label{tab:notation}
+\begin{tabular}{ll}
+\toprule
+\jevhead{Symbol} & \jevhead{Meaning} \\
+\midrule
+$n_i$, $i = 1, \dots, N$ & narrative $i$ of the analyzed corpus of size $N$ \\
+$\mathcal{V} = \mathcal{B} \cup \mathcal{C} \cup \mathcal{S}$ & variables, partitioned into presence, categorical and ordinal sets \\
+$O_v$, $o_v^{\varnothing}$ & option set of a categorical variable and its no-match option \\
+$p_{iv} \in [0,1]$ & returned probability that presence variable $v$ holds in narrative $i$ \\
+$\pi_{iv} \in \Delta(O_v)$, $\hat{o}_{iv}$ & returned distribution over options and its mode \\
+$c_{iv} = \phi(\pi_{iv})$ & returned confidence attached to a categorical or ordinal answer \\
+$g(v)$, $\tau_g$ & gate of a dependent variable and the gate threshold \\
+$\lambda_v$ & leakage rate of a gated variable \\
+$y_{iv} \in \{0,1\}$, $y'_{iv}$ & true label and coded-field label \\
+$\hat{y}_{iv} = \mathbb{1}[p_{iv} > \tau]$ & decision at threshold $\tau$ \\
+$\theta$ & abstention threshold on the confidence score, distinct from $\tau$ \\
+$w_i$ & calibration weight of a pair in the human reference sample \\
+$a_{iv}$ & probability that variable $v$ was assigned to narrative $i$ for labeling \\
+$\rho$ & base rate (prevalence) of a variable \\
+$G$, $\delta$, $w_0$ & attainable output grid, its smallest positive value, and the mass on zero \\
+$\kappa_{iv}$ & confidence score used for abstention \\
+$C(\cdot)$, $R(\cdot)$ & coverage and selective risk \\
+$\pi^{*}$, $H(\pi^{*})$ & target precision and the review budget at that precision \\
+$k$, $\ell_i$ & questions per call and narrative length in characters \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Corpus and de-identification}
+\label{sec:corpus}
+
+The corpus is the crash-level narrative file of the Texas Crash Records Information System
+for the years \FirstYear{} to \LastYear{}, held under the authors' data agreement with the
+Texas Department of Transportation. It is joined to the crash-unit-person extract of the same
+system by crash identifier. The narrative file holds \Nrecords{} crash records, and after
+removing records whose narrative is empty or has \MinChars{} characters or fewer, \Ncorpus{}
+narratives remain and form the analyzed corpus. The median narrative has \MedianChars{}
+characters, the ninety-fifth percentile has \LengthPNinetyFive{}, and the ninety-ninth has
+\LengthPNinetyNine{}, so a typical narrative contributes about \NarrativeTokens{} input tokens
+to a model call. Narratives are written either in mixed case or in capitals, in a ratio that
+is stable across years and serves as a proxy for reporting agency (Figure~\ref{fig:corpus}c).
+Narrative availability changed sharply over the period, because the share of crash records
+with an empty narrative falls from \EmptyShareFirst\% in \FirstYear{} to \EmptyShareLast\% in
+\LastYear{} (Figure~\ref{fig:corpus}a). Any analysis that pools years without conditioning on
+narrative availability under-represents the early period, and prevalence trends estimated
+from narratives alone are confounded with this reporting change. Every prevalence reported
+here is therefore stated on the analyzed corpus with its denominator explicit.
+
+Names and telephone numbers were replaced with placeholders by the data owner before the
+file was received, and the identifiers that survive that pass were measured over all
+\Ncorpus{} narratives with the regular expressions released with the code. Date strings occur
+in \PIIDate\% of narratives, long digit runs in \PIIDigitRun\%, case or report numbers in
+\PIICase\%, date-of-birth tokens in \PIIDob\%, and driver-license or identification numbers
+in \PIIIdNum\%. Titled personal names, such as an officer's rank followed by a surname, match
+in \PIITitledName\% of narratives, though most of these name the reporting officer rather than
+an involved party. A second-pass regular-expression redaction replaces each of these patterns
+with a placeholder in any copy of a narrative used for display. A model-based
+residual-identifier screen, which asks a single presence question about any unreplaced name,
+date of birth, license number, address or telephone number, is applied before any narrative
+is shown to a person outside the research team.
+
+The sequence in which those three protections were applied differs by recipient, and it is
+stated here exactly rather than summarized. The data owner's redaction of names and telephone
+numbers applies to every narrative and preceded everything else. The typed-model runs, both the
+first-stage screen of \StageOneCoded{} narratives and the full coding of \NstageTwo{}, sent
+that owner-redacted text and nothing further, so the second-pass regular-expression redaction
+and the model-based screen were not applied before them. Those two further protections were
+applied to the \DesignNCandidates{} candidates of the reference frame, and only to them, before
+any narrative reached a human coder or either frontier vendor. \GoldPIIWithheld{} candidates
+were withheld on the screen's account and replaced. The consequence is that the human coders
+and the two frontier vendors received twice-redacted and screened text, while the typed-model
+service received the owner-redacted text at the rates of residual identifiers reported above.
+That asymmetry follows from the order in which the work was done rather than from a judgment
+that one recipient needs less protection, and an agency repeating this work should apply the
+screen before the first model call. No narrative is reproduced in this paper, and every example
+of narrative text is synthetic.
+
+
+\subsection{Schema design and two-stage coding}
+\label{sec:schema}
+
+Narrative coding is formulated as a set of typed decisions over the narratives $n_i$ and the
+variable set $\mathcal{V}$, which is partitioned into presence variables $\mathcal{B}$,
+categorical variables $\mathcal{C}$ with an explicit no-match option
+$o_v^{\varnothing} \in O_v$, and ordinal variables $\mathcal{S}$ with levels $0, \dots, L_v$.
+For a presence variable the model returns a probability $p_{iv} \in [0,1]$ that the variable
+holds. For a categorical variable it returns a distribution $\pi_{iv} \in \Delta(O_v)$ with
+mode $\hat{o}_{iv}$ and a confidence $c_{iv} = \phi(\pi_{iv})$, and for an ordinal variable a
+distribution over levels with an expected level and a confidence. A dependent variable $v$
+has a gate $g(v) \in \mathcal{B}$, and its answer is interpreted through the gating operator
+\begin{equation}
+\tilde{o}_{iv} \;=\;
+\begin{cases}
+\hat{o}_{iv} & \text{if } p_{i,g(v)} > \tau_g,\\
+o_v^{\varnothing} & \text{otherwise},
+\end{cases}
+\qquad \tau_g = \TauGate,
+\label{eq:gate}
+\end{equation}
+so that a detail question is read only when its presence question has fired. The empirical
+justification for the operator is the leakage rate
+\begin{equation}
+\lambda_v \;=\; \Pr\!\left(\hat{o}_{iv} \neq o_v^{\varnothing} \;\middle|\; p_{i,g(v)} \le \tau_g\right),
+\label{eq:leak}
+\end{equation}
+the share of narratives in which the model would have asserted a detail whose presence
+question it had itself answered in the negative. Both quantities are computed when the raw
+answers are flattened, and the raw answer is kept beside the gated one so that
+Eq.~(\ref{eq:leak}) can be reported for every gated variable.
+
+The schema holds \NQuestions{} questions, of which \NPresence{} are presence questions,
+\NChoice{} are categorical, \NScore{} are ordinal and \NGated{} are gated, and
+Table~\ref{tab:schema-full} in Appendix~\ref{app:schema} reproduces every instruction and
+criterion as sent to the model. Seven design rules govern the schema, and they were derived
+from the documented failure modes of the model class. Each question makes one narrow judgment,
+presence comes before detail with the detail gated by Eq.~(\ref{eq:gate}), and every
+categorical question carries an explicit no-match option. Named entities such as drugs are
+selected from a closed option set rather than generated, and numbers are pre-bucketed in the
+criteria text, so that a stage of pregnancy is described in weeks and months rather than left
+for the model to compute. No question uses a double negative or refers to another question,
+because questions cannot see each other, and exclusions are written into the criteria after
+error analysis. The effect of the last rule was measured rather than asserted. The aggression
+question had fired on police pursuits, which are enforcement actions rather than aggression
+directed at another road user, so the exclusion was added and the full schema was re-run on a
+fixed sample of \SchemaValidateCompared{} narratives before and after the change. Among the
+\PursuitN{} narratives containing pursuit language, positives fell from \PursuitPosBefore{}
+to \PursuitPosAfter{} and the mean probability from \PursuitMeanBefore{} to
+\PursuitMeanAfter{}. The \OtherNoulsN{} other presence questions were unchanged, with label
+agreement of at least \OtherAgreeMin{} and a mean absolute probability shift of at most
+\OtherShiftMax{}, so the change was surgical rather than a general suppression. The criteria
+text is the entire specification of what each variable means, and the human coders and the
+frontier models of Section~\ref{sec:reference} received that same text verbatim.
+
+Coding proceeds in two stages over a simple random sample drawn from the analyzed corpus with
+a fixed seed. In the first stage a lean schema of \NLeanQuestions{} presence questions is run
+over a random frame of \StageOneFrame{} narratives, of which \StageOneCoded{} returned an
+answer, at a cost of \$\StageOneCost{}. The stage estimates prevalence at large sample size
+with exact binomial intervals and supplies a pool of likely positives for the rare classes
+that a purely random second-stage sample would barely contain. In the second stage the full
+schema is run over a frame with two parts. The first part is a random subset of
+\NstageTwoRandom{} narratives from the first-stage sample, and it is the inferential
+backbone, because every population estimate in this paper is computed on it alone. The
+second part enriches each rare class from keyword hits and from first-stage positives up to
+a per-class ceiling, so that per-variable calibration and precision are estimable for classes
+that are otherwise too rare to measure. It is never pooled with the random part for a
+prevalence estimate. Every narrative carries its stratum and its inclusion probability,
+recorded at coding time because they cannot be recovered afterwards, and estimates that use
+the enriched part are inverse-probability weighted. The enriched allocation is trimmed
+proportionally within class so that the projected spend stays below its budget line, and the
+trim is folded into the recorded inclusion probabilities. The frame is shuffled before
+running, so that an interrupted run would leave a representative prefix rather than a
+truncation that drops the classes ordered last. The second stage coded \NstageTwo{}
+narratives with no errors at a cost of \$\StageTwoCost{}.
+
+Input tokens, and therefore cost, are well described by a linear model in the number of
+questions $k$ in a call and the narrative length $\ell_i$ in characters,
+\begin{equation}
+T(k, \ell_i) \;=\; \alpha + \beta k + b\,\ell_i,
+\label{eq:cost}
+\end{equation}
+fitted on a sweep of \CostSweepQuestionSets{} question counts over \CostSweepCalls{} calls at a
+cost of \$\CostSweepCost{}. Let $\varpi$ be the price per token and $\bar{\ell}$ the mean
+narrative length. A design that screens every narrative with a lean schema of $k_s$ questions
+and then codes a fraction $q$ of them with the full schema of $k_f$ questions costs
+$N\varpi[T(k_s, \bar{\ell}) + q\,T(k_f, \bar{\ell})]$, against $N\varpi\,T(k_f, \bar{\ell})$
+for coding everything once. Screening therefore pays only when
+\begin{equation}
+q \;<\; q^{*} \;=\; 1 - \frac{T(k_s, \bar{\ell})}{T(k_f, \bar{\ell})}
+\;=\; 1 - \frac{\alpha + \beta k_s + b\bar{\ell}}{\alpha + \beta k_f + b\bar{\ell}}.
+\label{eq:twostage}
+\end{equation}
+Because $\beta k$ dominates $b\bar{\ell}$ for schemas of the size used here, the break-even
+fraction depends on how many questions the screen drops and not on how much text is read.
+All runs use the pinned model identifier, and the identifier returned by the service is
+recorded on every call so that a silent version change is detectable after the fact.
+Requests run at a concurrency of \ConcurrencyN{} with exponential backoff over at most
+\MaxTries{} attempts. The runner accumulates realized input tokens, projects the full-run cost
+after the first \ProjectAfterCalls{} calls, and aborts if that projection exceeds the ceiling
+it was given, so a mispriced schema cannot run away unattended. The total spend across
+every model call reported here was \$\TotalSpend{}. The schema is
+released verbatim, the runner and the metric code are released with their unit tests, and
+every aggregated output behind a figure or table is released.
+
+
+\subsection{Reference sets}
+\label{sec:reference}
+
+The first reference is the coded CRIS record. Narratives are joined to the person- and
+unit-level extract by crash identifier, and the coded fields are aggregated to crash level for
+all \NCrashesJoined{} crashes with the mapping of Table~\ref{tab:coded-map}. That mapping gives
+nine presence variables a coded counterpart and records two deviations from the original plan,
+the contributing-factor codes for wrong-way travel in place of the broader opposite-direction
+collision type, and the ill-driver factor as the reference for medical episodes. Coded fields
+are themselves incomplete, so every statistic computed against them is an agreement measure
+bounded by the reference's own error, and it is labeled as such throughout. The keyword baseline
+scored against that reference is a family of regular expressions per variable, listed in
+Table~\ref{tab:keywords} and tuned only on a held-out development sample.
+
+The second reference is a human reference set drawn under a cell-filling design, described
+here as it was executed rather than as it was specified. Each variable's returned probability is
+cut into the cells \GoldBinsText{}, and narratives were drawn sequentially from the second-stage
+random stratum by a greedy rule that repeatedly took a narrative filling the largest number of
+still-short cells, against a target of \GoldBinTargets{} per cell. A narrative drawn for one
+variable is labeled for all of its active variables, those with
+$p_{iv} \ge \GoldActiveThreshold$, plus \GoldNegControls{} randomly chosen low-probability
+variables as negative controls. \DesignNCandidates{} candidates were drawn, \DesignNWithheld{}
+were withheld by the identifier screen of Section~\ref{sec:corpus}, and the first
+\GoldNarratives{} that cleared it were labeled, with the estimand fixed before any label
+existed.
+
+A greedy draw followed by a screen has no inclusion probabilities that can be written down, so
+the weights are calibration weights in the sense of \citet{deville1992calibration} rather than
+inverse inclusion probabilities. The analysis population is the second-stage random stratum, and
+the cell separates the two routes into the sample exactly. A variable at or above
+\GoldActiveThreshold{} is always labeled, so its assignment probability is one, and a variable
+below it is labeled only as one of the \GoldNegControls{} controls, so its assignment
+probability is \GoldNegControls{} divided by that narrative's count of low-probability
+variables. A pair's design weight is its narrative's base weight divided by that assignment
+probability, scaled within its cell so that the weighted sample reproduces the population count
+of the cell. Appendix~\ref{app:coders} gives the construction in full, including the rule that
+merges cells holding fewer than \DesignMinCell{} labeled pairs, and both factors are recorded
+for every pair in the released audit table.
+
+The base rate, the precision and the observed positive rate at a grid value are all population
+means of some quantity $z_i$, and each is estimated by the H\'ajek ratio
+\begin{equation}
+\hat{\theta} \;=\; \frac{\sum_{i \in s} w_i\, z_i}{\sum_{i \in s} w_i},
+\label{eq:ht}
+\end{equation}
+where $s$ is the labeled sample and $w_i$ the calibration weight of pair $i$. The ratio of two
+weighted totals is consistent rather than unbiased, at the order Appendix~\ref{app:proofs}
+gives. The weights span a factor of \DesignWeightRatio{} and give a design effect of
+\DesignDeff{}, so the \GoldNUsable{} usable judgments carry the information of about
+\DesignNEff{}, which is what every interval below is built on.
+
+Intervals resample narratives rather than judgments, because one narrative supplies up to
+\FrontierNVars{} judgments and they are not independent. The cluster bootstrap draws narratives
+with replacement within the \DesignNStrata{} draw routes the frame records, carrying all of a
+narrative's pairs and holding their weights fixed. With $B = \BootstrapB{}$ replicates the
+interval is
+\begin{equation}
+\left[\hat{\theta}^{(\alpha/2)} - \bar{b},\; \hat{\theta}^{(1-\alpha/2)} - \bar{b}\right],
+\qquad \bar{b} = \frac{1}{B}\sum_{r=1}^{B} \hat{\theta}^{(r)} - \hat{\theta},
+\label{eq:htvar}
+\end{equation}
+where the percentile interval is re-centered by the bootstrap bias, because an absolute
+deviation such as calibration error can only be pushed upward by resampling noise, and the raw
+bounds are kept in the released result files. Where a binomial interval is wanted for a weighted
+count, the Kish effective sample size $n_{\mathrm{eff}} = (\sum w_i)^2 / \sum w_i^2$ replaces
+the raw count, and every interval obtained that way is approximate.
+
+\CoderN{} coders with graduate training in transportation safety labeled \CoderNPairs{}
+narrative-variable pairs, \CoderNAnswers{} judgments in total, under the protocol and the fixed
+roster that Appendix~\ref{app:coders} sets out. They were recruited to three different profiles
+so that agreement between them would not measure a shared domain inference. Each saw the
+redacted narrative and the same criteria text the model was given, under the rule to label what
+the narrative states rather than what probably happened, and saw nothing else, so neither the
+model's probability, nor the coded field, nor another coder's answer. \CoderNDouble{} pairs
+were double-coded and
+\CoderNCalib{} triple-coded as a shared calibration block, on which pairwise Cohen's kappa,
+\begin{equation}
+\kappa \;=\; \frac{p_o - p_e}{1 - p_e},
+\label{eq:kappa}
+\end{equation}
+with $p_o$ the observed and $p_e$ the chance agreement, runs from \CoderKappaMin{} to
+\CoderKappaMax{} with a median of \CoderKappaMedian{}. That coder-to-coder statistic is
+unweighted, because it describes the panel rather than the population, whereas every kappa
+comparing the model with the human reference carries the calibration weights and is labeled
+weighted. Raw agreement across all pairs is \CoderAgreement\%, high partly because the frame is
+dominated by clear negatives, and the median judgment took \CoderMedianSec{} seconds. A pair is
+resolved by majority, and ties and pairs any coder marked unclear are dropped from every rate,
+which leaves \GoldNUsable{} usable judgments with \GoldNDisputed{} disputed pairs and
+\CoderNUnclear{} unclear answers. Scoring the model against a label the coders could not agree
+on would measure nothing, so the reference is defined on the cases people find clear.
+
+The third reference is a pair of frontier generative models from different vendors, run on the
+same \FrontierNarratives{} narratives and the same \CoderNPairs{} pairs, and scored against the
+same human labels with the same weights and metric code. They received the criteria text
+verbatim and the same per-narrative variable assignment, and nothing else, so neither the coded
+fields, nor the base rates, nor the typed model's probabilities. A generative model does carry
+token likelihoods, but those describe the words it chose rather than its belief about the event,
+and neither vendor's interface exposed them here. Each arm was therefore asked to state a
+probability and to use the full range, which makes the elicited number a verbalized confidence
+rather than a read-out of the model's internals. The arms ran through an agent harness in
+\FrontierBatches{} batches of \FrontierBatchSize{} narratives, with all criteria in context and
+no constraint on intermediate reasoning, so they had more context and more inference-time
+computation per judgment than the typed model. Their cost was not metered by that harness, which
+is why the price comparison in the results prices a comparable tier rather than these arms. Two
+exact statistics complete the toolkit, of which the first is the Clopper--Pearson interval
+that prevalences and confirmation rates carry for $x$ successes in $n$ trials,
+\begin{equation}
+\left[\,L,\; U\right], \qquad
+L = \begin{cases} 0 & x = 0\\ B^{-1}\!\left(\tfrac{\alpha}{2};\, x,\, n - x + 1\right) & x > 0\end{cases},
+\qquad
+U = \begin{cases} 1 & x = n\\ B^{-1}\!\left(1 - \tfrac{\alpha}{2};\, x + 1,\, n - x\right) & x < n\end{cases},
+\label{eq:cp}
+\end{equation}
+where $B^{-1}$ is the beta quantile function. The two boundary cases are stated because the
+beta quantile is undefined at them. Paired comparisons of two methods on the
+same narratives use the exact McNemar test on the discordant counts $n_{10}$ and $n_{01}$,
+\begin{equation}
+P \;=\; \min\!\left\{1,\; 2\sum_{j \le \min(n_{10}, n_{01})} \binom{n_{10}+n_{01}}{j} 2^{-(n_{10}+n_{01})}\right\}.
+\label{eq:mcnemar}
+\end{equation}
+
+
+\subsection{Evaluation}
+\label{sec:evaluation}
+
+Calibration is assessed with proper scores, binned and exact calibration errors, and the
+logistic recalibration statistics. With weights $w_i$ normalized to sum to the sample size,
+the Brier score and its Murphy decomposition over bins $k$ with weight $W_k$, mean prediction
+$\bar{p}_k$ and observed rate $\bar{y}_k$ are
+\begin{equation}
+\mathrm{BS} = \frac{1}{n}\sum_i w_i (p_i - y_i)^2,\qquad
+\mathrm{BS} \approx \underbrace{\sum_k \tfrac{W_k}{n}(\bar{p}_k - \bar{y}_k)^2}_{\text{reliability}}
+\;-\; \underbrace{\sum_k \tfrac{W_k}{n}(\bar{y}_k - \bar{y})^2}_{\text{resolution}}
+\;+\; \underbrace{\bar{y}(1-\bar{y})}_{\text{uncertainty}},
+\label{eq:brier}
+\end{equation}
+where the approximation is exact on the binned representation. The expected and maximum
+calibration errors over equal-mass bins are
+\begin{equation}
+\mathrm{ECE} = \sum_k \frac{W_k}{n}\,\bigl|\bar{p}_k - \bar{y}_k\bigr|,\qquad
+\mathrm{MCE} = \max_k \bigl|\bar{p}_k - \bar{y}_k\bigr|.
+\label{eq:ece}
+\end{equation}
+The model returns probabilities on a discrete grid $G$, so a binning-free estimator exists.
+Grouping by attainable value $v \in G$ with weight $W_v$ and observed rate $r_v$ gives
+\begin{equation}
+\mathrm{ECE}_G = \sum_{v \in G} \frac{W_v}{n}\,\bigl|v - r_v\bigr|,
+\label{eq:ecegrid}
+\end{equation}
+which needs no binning parameter. It is the estimator used for the human reference set, for every bootstrap interval and for the reliability curves. The coded-field errors tabulated in the results use the equal-mass estimator of Eq.~(\ref{eq:ece}) computed upstream, and the two agree at the printed precision except for one variable noted there. The calibration slope and intercept are the maximum-likelihood coefficients of
+\begin{equation}
+\Pr(y_i = 1 \mid p_i) = \sigma\!\left(a + b\,\mathrm{logit}(p_i)\right),
+\label{eq:cox}
+\end{equation}
+with $a = 0$ and $b = 1$ under calibration. A slope above one means probabilities that are
+not extreme enough and a slope below one means probabilities that are too extreme, and
+quasi-complete separation is flagged rather than reported as a slope. The Spiegelhalter
+statistic
+\begin{equation}
+z = \frac{\sum_i w_i (y_i - p_i)(1 - 2p_i)}{\sqrt{\sum_i w_i^2 (1 - 2p_i)^2\, p_i (1 - p_i)}}
+\label{eq:spieg}
+\end{equation}
+is standard normal for independent observations with known probabilities. The reference set
+is neither weighted nor independent in that sense, so the statistic is reported here as a
+descriptive index and its reference distribution is obtained by the cluster bootstrap of
+Eq.~(\ref{eq:htvar}) instead. Its sign is not interpreted, because the factor $1 - 2p$ in the
+summand reverses above one half, and the direction of the miscalibration is read from the
+weighted mean probability minus the prevalence, which Appendix~\ref{app:proofs} justifies.
+
+The discrete grid has a consequence that the continuous calibration literature does not
+treat, and it is stated here as a proposition. Let $\delta$ be the smallest positive value in
+$G$, $w_0$ the probability mass the model places on exactly zero, and $\rho$ the base rate of
+the variable.
+
+\begin{proposition}[Resolution floor]
+\label{prop:floor}
+If the model is calibrated then $\rho = \mathbb{E}[p] \ge \delta(1 - w_0)$, so calibration
+requires $w_0 \ge 1 - \rho/\delta$. If $\rho < \delta(1 - w_0)$, no allocation of grid values
+is calibrated, the mean probability exceeds the prevalence, and
+\begin{equation}
+\mathrm{ECE}_G \;\ge\; \mathbb{E}[p] - \rho \;\ge\; \delta(1 - w_0) - \rho \;>\; 0.
+\label{eq:floor}
+\end{equation}
+\end{proposition}
+
+The proof is given in Appendix~\ref{app:proofs} and takes five lines. The model audited here
+never returned zero in \NGridAnswersMillions{} million answers, so $w_0 = 0$ and the bound is
+$\delta - \rho$ with $\delta = \GridStep$, and the proposition applies to every variable whose
+base rate lies below \GridStep. The base rates that decide this are the coded-field
+prevalences of Table~\ref{tab:calibration}, so every application of the proposition in this
+paper is an application against the coded reference and is named as such. For such a variable
+the mean probability is not a prevalence estimate, whatever the model's ranking quality.
+
+Selective prediction is evaluated in two forms, the conventional one and the one defined
+over flagged records. Let $\kappa_{iv} = \max(p_{iv}, 1 - p_{iv})$ be the confidence of a
+presence decision and $\theta$ an abstention threshold, which is a different quantity from the
+decision threshold $\tau$ of Table~\ref{tab:notation} and is given its own symbol for that
+reason. The risk-coverage curve and its area are
+\begin{equation}
+C(\theta) = \Pr(\kappa \ge \theta),\qquad
+R(\theta) = \Pr(\hat{y} \ne y \mid \kappa \ge \theta),\qquad
+\mathrm{AURC} = \int_0^1 R\,\mathrm{d}C,
+\label{eq:riskcov}
+\end{equation}
+integrated as a step function over tied confidence values, with the excess area measured
+against an oracle that ranks every correct decision above every incorrect one. The coverage
+attainable at a target risk $r$ is $C^{*}(r) = \max\{C(\theta) \mid R(\theta) \le r\}$. This
+formulation carries little information when the positive class is rare. A rule that answers in
+the negative everywhere has full-coverage risk $R(0) = \rho$, so any target $r \ge \rho$ is
+already met by a rule that flags nothing and reads nothing. An error target at or above the
+base rate therefore certifies a screener that does no work, which is a statement about the
+target rather than about the model, and it does not follow from this that the model's own
+review budget is zero. All \NPrevalenceVars{} variables with a coded reference have
+thresholded rates below five percent, running up to \PrevalenceMaxPct\%, and \NBelowOnePct{}
+of them fall below the \RiskTargetOne\% target as well. The quantity a safety office faces is instead defined over the records the
+model flags. Let $F = \{i \mid p_{iv} > \tau\}$ be the flagged set, ranked by probability, and
+for an acceptance threshold $t \ge \tau$ define the coverage and precision
+\begin{equation}
+c(t) = \frac{\sum_{i \in F} w_i\,\mathbb{1}[p_{iv} \ge t]}{\sum_{i \in F} w_i},\qquad
+\pi(t) = \frac{\sum_{i \in F} w_i\,\mathbb{1}[p_{iv} \ge t]\,y_{iv}}{\sum_{i \in F} w_i\,\mathbb{1}[p_{iv} \ge t]},
+\label{eq:prec}
+\end{equation}
+so that $1 - \pi(t)$ is the risk of accepting the top share $c(t)$ without reading it. The
+review budget at target precision $\pi^{*}$ is the share of flagged records that cannot be
+auto-accepted,
+\begin{equation}
+H(\pi^{*}) \;=\; 1 - \max\bigl\{\, c(t) \mid \pi(t) \ge \pi^{*} \,\bigr\},
+\label{eq:budget}
+\end{equation}
+which is the construction of Eq.~(\ref{eq:riskcov}) restricted to the flagged set with risk
+defined as one minus precision. Two conventions are needed to complete the definition of that maximum. If no acceptance
+threshold on the grid attains $\pi^{*}$ the feasible set is empty, the maximum is taken to be
+zero and $H(\pi^{*}) = 1$, so a variable no threshold can certify routes every flagged record
+to review. Ties on the grid are never split, because a threshold cannot separate two records
+carrying the same probability, and a tied block is therefore accepted or reviewed whole.
+
+Selecting $t$ and certifying the precision it delivers on the same labels reports the best of
+many thresholds as though it were the value of one. Against the human reference the budget is
+therefore cross-fitted, with $t$ chosen on one half of the narratives and both the coverage it
+buys and the precision it delivers measured on the other, in both directions and over repeated
+splits. The in-sample value is reported beside it so that the difference is visible. The
+delivered precision carries a lower confidence bound from Eq.~(\ref{eq:cp}) at the effective
+accepted count, which is approximate for the reason given in Section~\ref{sec:reference}. The
+budget is reported in absolute terms per year by multiplying the flagged share of the corpus by
+\TexasPerYear{}, the mean annual count of analyzed narratives, and that product counts
+variable-level review decisions. Where the quantity wanted is the number of documents a reader
+opens, the union of the flagged sets across variables is reported instead and named as such.
+
+The two references disagree in a direction that the structure of coded-field error predicts,
+and the prediction is stated as a lemma. Let $r_v = \Pr(y = 1 \mid p = v)$ be the true
+observed rate at grid value $v$, and let the coded field miss a factor the narrative states
+with probability $f_v$ while never recording a factor the narrative does not state, so that
+$r'_v = (1 - f_v)\,r_v$.
+
+\begin{lemma}[One-sided reference noise]
+\label{lem:noise}
+For every grid value, $r'_v \le r_v$, so the reliability curve measured against the coded
+field lies on or below the true curve. For every grid value at which
+$(1 - f_v)\,r_v \ge v$, $|v - r'_v| \le |v - r_v|$, and if that condition holds at every
+grid value carrying weight then
+\begin{equation}
+\mathrm{ECE}_G(y') \;\le\; \mathrm{ECE}_G(y).
+\label{eq:noise}
+\end{equation}
+\end{lemma}
+
+The proof is given in Appendix~\ref{app:proofs} beside the previous one. The lemma is
+conditional, and its condition is that the coded field never records a factor the narrative
+does not state. That is an assumption about this pair of sources rather than a property of
+coded data in general, and nothing in the literature establishes it. The human reference set
+supplies the empirical check, because the cell in which the coded field records a factor the
+model does not flag is observable and is reported in Section~\ref{sec:res-frontier}. The
+results also report the measured ratio of the two calibration errors as the companion of the
+bound, and that ratio turns out to be close to one, so the bound is not where the difference
+between the two references shows itself. Post-hoc recalibration is assessed as an
+add-on rather than as the headline. Platt scaling and isotonic regression are fitted on one half of the narratives and scored on
+the other half, over \RecalRepeats{} repeats in both directions,
+\begin{equation}
+q^{\mathrm{Platt}}(p) = \sigma\!\left(a + b\,\mathrm{logit}(\tilde{p})\right),\qquad
+\hat{m} = \arg\min_{m \uparrow} \sum_i w_i \bigl(m(p_i) - y_i\bigr)^2,\qquad
+q^{\mathrm{iso}}(p) = \hat{m}(p),
+\label{eq:platt}
+\end{equation}
+where $\tilde{p}$ is $p$ clipped to $[\EndpointClip, 1 - \EndpointClip]$ before the logit is
+taken. The clip applies in fitting and in evaluation alike, because the logit is undefined at
+the endpoints and the output grid reaches them. The isotonic minimization is over non-decreasing maps $m$ and
+defines a fitted function, which is then evaluated at $p$ and held constant outside the range
+it was fitted on. The Platt map is fitted without a penalty, so it is a two-parameter
+correction of the intercept and the slope, and temperature scaling is the special case with
+$a = 0$. Splitting on narratives rather than on judgments matters here for the reason given in
+Section~\ref{sec:reference}. Maps are fitted per variable wherever the reference set carries at
+least \RecalMinPositives{} positive labels for that variable, and pooled otherwise, because an
+analyst recalibrates one variable at a time. The decision threshold $\tau$ is also retuned per
+variable to maximize weighted $F_1$ on one random half of the narratives and scored on the
+other, over \ThreshRepeats{} repeats, so that a threshold failure can be told from a model
+failure by the out-of-fold gain. Every quantity in this section is computed by the released
+code, and Table~\ref{tab:eqmap} names the function and the result file for each equation.
+
+%% =====================================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Population coding, cost, and the probability landscape}
+\label{sec:res-population}
+
+The second stage coded \NstageTwo{} of the \Ncorpus{} narratives in the analyzed corpus with
+the full \NQuestions{}-question schema, and \NstageTwoRandom{} of them form the random
+stratum on which every population estimate rests (Table~\ref{tab:run}). Coding cost
+\$\StageTwoCost{} in total, which is a realized \$\CostPerThousand{} per thousand narratives,
+so coding the whole corpus at that rate would cost \$\CostWholeCorpus{}. The median latency
+was \MedianLatency{} seconds, the ninetieth percentile \StageTwoPNinetyLatency{} seconds, the
+sustained rate about \StageTwoReqPerS{} requests per second, and the mean input
+\MeanTokens{} tokens per narrative, with \StageTwoErrors{} failed calls. The fitted token
+model of Eq.~(\ref{eq:cost}) has $\alpha = \TokenAlpha$, $\beta = \TokensPerQuestion$ and
+$b = \TokenBchar$ tokens per character, with $R^2 = \CostModelRsq$ for the question-count model (Figure~\ref{fig:corpus}d), and Table~\ref{tab:run} also reports the direct fit at \NQuestions{} questions, whose single intercept absorbs the schema term. Its shape is the substantive finding of the run, because at
+\NQuestions{} questions the schema accounts for about \SchemaTokens{} tokens per call while
+a median narrative of \MedianChars{} characters contributes about \NarrativeTokens{}. Each
+additional question costs a constant \TokensPerQuestion{} tokens regardless of the corpus,
+so a lean screen is cheaper only in proportion to the questions it omits. Two break-even
+fractions follow and they are not the same quantity. Evaluating Eq.~(\ref{eq:twostage}) with
+the fitted token model at the median narrative length, with \SchemaQScreen{} questions in the
+screen against \SchemaQFull{} in the full schema, predicts that screening pays only when fewer
+than a fraction \BreakEvenModel{} of narratives go on to full coding. The screen as executed
+cost \ScreenCostShare{} of the full call per narrative, which puts the realized break-even at
+\BreakEvenFraction{}. The two differ because the lean schema carries shortened instruction
+text as well as fewer questions, so its intercept is below the one the question-count model
+assumes, and the executed screen is therefore cheaper than the model predicts. Under either
+figure the conclusion is the same, and asking more questions in one call is the dominant
+efficiency lever.
+
+\input{tables/T3_run.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/F2_corpus_cost.pdf}
+\caption{Corpus and cost. (a) Usable narratives per year in thousands (blue) against all crash
+records (hollow), with the share of records whose narrative is empty (orange, right axis)
+falling from \EmptyShareFirst\% in \FirstYear{} to zero by the middle of the period.
+(b) Narrative length on a logarithmic axis, median and upper percentiles marked, with the
+input tokens on the upper axis. (c) Share of narratives in mixed case (light blue) and in
+capitals (gray). (d) Measured cost per thousand narratives against questions per call (blue),
+the fitted model of Eq.~(\ref{eq:cost}), and the list-price band of a frontier generative
+model on the same input (orange).}
+\label{fig:corpus}
+\end{figure}
+
+The returned probabilities pile up at the two ends of the grid in every one of the
+\NgridVars{} presence variables (Figure~\ref{fig:landscape}). Most narratives receive a value at
+or near the floor, and every panel turns up again at the ceiling, where the top decile holds
+more mass than the decile below it in all \NCeilingUpturn{} of \NGridShapeVars{} variables. The
+uncertain band between \UncertainLo{} and \UncertainHi{} holds under three percent of narratives
+for every variable. The two ends do not carry equal weight everywhere. For \NMidHeavy{}
+variables, namely \MidHeavyVars{}, the middle of the range holds more narratives than the
+ceiling does, so the upper mode is a rise rather than a second peak. That shape is
+favorable for selective prediction, because the population a threshold would route to review
+is small.
+The model returns its probabilities on a discrete grid, and this property was not documented
+by the developer. The returned values take at most \GridDistinct{} distinct levels, running
+from \GridMin{} to \GridMax{} in steps of \GridStep{}, and across \NGridAnswersMillions{}
+million answers on the random stratum the value zero occurred \NGridZeros{} times and the
+value one occurred \NGridOnes{} times. The same grid governs the confidence attached to
+categorical and ordinal answers. The lower end of the grid has a first visible consequence in
+Table~\ref{tab:prevalence}. The expected probability is the estimate a calibrated model would
+match to the true prevalence, but for the rarest variables most narratives sit at the grid's
+smallest value, so it largely measures the floor rather than the data. For
+\FloorInflMaxVar{}, \FloorInflMax\% of the expected probability is contributed by narratives
+at $p = \GridStep$. \NfloorFlagged{} variables exceed the \FloorFlagShare\% reporting
+threshold, one of them by a margin that rounds away in print, and they are marked in the
+table, where thresholded rates or keyword rates are the appropriate summaries. Gating behaves as designed, because the measured leakage rate of
+Eq.~(\ref{eq:leak}) across the \NGatedMeasured{} gated variables ranges from \LeakMin\% to
+\LeakMax\%, with the maximum for \LeakMaxVar{}, where \LeakMaxNLeaked{} of \LeakMaxNOff{}
+gate-off narratives carried a substantive answer that the operator suppressed.
+
+\input{tables/T4_prevalence.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/F3_probability_landscape.pdf}
+\caption{Returned probabilities for each presence variable on the random stratum, with a
+logarithmic count axis. The shaded band is the uncertain region from \UncertainLo{} to
+\UncertainHi{} with its share annotated and the dashed line the decision threshold, and each
+panel gives the thresholded rate, the expected probability and their ratio. Every panel
+spikes at the floor and turns up again at the ceiling.}
+\label{fig:landscape}
+\end{figure}
+
+
+\subsection{Calibration against coded fields and against human judgment}
+\label{sec:res-calibration}
+
+Table~\ref{tab:calibration} reports calibration against the coded CRIS fields for the
+\NvarsCoded{} variables that have a usable reference, and Figure~\ref{fig:calibration} draws
+the reliability curves on the model's own output grid with the human reference set in the
+same panels. Against the coded reference the tabulated calibration error ranges from \ECEmin{} for
+\ECEminVar{} to \ECEmax{} for \ECEmaxVar{}, and the calibration slope of Eq.~(\ref{eq:cox})
+from \Slopemin{} to \Slopemax{}. Every calibration error reported against either reference in
+this paper is the exact grid error of Eq.~(\ref{eq:ecegrid}) rather than the binned error of
+Eq.~(\ref{eq:ece}). Each interval is a bootstrap of that same quantity, so every point
+estimate lies inside its own interval and the two references can be compared with each other.
+Slopes on both sides of one appear, so the departures are variable-specific rather than a
+single systematic bias. The
+curves are drawn by grid value rather than in equal-mass bins, because for a rare variable
+almost all mass lands on two or three grid values and a ten-bin scheme collapses to a
+handful of populated bins. The grid floor bounds what calibration is achievable. Coded base
+rates run from \BaseRateMin\% to \BaseRateMax\%, and for \NbelowFloor{} variables, namely
+\BelowFloorVars{}, the base rate falls below the smallest expressible probability of
+\GridStep{}. Proposition~\ref{prop:floor} therefore applies to them, and the bound of
+Eq.~(\ref{eq:floor}) on the attainable calibration error runs from \FloorBoundMin{} to
+\FloorBoundMax{}, with the maximum for \FloorBoundMaxVar{}. The floor and the coded base rate
+are marked on every panel of Figure~\ref{fig:calibration} so that the affected cases are
+visible rather than inferred.
+
+\input{tables/T5_calibration.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/F4_calibration.pdf}
+\caption{Reliability against two references for the nine variables with a coded counterpart.
+Gray markers are the observed rate in the coded CRIS field at each attainable grid value,
+with exact binomial intervals and marker area proportional to support; observed rates of zero
+are marked on the floor. Blue markers are the human reference set on its calibration cells,
+weighted by the design weights of Section~\ref{sec:reference}, with approximate intervals at
+Kish's effective sample size. Open circles are strata with no positive, and strata too thin
+to support a rate are not drawn, which is why the restraint-use panel carries no filled blue
+marker. Axes are logarithmic. The dotted vertical guide is the grid
+floor and the dashed horizontal guide the coded base rate, and where the latter lies below
+the former no allocation of grid values can be calibrated. Each panel annotates the
+calibration error against both references.}
+\label{fig:calibration}
+\end{figure}
+
+Against the human labels the calibration error is almost unchanged, and the difference between
+the two references appears elsewhere. Table~\ref{tab:gold} scores the model over \GoldNVars{}
+variables and \GoldNUsable{} usable judgments. Per variable the calibration error against the
+human labels is \ECEGapMin{} to \ECEGapMax{} times the error against the coded field, with a
+median ratio of \ECEGapMedian{}, and it is the larger of the two for \ECEGapNAbove{} of
+\ECEGapN{} variables. The margin does not survive rounding to the three decimals
+Figure~\ref{fig:calibration} prints for \ECEGapNTied{} of them, which is why a count
+taken from the figure's annotations comes out lower. Once both references are weighted to the same population and measured
+with the same estimator, neither one makes the model's probabilities look materially better
+calibrated than the other, and Figure~\ref{fig:calibration} annotates the two errors side by
+side in each panel to show it.
+
+The two references separate sharply on agreement rather than on calibration, and that
+separation is the result the rest of this paper rests on. Cohen's kappa against the coded field
+is below the calibration-weighted kappa against human judgment for all \KappaGapNPositive{} of
+\KappaGapN{} variables that carry a coded counterpart, by a median of \KappaGapMedian{}. The
+widest case is \KappaGapMaxVar{}, which reaches \KappaGapMaxCoded{} against the coded field and
+\KappaGapMaxHuman{} against human judgment, so the same extraction reads as mediocre under one
+reference and as strong under the other. The narrowest agreement of all is \KappaCodedMinVar{}
+at \KappaCodedMin{} against the coded field, and there the human reference agrees that the model
+is weak, at \KappaCodedMinHuman{}. The mechanism is the one Lemma~\ref{lem:noise} describes,
+namely one-sided omission. A factor the narrative states and the coded field does not record
+turns a correct extraction into an apparent false positive. That costs the model agreement
+without costing it calibration, because its probabilities stay close to the rate at which the
+factor is actually stated. The practical consequence is that a coded reference
+understates how faithfully the model reads a narrative, and Section~\ref{sec:res-downstream}
+prices what those unrecorded factors are worth.
+
+Calibration against the human reference is nonetheless rejected, and the failure is a level
+shift rather than over-confidence. Pooled across variables the calibration error is \GoldECE{}
+with a cluster-bootstrap interval of [\GoldECElo{}, \GoldECEhi{}], the Brier score is
+\GoldBrier{} with a skill score of \GoldBSS{}, and the Spiegelhalter statistic of
+Eq.~(\ref{eq:spieg}) is $\GoldZ$ with a bootstrap standard error of \GoldZSE{}. The calibration
+slope is \GoldSlope{}, above one, so the probabilities are not extreme enough and the model
+hedges toward the middle of the range, which is the opposite of the over-confidence usually
+reported for neural classifiers. The probabilities also sit too high overall, with a mean of
+\GoldExpectedP\% against a weighted base rate of \GoldBaseRate\% and an intercept of
+$\GoldIntercept$, an over-statement of about \GoldRelExcess\% in relative terms. A safety
+office summing probabilities to estimate prevalence would therefore over-count, whereas one
+ranking narratives for review is unaffected, because ranking is invariant to a monotone
+transformation, and that invariance is why the remedy is a recalibration rather than a
+retrained model. Figure~\ref{fig:goldrel} in Appendix~\ref{app:coders} draws the same
+human-referenced reliability for the seven variables without a coded counterpart.
+
+Recalibration recovers most of the error at a small cost in labels. Table~\ref{tab:recal}
+fits the maps of Eq.~(\ref{eq:platt}) on half of the narratives and scores them on the other
+half in both directions, over \RecalRepeats{} repeats. Splitting on narratives rather than on
+pairs matters here, because one narrative supplies up to sixteen judgments and a split over
+pairs would fit the map partly on the records it is then scored against. Out of fold, the
+pooled calibration error falls from \RecalRawECE{} to \RecalPlattECE{} under Platt scaling and
+to \RecalIsoECE{} under isotonic regression, a factor of \RecalIsoGain{}, with an interval of
+[\RecalPlattECElo{}, \RecalPlattECEhi{}] on the Platt value. The fitted map is a two-parameter
+correction with an unpenalized intercept and slope, and after it the pooled slope is
+\RecalPlattSlope{} against \GoldSlope{} before, so the map removes the level shift rather than
+merely rescaling it.
+
+The pooled map is a demonstration and the per-variable maps are the deployment evidence, since
+an analyst recalibrates one variable at a time. Table~\ref{tab:recal} therefore carries a
+per-variable block for the \RecalPerVarN{} variables whose reference labels contain at least
+\RecalMinPositives{} positives. The held-out calibration error under a variable's own Platt
+map runs from \RecalPerVarECELo{} to \RecalPerVarECEHi{} with a median of
+\RecalPerVarECEMedian{}, against a median of \RecalPerVarRawMedian{} for the raw output, and
+\RecalPerVarNImproved{} of the \RecalPerVarN{} variables improve under it. The remaining
+\RecalPooledOnlyN{} variables carry too few positives to estimate their own map and can only be
+recalibrated under the pooled one, which is a statement about the size of the reference set
+rather than about the method. The practical claim is that a few thousand human judgments, about
+\CoderHours{} hours per coder at the median response time, are enough to recalibrate the
+variables that carry enough positive labels, over a corpus of \Ncorpus{} narratives.
+
+\input{tables/T10_gold.tex}
+\input{tables/T11_recalibration.tex}
+
+
+\subsection{Accuracy, selective prediction, and the review budget}
+\label{sec:res-accuracy}
+
+Against human judgment of the same criteria text, and calibration-weighted to the population
+under the design of Section~\ref{sec:reference}, pooled precision is \GoldPrecision{} with an
+interval of [\GoldPrecisionLo{}, \GoldPrecisionHi{}] and recall is \GoldRecall{}. Pooled
+$F_1$ is \GoldFone{} with an interval of [\GoldFoneLo{}, \GoldFoneHi{}], the weighted Cohen's
+kappa is \GoldKappa{}, and \GoldNStrong{} of the \GoldNVars{} variables reach an $F_1$ of
+\StrongFoneThreshold{} or more (Table~\ref{tab:gold}). Every interval here resamples narratives
+rather than judgments, which is the unit the reference set was drawn in. This subsection carries
+the paper's only accuracy claim, and every other number in this section is agreement with coded
+fields. These rates are also conditional on the pairs the coders found clear, and the bounds
+that conditioning puts on them are reported at the end of this subsection.
+
+\GoldNWeak{} variables fall below an $F_1$ of \WeakFoneThreshold{}, namely \GoldWeakVars{}, and
+they do not all fail the same way. For \GoldNWeakPrecision{} of them, \GoldWeakPrecisionVars{},
+the failure is precision, and \GoldWorstPrecVar{} reaches only \GoldWorstPrec{} at full recall.
+For \GoldNWeakRecall{} of them, \GoldWeakRecallVar{}, the failure is the opposite, with
+precision \GoldWeakRecallPrec{} and recall \GoldWeakRecallValue{}, so the model states the
+factor accurately when it states it and misses more than a third of the records that carry it.
+Only \GoldWeakDisputes{} of the \GoldNDisputed{} disputed pairs fall in these variables, so the
+coders were essentially unanimous and these are model errors rather than ambiguous criteria,
+which is why Table~\ref{tab:gold} is presented per variable. It would be natural to conclude
+that these concepts are simply not recoverable from a crash narrative, but
+Section~\ref{sec:res-frontier} shows that conclusion to be wrong for most of them. Two frontier
+models given the same narratives and the same criteria recover \FrontierNRecovered{} of the
+\GoldNWeak{} weak variables above an $F_1$ of \FrontierWeakThreshold{}, namely
+\FrontierRecoveredVars{}, reaching \BestIntentionalFone{} on intentional acts,
+\BestUnbeltedFone{} on restraint use and \BestVehicleDefectFone{} on vehicle defects. The
+information is therefore in the narrative for those, and the failures belong to the interaction
+between this model and this schema rather than to the narrative. The exception is
+\FrontierNotRecoveredVars{}, where the best frontier arm reaches \BestWrongWayFone{} and no arm
+clears the threshold, so that concept may genuinely be hard to state from a narrative alone.
+
+The obvious remedy does not work, and the test is reported rather than the intuition.
+Precision \GoldWorstPrec{} at full recall looks like a threshold set too low, particularly
+given the upward level shift established above, so Table~\ref{tab:threshold} retunes $\tau$
+per variable to maximize $F_1$ on one random half of the narratives and scores it on the
+other over \ThreshRepeats{} repeats. No variable gains as much as \ThreshGainThreshold{} in
+$F_1$ among the \ThreshNStable{} for which the procedure is stable, the median change is
+\ThreshMedianGain{}, and the best is \ThreshBestGain{} for \ThreshBestGainVar{}. The weak
+variables divide by how much evidence they carry. \ThreshWeakNThin{} of them,
+\ThreshWeakThinVars{}, appear to gain as much as \ThreshWeakThinBestGain{}, but each carries
+only \ThreshWeakNPosMin{} positive labels and both exceed the stability bound. The apparent
+improvement is a threshold fitted to noise, and the interquartile range of the chosen threshold
+in Table~\ref{tab:threshold} shows how little the two halves agreed. The other
+\ThreshWeakNThick{}, \ThreshWeakThickVars{}, carry up to \ThreshWeakNPosMax{} positives and do
+not gain at all, the best of them changing by \ThreshWeakThickBestGain{}. Wrong-way travel is
+the clearest case, since at a tuned threshold of \ThreshWrongWayTau{} on
+\ThreshWrongWayNPos{} positives its out-of-fold $F_1$ is \ThreshWrongWayOof{}, below what the
+default already achieves. The default threshold of \TauGate{} is therefore kept throughout,
+since the well-behaved variables are not improved by retuning either.
+
+These failures belong to the pairing of this model with this schema rather than to the schema
+alone. The frontier arms of Section~\ref{sec:res-frontier} read the same criteria text and
+recover \FrontierNRecovered{} of the \GoldNWeak{} weak variables, so the wording cannot be the
+whole explanation, and a rewrite of the criteria would repair the interaction rather than a
+defect in the concepts. That rewrite is not attempted here, because the reference set was
+drawn against the current schema and a schema tuned until its weak variables pass on the same
+labels would be circular.
+
+\input{tables/T12_threshold.tex}
+
+The conventional selective-prediction formulation returns nothing on these variables. At
+full coverage the accuracy-based selective risk of Eq.~(\ref{eq:riskcov}) against the coded
+reference runs from \FullCovRiskMin\% to \FullCovRiskMax\% (Figure~\ref{fig:riskcoverage}a).
+Every variable therefore sits below the \RiskTargetFive\% target usually adopted in the
+selective-classification literature, \NzeroBudgetOne{} of \NvarsCoded{} sit below the
+\RiskTargetOne\% target as well, and the implied review budget is zero for \NzeroBudget{} of
+\NvarsCoded{} variables at the \RiskTargetFive\% target. Applied unchanged, the standard
+analysis would certify a rare-event screener as needing no human review at all. The budget
+over flagged records carries the information instead. Precision among flagged positives
+against the coded reference ranges from \PrecMin{} for \PrecMinVar{} to \PrecMax{} for
+\PrecMaxVar{}, so the review effort lies entirely in the flagged set. Ranking that set by
+probability and auto-accepting the most confident traces the curves of
+Figure~\ref{fig:riskcoverage}b. Those curves are drawn as steps because the output grid is
+discrete, so the only operating points that exist are the attainable thresholds and the
+intervals between them carry the precision of the lower one. The alcohol curve shows why that distinction
+matters in practice. It reaches full precision only on a negligible share of its flags, and it
+then drops
+straight through the policy band to \PrecAlcoholTopBlock\% as soon as the block of records at
+the highest grid value is accepted, which is \PrecAlcoholTopCoverage\% of its flags at once.
+Eq.~(\ref{eq:budget}) reads those attainable points and converts them into the budgets of
+Table~\ref{tab:selective}. Against the coded reference the budget
+saturates, because \BudgetCodedSatN{} of the \BudgetCompN{} variables measurable against both
+references require reviewing essentially every flagged record to reach \PrecTargetNinety\%
+precision (Figure~\ref{fig:riskcoverage}c), and only \PrecMaxVar{} can auto-accept most of its
+flags. As annual workload for Texas, that precision across all \NvarsCoded{} variables implies
+\ReviewDecisionsPerYear{} variable-level review decisions per year, of which
+\ReviewPerYearMax{} are for \ReviewPerYearMaxVar{} alone (Figure~\ref{fig:riskcoverage}d).
+That total counts decisions rather than documents, because a narrative that more than one
+variable routes to review contributes once for each of them. A reader opens such a narrative
+once and answers every question it raises, so the staffing figure is the union of the flagged
+sets, which is \ReviewNarrativesPerYear{} narratives per year, or \ReviewNarrativeShare\% of
+the corpus.
+
+These budgets answer how much review is needed to match the coded field rather than how much is
+needed to be right, and the human reference shows the difference to be the dominant term. The
+budget also has to be certified on labels that did not choose it, because the acceptance
+threshold is selected from a grid and the best of many thresholds is not the value of one.
+Table~\ref{tab:selective} therefore reports the budget twice, chosen on one half of the
+narratives and measured on the other over \GoldBudgetNSplits{} splits, and chosen and measured
+on the same half. Pooled, the held-out budget of Eq.~(\ref{eq:budget}) is \GoldBudgetNinety\%
+of flagged records at \PrecTargetNinety\% precision against \GoldBudgetNinetyInSample\% in
+sample, so the optimism of in-sample selection is \GoldBudgetOptimism{} percentage points at
+this pooled level. The precision that budget actually delivers out of fold is
+\GoldBudgetPrecHeldOut{}, with a lower confidence bound of \GoldBudgetPrecLCB{} computed at the
+effective accepted count and therefore approximate.
+
+The pooled budget is a mixture over variables rather than a policy, and Table~\ref{tab:gold}
+gives the figure an agency would act on. Held out, the per-variable budgets run from
+\GoldBudgetPerVarLo\% to \GoldBudgetPerVarHi\%, the largest being \GoldBudgetMaxVar{}, and
+\GoldNZeroBudget{} of \GoldNVars{} variables already meet the \PrecTargetNinety\% target with
+no review at all. The human-referenced budget is below the coded-field budget for all
+\BudgetLowerN{} comparable variables, so the coded-field budgets of Table~\ref{tab:selective}
+are an upper bound on human effort. The curve of Figure~\ref{fig:goldprec} in
+Appendix~\ref{app:coders} pools the reference set across variables and is read as a summary of
+that mixture rather than as an operating point.
+
+One qualification applies to every accuracy and budget figure in this subsection. The
+\ExclN{} pairs the coders left unclear or disagreed on are excluded from all of them, so each
+is conditional on the pairs the coders found clear. Treating every excluded pair as a model
+error lowers pooled $F_1$ to \ExclFoneError{} and raises the pooled budget to
+\ExclBudgetError\%, treating them all as model-correct raises $F_1$ to \ExclFoneCorrect{}, and
+routing them to review regardless of probability raises the budget to \ExclBudgetReview\%.
+Those are the bounds, and Table~\ref{tab:exclusions} in Appendix~\ref{app:coders} reports the
+exclusions by variable and by probability bin.
+
+\input{tables/T6_selective.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/F5_risk_coverage.pdf}
+\caption{Selective prediction against the coded reference. (a) Accuracy-based selective risk at
+full coverage for each variable against the two conventional targets, with every variable
+below the \RiskTargetFive\% line and four above the \RiskTargetOne\% line. (b) Precision
+against the share of flagged positives auto-accepted for alcohol involvement (blue), fatigue
+(green) and wrong-way travel (pink), with the \PrecTargetNinety{} to
+\PrecTargetNinetyFive\% policy band shaded. The curves are steps, each interval taking the
+precision of the lower attainable threshold, because any coverage inside it means accepting a
+block of records tied at one grid value. No curve rests inside the band. (c) The share of
+flagged positives a variable could auto-accept while holding each target, the complement of
+the budget of Eq.~(\ref{eq:budget}), zero for eight of nine variables at the lower target and
+for all nine at the higher. (d) The variable-level review decisions this implies for Texas
+each year (orange) against the volume the model flags (gray). Precision here inherits the
+omissions of the coded fields.}
+\label{fig:riskcoverage}
+\end{figure}
+
+
+\subsection{Frontier comparison and value added over the coded fields}
+\label{sec:res-frontier}
+
+Two frontier generative models were scored on the same \CoderNPairs{} narrative-variable pairs
+against the same human labels with the same weights and metric code
+(Table~\ref{tab:frontier}). Calibration turns out to be a property of the individual model
+rather than of the paradigm, and that is the result which generalizes. The first frontier arm
+fails in the same direction as the typed model, rejected by the Spiegelhalter test at
+$z = \FableZ$ and carrying a slope of \FableSlope{} against \GoldSlope{}, so both over-state
+prevalence. The second behaves differently, with a slope of \GPTSlope{}, a statistic of $\GPTZ$
+close to zero, and a calibration error of \GPTECE{} against \FableECE{} and \GoldECE{} for the
+other two. It elicits only \GPTDistinctP{} distinct values against \FableDistinctP{} for the
+first arm, so a coarse output grid is not by itself an obstacle to calibration. Calibration
+cannot therefore be inferred from the vendor or the interface, and the best-calibrated arm is
+not the most accurate one, which is why the audit cannot be skipped by buying a better
+model.
+
+On accuracy the frontier arms do not agree with each other. The first reaches an $F_1$ of
+\FableFone{} against \GoldFone{} for the typed model, a paired difference of \DiffJevFable{}
+with an interval of [\DiffJevFableLo{}, \DiffJevFableHi{}] over \PairedN{} judgments, which is a
+material advantage. The second reaches \GPTFone{} and is not distinguishable from the typed
+model, because its paired difference of \DiffJevGPT{} has an interval of
+[\DiffJevGPTLo{}, \DiffJevGPTHi{}] that straddles zero, and it gets there by trading recall for
+precision, \GPTRecall{} against \GPTPrecision{}. The two frontier models differ from each other
+by \DiffFableGPT{}, more than either differs from the typed model, so the choice among frontier
+models matters more than the choice between paradigms. Which variables a model fails on is
+idiosyncratic. At least one frontier arm recovers \FrontierNRecovered{} of the typed model's
+\GoldNWeak{} weak variables, the second arm falls below an $F_1$ of \FrontierWeakThreshold{} on
+\GPTWeakVars{}, where the typed model is sound on \GPTNWeakJevSound{}, and the first is weak
+only on \FableWeakVars{}. This is the attribute-specific pattern that
+\citet{bharati2026benchmarking} report across six models, reproduced here against human labels
+rather than coded fields.
+
+Cost is reported separately from accuracy, because the two cannot be measured on the same arms
+here. The benchmarked arms ran outside this pipeline and their outputs carry no token counts, so
+no statement in this paper attaches a cost to either of them. What can be priced is a scenario,
+applying the list prices of three commercially available tiers to the token counts this study
+measured. A mid-tier model would cost \$\FrontierCostSonnet{} per thousand narratives against
+\$\CostPerThousand{} for the typed model, a factor of \FrontierCostRatio{}, with the largest
+tier at \FrontierCostRatioOpus{} and the smallest at \FrontierCostRatioHaiku{}. Projected to the
+whole corpus that is about \$\CostWholeCorpusSonnet{} against \$\CostWholeCorpus{}, which
+separates a routine analysis from one that does not happen. The scenario prices tiers rather
+than the arms of Table~\ref{tab:frontier}, and the two must not be read as one curve.
+
+\input{tables/T13_frontier.tex}
+
+Crash-level agreement with the coded fields runs from \Agreemin\% to \Agreemax\%, but at these
+base rates agreement is dominated by shared negatives, so Cohen's kappa is the informative
+summary (Table~\ref{tab:discrepancy}). It ranges from \Kappamin{} for \KappaminVar{} to
+\Kappamax{} for \KappamaxVar{}, from slight to almost perfect on the Landis and Koch scale.
+Figure~\ref{fig:agreement}c plots how often each source flags a factor the other does not. Seven
+of the nine variables fall below the diagonal, so the narrative asserts these factors more often
+than the coded fields record them, and alcohol involvement sits on it. Restraint use is the one
+variable above, because the restraint field records an unbelted occupant in many crashes whose
+narrative says nothing about seat belts. That pattern is what the study was built to detect, and
+it is also why the coded fields cannot serve as an accuracy reference, since a narrative-only
+flag may be a model error or a coded omission.
+
+Which of the two it is can only be settled on the human reference set. Its narratives that the
+model flags and the coded field records as negative are \NarrOnlyShare\% of all its flags,
+\NarrOnlyN{} judgments over \NarrOnlyNVars{} variables. The coders confirm \NarrOnly\% of them,
+with an interval of \NarrOnlyLo{} to \NarrOnlyHi\%, against \CodedConf\% where the coded field
+agrees. Rather more than half of the narrative-only region is therefore a factor the narrative
+states and the coded field does not record, which is a statement about what the two sources
+contain rather than about what happened in the crash. That rate divides sharply by the model's
+accuracy on the variable. Restricted to variables the model codes well it is \NarrOnlyStrong\%
+on \NarrOnlyStrongN{} judgments, with an interval of \NarrOnlyStrongLo{} to
+\NarrOnlyStrongHi\%, and restricted to the weak variables it is \NarrOnlyWeak\% on
+\NarrOnlyWeakN{}, with an interval of \NarrOnlyWeakLo{} to \NarrOnlyWeakHi\%. Where the model is accurate a narrative-only flag is usually a factor the
+coded field omits, and where it is weak the flag is usually the model, so the value-added
+reading is licensed per variable by that variable's accuracy.
+
+Against the same coded reference the typed model recovers more of the coded positives than
+keyword rules do, with precision moving in both directions (Figure~\ref{fig:agreement}b,
+Table~\ref{tab:baseline}). Recall rises for every variable, by the largest margins for
+hydroplaning and wrong-way travel, while precision rises for animal involvement, phone use and
+alcohol involvement and falls elsewhere, most for restraint use. The paired McNemar test of
+Eq.~(\ref{eq:mcnemar}) rejects equal correctness for every variable except fatigue. Keyword
+rules therefore remain a strong and nearly free baseline where the vocabulary is closed, which
+matches the Arkansas finding of \citet{bharati2026benchmarking}, and the typed model's advantage
+concentrates in variables whose expression is paraphrastic. Figure~\ref{fig:frontier} places the
+two routes on the cost axis of the scenario above, with keyword rules at a macro-averaged $F_1$
+near one half and the typed model somewhat above it at a price two orders of magnitude
+higher.
+
+\input{tables/T8_discrepancy.tex}
+\input{tables/T7_baseline.tex}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=\textwidth]{figs/F7_coded_agreement.pdf}
+\caption{Agreement with the coded fields. (a) Discrepancy taxonomy per variable, with crashes
+flagged by both sources (blue), by the narrative only (orange) and by the code only (gray),
+and Cohen's kappa beside each bar. (b) The change in recall and in precision against the same
+coded reference when keyword rules are replaced by the typed model; the square grows with the
+size of the change, gains in blue and losses in orange. (c) The rate at which each source
+flags a factor the other does not, logarithmic on both axes, with the dashed diagonal marking
+equal rates and marker area the total mismatch count. Narrative-only cases are candidates for
+information the coded fields omit rather than errors.}
+\label{fig:agreement}
+\end{figure}
+
+\begin{figure}[pos=!htbp]\centering
+\includegraphics[width=0.85\textwidth]{figs/F9_frontier.pdf}
+\caption{Cost per thousand narratives against macro-averaged $F_1$ with respect to the coded
+fields over the same nine variables, for keyword rules (green) and the typed model (blue),
+with marker area proportional to median latency and the dashed step the observed Pareto
+frontier. The vertical orange line is the list price of a mid-tier frontier model applied to
+the measured token counts. Frontier-arm accuracy is not plotted, because it was measured
+against the human reference set rather than the coded fields. The inset projects the cost of
+coding the full corpus by each route, which none of them coded.}
+\label{fig:frontier}
+\end{figure}
+
+\subsection{What changes in a safety diagnosis when narrative variables are added}
+\label{sec:res-downstream}
+
+The preceding subsections establish that the model reads narratives faithfully for most
+variables and that the coded contributing-factor fields omit a good deal of what the narratives
+state. Neither result says how much a transportation agency's picture of its own crashes would
+change if the narrative variables were used alongside the coded fields, and that question is
+the one a safety office actually asks. This subsection answers it on the Stage-2 random
+stratum, which contains \DownNSeverity{} injury or fatal crashes of which \DownNFatal{} are
+fatal, using only data already produced and no further model calls.
+
+The quantity is the number of injury and fatal crashes that would be attributed to each factor
+under each of two sources. Under the coded fields alone it is the count of such crashes whose
+coded field records the factor. Under the two sources together it is that count plus the
+expected number of crashes whose coded field is negative and whose narrative states the factor,
+obtained by summing the recalibrated probability of Section~\ref{sec:res-calibration} over
+those crashes. Summing a calibrated probability rather than counting model flags is what makes
+the second term an estimate of a population total, because a calibrated probability already
+carries the model's error rate inside it. The recalibration map is fitted per variable wherever
+the reference set supports one. The interval on the second term comes from resampling
+the reference narratives and refitting the map, since the map is estimated on
+\GoldNNarratives{} narratives and the stratum holds \NstageTwoRandom{}, so the map is where the
+uncertainty lives.
+
+Table~\ref{tab:downstream} gives the result for all \DownNVars{} mapped factors, scaled to
+Texas per year. The coded fields attribute \DownCodedTotal{} injury and fatal crashes per year
+across the nine factors, and the narrative variables add \DownAddedTotal{} more. The relative
+increase runs from \DownRelMin\% for \DownRelMinVar{} to \DownRelMax\% for \DownRelMaxVar{},
+with a median of \DownRelMedian\%. The largest single addition in absolute terms is
+\DownAddedMax{} crashes per year for \DownAddedMaxVar{}. The largest in relative terms is
+\DownRelMaxVar{}, where the coded fields record \DownTopCoded{} injury and fatal crashes per
+year and the narratives add \DownTopAdded{} more, with an interval of \DownTopAddedLo{} to
+\DownTopAddedHi{}. A factor that the coded fields make the smallest of the nine therefore
+becomes comparable to several of the others, which is a change in the diagnosis rather than
+only in the counts. Ranking the nine factors by attributed crashes, \DownNRankMove{} of them
+change place when the narrative variables are added.
+
+The confirmation rates of Section~\ref{sec:res-frontier} decide how much of that change can be
+believed, and they differ enough across factors that the answer is not uniform. For
+\DownNConfirmHigh{} of the \DownNVars{} factors a coder confirmed at least
+\DownConfirmHighThreshold{} of the narrative-only flags, and \DownConfirmHiVar{} is the
+strongest at \DownConfirmHi{}, so for those the added count is evidence about the crashes rather
+than about the model. For \DownNConfirmLow{} of them the coder confirmed fewer than half, and
+\DownConfirmLoVar{} is the weakest at \DownConfirmLo{}, so most of what the model adds there is
+model error and the increase is not a finding. The pattern is the one
+Section~\ref{sec:res-accuracy} would predict, since the factors with low confirmation are the
+factors the model codes poorly. A safety office can therefore adopt the narrative variables one
+factor at a time, on evidence it already holds, rather than as a single decision. Read that
+way, adding calibrated narrative variables to the coded fields raises the attributed burden of
+the well-measured factors by between \DownRelMin\% and \DownRelMax\%. \DownRelMaxVar{} in
+particular moves from a minor entry in the coded record to a factor of a size that would
+ordinarily attract a countermeasure program.
+
+\input{tables/T14_downstream.tex}
+
+%% =====================================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+The central answer of this study is that adding calibrated narrative variables to a state's
+coded contributing-factor fields changes the safety diagnosis those fields support. Across the
+\DownNVars{} factors that carry a coded counterpart, the narratives add \DownAddedTotal{}
+injury and fatal crashes per year to the \DownCodedTotal{} the coded fields record, a median
+increase of \DownRelMedian\%, and \DownNRankMove{} of the nine factors change rank. The
+strongest single case is \DownRelMaxVar{}, which the coded fields make the smallest of the nine
+and which the narratives raise by \DownRelMax\%. That result rests on two prior ones that this paper also establishes. A typed decision model
+can code narratives at a cost low enough for a state to run the schema over a population rather
+than a sample. Its probabilities are usable for ranking but not for counting until they are
+recalibrated against a few thousand human judgments. Once that
+recalibration is in hand, the human review a narrative-derived variable needs can be stated per
+variable and per year, which is what makes the added counts actionable rather than merely
+interesting. No comparable study has priced that change against the coded record. Safety
+diagnoses built on coded contributing factors alone, of the kind the crash data-quality
+literature describes \citep{imprialou2019quality}, therefore understate the factors whose
+evidence sits mainly in prose, and the size of the understatement is measurable rather than
+presumed. The closest prior study is the Arkansas
+benchmark of \citet{bharati2026benchmarking}, which evaluated six frontier generative models
+on some four thousand matched fatal crashes over six attributes the database already codes. That
+study found a keyword baseline comparable to the best model, with differences across
+attributes larger than differences across models. The present results reproduce both
+findings on a different corpus and a different model class. Keyword rules remain a strong and
+nearly free baseline for closed-vocabulary variables, and the spread of kappa across
+variables against the coded fields is wider than any difference between methods. What this
+study adds is the layer that agreement measures cannot supply. It measures the probabilities
+rather than the labels, and it quantifies how much the administrative reference understates the
+model's fidelity to the narrative. It then converts the result into a review budget defined over the records an agency
+would read, which is the operational form of the human review that the Arkansas authors
+recommended. The paragraphs that follow take each of the study's findings in turn and place
+it against the closest published work.
+
+The calibration finding sits between two literatures that have not been connected. Work on verbalized confidence in generative models reports over-confidence \citep{xiong2024express} and shows that calibration depends on the elicitation format \citep{kadavath2022know,tian2023just}. Neither of the frontier arms audited
+here behaved in that way. The second arm elicited its probabilities on only \GPTDistinctP{}
+distinct values and was nonetheless the best calibrated of the three, at a slope of \GPTSlope{} and a
+statistic of $\GPTZ$, which says that a coarse verbalized scale is not by itself a source of
+over-confidence. The typed model and the first frontier arm failed in the other direction
+instead, with slopes above one and a level too high. That is the pattern the clinical prediction-model literature describes as a failure
+of calibration in the large that survives a reasonable slope
+\citep{van2016a,steyerberg2010assessing}. The hierarchy of \citet{van2016a} places mean calibration first, then weak calibration, which
+requires an intercept of zero and a slope of one together, then moderate and strong
+calibration. The typed model fails at the first level, with a mean probability of
+\GoldExpectedP\% against a prevalence of \GoldBaseRate\%, and it fails at the second as well,
+because its slope is \GoldSlope{} rather than one. Describing the remedy as a one-parameter
+correction would therefore be wrong. The Platt map of Eq.~(\ref{eq:platt}) fits an intercept
+and a slope, which is what a weak-calibration failure requires, and after it the pooled slope
+is \RecalPlattSlope{}. The result also extends the observation of \citet{zhou2024reliable} that larger and more
+instructable models become less reliable, because the more accurate frontier arm was the one
+rejected on calibration. Its slope of \FableSlope{} lies further from one than the typed
+model's, even though its accuracy is higher. The arm that is best calibrated here, at a slope
+of \GPTSlope{} and a calibration error of \GPTECE{}, is neither the most accurate arm nor the
+one with the finest output grid. Calibration is therefore a property of the model and the
+elicitation together rather than of size, price or interface, and an audit against an external
+reference is the only way to learn both its presence and its direction.
+
+The reference-noise finding connects the injury-surveillance auto-coding line with the crash
+data-quality literature. The injury-surveillance auto-coding line classified narratives into cause codes with Bayesian and other learners \citep{lehto2009bayesian,bertke2016comparison} and routed low-confidence records to human review \citep{marucciwellman2015practical,marucciwellm2017classifyin},
+and the rare-category study of \citet{nanda2018improving} found that filtering rather than
+more training data rescued the rare classes. The present study inverts the direction of comparison, scoring the narrative-derived
+probability against the coded field and then against human judgment of the narrative. The
+result is not the one the design anticipated, and it is worth stating plainly. The two
+references give almost the same calibration error, a median ratio of \ECEGapMedian{} with a
+range of \ECEGapMin{} to \ECEGapMax{}, so a coded reference does not flatter the model's
+probabilities. What an incomplete reference penalizes instead is the agreement statistic.
+Cohen's kappa against the coded field falls below the weighted kappa against human judgment for
+all
+\KappaGapNPositive{} comparable variables, by a median of \KappaGapMedian{}, and
+\KappaGapMaxVar{} reads as \KappaGapMaxCoded{} against the coded record and
+\KappaGapMaxHuman{} against human judgment of the same narratives. The mechanism is omission in
+the coded fields, whose incompleteness the crash data-quality literature lists among its most
+serious problems \citep{imprialou2019quality}, and which this study measures directly as the
+excess of narrative-only over code-only discrepancies. Under-reporting studies have measured
+the same omission at the level of whole crashes and injured people
+\citep{elvik1999incomplete,alsop2001underreporting,watson2015underreporting}.
+Lemma~\ref{lem:noise} gives that structure its formal statement, and its empirical content
+here is narrower than the lemma allows. Omission moves the agreement statistic rather than the
+calibration statistic, because a probability close to the rate at which a factor is stated
+stays close to it whether or not a clerk recorded the factor. \citet{arteaga2025a} used a language model to expose under-reporting from the same
+kind of narrative evidence. The confirmed rate of \NarrOnly\% in the narrative-only cell
+reported here measures how much of that apparent under-reporting is a factor the coded field
+omits rather than a model error. Its split by variable accuracy shows that the answer depends
+on the model as much as on the field, and Section~\ref{sec:res-downstream} converts it into
+crashes per year.
+
+The resolution floor is a general property of any model that reports probabilities on a
+discrete grid, and the calibration literature has not treated it because that literature is
+written for continuous outputs. Reliability diagrams and their binning have received close
+attention, from the consistency bands of \citet{brocker2007diagrams} to the binning-free
+constructions of \citet{dimitriadis2021stable} and the regression view of
+\citet{gneiting2023regression}. \citet{kumar2019verified} showed that verifiable calibration
+error requires a discretized output, and a model that discretizes its own output supplies that
+property for free. The exact error of Eq.~(\ref{eq:ecegrid}) therefore needs no binning
+parameter, and equal-mass binning of the kind recommended by \citet{nixon2019measuring} stops
+working because the mass concentrates on a handful of attainable values.
+Proposition~\ref{prop:floor} adds the constraint that a discrete grid imposes. Wherever the
+smallest positive value exceeds a variable's base rate, no assignment of grid values is
+calibrated and the mean probability over-states prevalence by at least the gap. That check
+takes one line, and any analyst using such a model should run it before trusting summed
+probabilities. The floor was invisible in the developer's documentation, and it was found only
+because the audit inspected the distribution of returned values rather than their accuracy
+alone.
+
+The review budget over flagged records connects selective prediction to rare-event screening.
+The risk-coverage machinery of \citet{elyaniv2010foundations} and \citet{geifman2017selective}
+assumes that abstention trades coverage against error, and on a balanced problem it does. On
+a variable with a base rate of a few percent, a model that answers everything already has an
+error rate below conventional targets, purely because the negative class dominates. The
+analysis then certifies a system nobody should trust, which is the objection the
+precision-recall literature raised against error rates on imbalanced data
+\citep{davis2006prroc,saito2015prplot}. Pointing the construction at the decision actually
+being made, which is whether to read a flagged record, restores the trade-off. Nobody reviews
+the records a model calls negative, so defining coverage over flagged positives and risk as
+one minus precision produces a number an agency can staff against. The difference between the
+coded-field budget, which saturates for eight of nine variables, and the human-referenced
+budget of \GoldBudgetNinety\% is the reference effect seen in the agreement statistics, now
+expressed in hours. A budget selected and certified on the same labels is optimistic, which is
+why the value reported here is cross-fitted and carries a lower bound on the precision it
+delivers. That bound is a finite-sample statement about this reference set rather than a
+guarantee. The distribution-free risk-control literature supplies guarantees of the stronger
+kind, with risk-controlling prediction sets \citep{bates2021distribution}, conformal risk
+control \citep{angelopoulos2024conformal} and the Learn then Test framework for selecting
+among many candidate thresholds \citep{angelopoulos2025learn}. Applying that machinery here
+would require an exchangeable calibration sample and a fixed error level chosen in advance,
+and it would return a threshold whose risk is controlled with high probability rather than an
+estimate with an interval. Section~\ref{sec:res-accuracy} reports the latter, and the
+construction is not specific to crash narratives, since it applies to any screening task in
+which the positive class is rare and the cost is concentrated in confirming positives.
+
+The schema and the cost model transfer to other states more readily than the reference
+mapping does. The schema asks about the narrative rather than about Texas, so the same
+questions can be posed to any state's narrative field, with the criteria text serving as the
+complete specification of each variable for a model, a coder or a reviewer alike. The cost
+model transfers more strongly still, because it is dominated by schema size rather than by
+narrative length. The per-narrative cost of this schema is therefore approximately the same
+in any corpus of comparable prose length, and the break-even fraction of
+Eq.~(\ref{eq:twostage}) is a property of the schema. What does not transfer is the coded-field
+reference. Every state codes contributing factors differently, and the mapping of
+Table~\ref{tab:coded-map} had to be corrected twice against the actual value sets before it
+was usable. The one-sided error that Lemma~\ref{lem:noise} describes will also have a
+different rate in every field of every state. An agency adopting the pipeline should
+therefore expect to reuse the schema and to refit the recalibration map on its own human
+judgments. It should also expect to rebuild the reference mapping from its own data
+dictionary, and the released code is organized so that those three steps are separable.
+
+Transfer is a hypothesis here rather than a finding, because this study covers one state, one
+model version and one schema, and it is stated with the conditions under which it would fail.
+The cost model would fail where narratives are much longer than the \MedianNarrativeChars{}
+characters of the median here, since the text term would then stop being small beside the
+schema term. The schema would fail where officers write to a different convention, because the
+criteria text was written against Texas shorthand and a construct such as an intentional act is
+recognized through the phrases a reporting culture happens to use. The recalibration map would
+fail wherever the prevalence differs, since a map fitted at one base rate moves the
+probabilities toward that rate and not toward another. The accuracy results would fail on any
+later model version, because the audit measures a model and a schema together rather than a
+capability. Each of these is testable in one state with a few hundred labeled narratives, which
+is the cost this study reports, and until that test is run the transfer claim should be read as
+a design expectation.
+
+%% =====================================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+This study set out to answer two questions that crash-narrative research has left to the
+reader, namely how much human checking a narrative-derived variable needs and what changes in a
+safety diagnosis when such variables are added to the coded record. Answering them required
+treating narrative coding as a set of typed, gated decisions with probabilities attached and
+auditing the probabilities against an external reference instead of assuming them. It also
+required running that decomposition at scale, with a first-stage screen over \StageOneCoded{}
+narratives and full coding of \NstageTwo{} rather than a few thousand records. The typed model
+coded those \NstageTwo{} Texas narratives with a \NQuestions{}-question schema at
+\$\CostPerThousand{} per thousand, which projects to \$\CostWholeCorpus{} for the full corpus
+of \Ncorpus{} narratives at the same rate. The cost model showed that spend is governed by the
+size of the question schema rather than by the length of the text, which makes batching
+questions the dominant efficiency lever and sets a break-even fraction of \BreakEvenFraction{}
+below which two-stage screening pays. The model returns probabilities
+on a two-decimal grid whose floor exceeds the coded-field base rate of \NbelowFloor{} target
+variables,
+so for those variables no allocation of grid values can be calibrated and the mean
+probability is not a prevalence estimate. And risk-coverage analysis imported unchanged from
+balanced settings certifies rare-event screeners as needing no review, so the budget has to
+be defined over the records the model flags.
+
+Measured against human judgment of the same criteria, the model reaches an $F_1$ of
+\GoldFone{} and a weighted kappa of \GoldKappa{} over \GoldNUsable{} usable consensus labels,
+but its probabilities are not calibrated. The Spiegelhalter statistic is \GoldZ{} and the mean
+probability lies above the prevalence, so the model fails calibration in the large, and its
+slope of \GoldSlope{} means it fails weak calibration as well. The two references agree on the
+calibration error, at a median ratio of \ECEGapMedian{}, and they disagree on agreement, where
+the coded field reads lower than human judgment for every comparable variable by a median of
+\KappaGapMedian{} in kappa. The coded reference is incomplete in one direction, and what that
+incompleteness costs is the appearance of agreement rather than the appearance of calibration.
+The same \GoldNUsable{} judgments then recalibrate the model to an out-of-fold calibration
+error of \RecalIsoECE{} with a slope of \RecalPlattSlope{}, which is the operationally
+important result. For a few thousand judgments a safety office obtains probabilities it can
+sum, threshold and budget against over a corpus it could never label by hand. Adding those
+probabilities to the coded contributing-factor fields raises the injury and fatal crashes
+attributed to the nine mapped factors by \DownAddedTotal{} per year and moves
+\DownNRankMove{} of them in rank, which is the answer to the second question. The frontier
+comparison showed that two generative models from different vendors do not agree with each
+other about how much better than the typed model they are. It also showed that calibration is a
+property of the individual model rather than of the paradigm, so the transferable part of this
+work is the audit rather than the model. The contributions are therefore a gated typed
+decomposition whose design rules were measured, a large-scale run with a measured cost model,
+and an independent calibration and selective-prediction audit against two references. To these
+the paper adds a review budget defined over flagged records and certified out of fold, a
+downstream measurement of what calibrated narrative variables change in a safety diagnosis, and
+the released schema, code and outputs.
+
+\limitationsparagraph The study has boundaries that the reader should hold in mind, and this
+paragraph states them. The model is closed and commercial, its training data are undisclosed, and its
+behavior may change without notice. The pinned identifier and the recorded per-call
+identifier make such a change detectable but not preventable, so a reader cannot rerun the
+analysis if the vendor withdraws the model, and audits of commercial systems should be
+treated as perishable. The coded CRIS fields used as the large reference are incomplete, so
+every statistic computed against them is an agreement measure bounded by the reference's own
+error. The accuracy claims rest on a human reference set that is smaller by three orders of
+magnitude and that is defined only on cases the coders found clear, because disputes were
+excluded rather than adjudicated. Its pairwise reliability is estimated on \CoderNCalib{}
+triple-coded pairs, and its stratification on the model's probability rather than on the
+positive class leaves the rarest variables with a handful of positive labels, as few as
+\ThreshWeakNPosMin{} for \ThreshWeakNThin{} of the \GoldNWeak{} that fail. Per-variable
+precision, any threshold fitted to it, and the calibration error at the floor stratum are
+correspondingly imprecise for those variables, and \RecalPooledOnlyN{} variables carry too few
+positives to support a recalibration map of their own. The weights that make the reference set
+speak for the population are calibration weights rather than known inclusion probabilities,
+because the frame was drawn by a greedy cell-filling rule and then screened. Their validity
+therefore rests on labeling being uninformative about the outcome within a cell. The recalibration maps
+were fitted on \CoderN{} coders' judgment of Texas narratives and should be refitted rather
+than transported. The downstream counts of Section~\ref{sec:res-downstream} inherit every one
+of these boundaries, and for the \DownNConfirmLow{} factors whose narrative-only flags the
+coders confirmed less than half the time they should be read as an upper bound rather than as
+an estimate. The frontier arms ran with more context and more computation per judgment than the
+typed model, and their cost was not metered at all, so no cost in this paper describes them and
+the price comparison is a scenario over commercially listed tiers. The analysis covers one state, narratives are written by officers
+with agency-specific conventions and are themselves incomplete records of the crash, and
+residual identifiers survive the data owner's de-identification pass at the rates reported in
+Section~\ref{sec:corpus}, which is why no narrative is reproduced here.
+
+Four lines of work follow from those boundaries. The first is a case-by-case adjudication of
+the discrepancies between narrative-derived and coded values, sampled on the discrepancies
+themselves rather than on a probability-stratified frame. That design would narrow the wide
+intervals on the narrative-only cell and attribute each discrepancy to the narrative, the
+code or the model. The second is a revised schema for the
+\GoldNWeak{} variables that failed, namely \GoldWeakVars{}, with their criteria rewritten after
+error analysis. The revision would be scored against a fresh reference
+set drawn against the revised schema, so that the repair is validated on labels that did not
+select it. The third is replication in other states, which would test whether the schema and the cost
+model transfer as Section~\ref{sec:discussion} predicts. The fourth is a repeated audit across model versions, with the same reference set
+and the same metric code. It is the only way to learn whether the calibration and the review
+budgets reported here are properties of the model or of one release, and the released code is
+designed to make it routine.

@@ -1,0 +1,820 @@
+
+
+
+
+\section{Evaluation}
+\label{sec:experiment}
+
+The base models produced by pre-training and the instruction-tuned models produced by post-training are evaluated accordingly with a comprehensive evaluation suite, including both commonly-used open benchmarks and skill-oriented in-house datasets.
+The evaluation suite is designed to be primarily automatic with minimal human interaction.
+
+To prevent test data leakage, we exclude potentially contaminated data using n-gram matching when constructing the pre-training and post-training datasets. Following the criteria used in Qwen2, a training sequence $\mathbf{s}_t$ is removed from the training data if there exists a test sequence $\mathbf{s}_e$ such that the length of the longest common subsequence (LCS) between tokenized $\mathbf{s}_t$ and $\mathbf{s}_e$ satisfies both $|\text{LCS}(\mathbf{s}_t, \mathbf{s}_e)| \geq 13$ and $|\text{LCS}(\mathbf{s}_t, \mathbf{s}_e)| \geq 0.6 \times \min(|\mathbf{s}_t|, |\mathbf{s}_e|)$.
+
+\subsection{Instruction-tuned Model}
+
+To critically evaluate instruction-tuned models, we adopt a multifaceted approach. 
+Foundational skills and human preferences are assessed using open datasets and benchmarks. 
+Additionally, our detailed in-house evaluations delve deeper into the models'competencies in key areas and multilingualism. 
+A particular focus is placed on assessing long-context capability.
+The subsequent sections outline the evaluation methods and present the results.
+
+\subsubsection{Open Benchmark Evaluation}
+
+To comprehensively evaluate the quality of instruction-tuned models, we compile automatic and human evaluations to assess the capabilities and human preference. 
+For the evaluation of basic capabilities, we apply similar datasets in the pre-trained model evaluation, which target on natural language understanding, coding, mathematics, and reasoning. 
+Specifically, we evaluate on MMLU-Pro, MMLU-redux, and LiveBench 0831~\citep{livebench} for general evaluation, GPQA, GSM8K and MATH for science and mathematics, HumanEval, MBPP, MultiPL-E and LiveCodeBench 2305-2409~\citep{livecodebench} for coding, 
+IFEval~\citep{ifeval}\footnote{For simplicity, we report the results of the subset \textit{strict-prompt}.} for instruction following.
+Additionally, we assess the performance of human preference alignment and instruction following by evaluating on benchmarks including MT-Bench~\citep{mtbench} and Arena-Hard~\citep{arena-hard}.
+
+
+
+\begin{table}[tbp]
+
+\centering
+
+\caption{\textbf{Performance of the 70B+ Instruct models and Qwen2.5-Plus.}}
+
+\label{tab:70b_instruct}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lccccc@{}}
+
+\toprule
+
+\textbf{Datasets}  & \textbf{Llama-3.1-70B} & \textbf{Llama-3.1-405B} & \textbf{Qwen2-72B} & \textbf{Qwen2.5-72B} & \textbf{Qwen2.5-Plus} \\
+
+\midrule
+
+\multicolumn{6}{c}{\textit{General Tasks}} \\
+\midrule
+
+MMLU-Pro  & 66.4 & \textbf{73.3} & 64.4 & 71.1 & 72.5 \\
+
+MMLU-redux  & 83.0 & 86.2 & 81.6 & \textbf{86.8} & 86.3\\
+
+LiveBench 0831  & 46.6 & 53.2 & 41.5 & 52.3 & \textbf{54.6}\\
+
+\midrule
+\multicolumn{6}{c}{\textit{Mathematics \& Science Tasks}} \\
+\midrule
+
+GPQA   & 46.7 & \textbf{51.1} & 42.4 & 49.0 & 49.7\\
+
+MATH   & 68.0 & 73.8 & 69.0 & 83.1 & \textbf{84.7}\\
+
+GSM8K  & 95.1 & \textbf{96.8} & 93.2 & 95.8 & 96.0\\
+
+\midrule
+\multicolumn{6}{c}{\textit{Coding Tasks}} \\
+\midrule
+
+HumanEval  & 80.5 & \textbf{89.0} & 86.0 & 86.6 & 87.8\\
+
+MBPP  & 84.2 & 84.5 & 80.2 & \textbf{88.2} & 85.5\\
+
+MultiPL-E  & 68.2 & 73.5 & 69.2 & 75.1 & \textbf{77.0}  \\
+
+LiveCodeBench  & 32.1 & 41.6 & 32.2 & \textbf{55.5} & 51.4\\
+
+\midrule
+\multicolumn{6}{c}{\textit{Alignment Tasks}} \\
+\midrule
+
+IFEval  & 83.6 & 86.0 & 77.6 & 84.1 & \textbf{86.3}\\
+
+
+Arena-Hard  & 55.7 & 69.3 & 48.1 & 81.2 & \textbf{81.4}\\
+
+
+MTbench  & 8.79 & 9.08 & 9.12 & \textbf{9.35} & 9.30\\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+
+\begin{table}[tbp]
+
+\centering
+
+\caption{\textbf{Performance of the 14B-30B+ instruction-tuned models and Qwen2.5-Turbo.}}
+
+\label{tab:14b-instruct}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lcccccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Qwen2-57BA14B} & \textbf{Gemma2-27B} & \textbf{GPT4o-mini} & \textbf{Qwen2.5-Turbo} & \textbf{Qwen2.5-14B} & \textbf{Qwen2.5-32B} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{General Tasks}} \\
+
+\midrule
+
+MMLU-Pro & 52.8 & 55.5 & 63.1 & 64.5 & 63.7 & \textbf{69.0} \\
+
+MMLU-redux & 72.6 & 75.7 & 81.5 & 81.7 & 80.0 & \textbf{83.9} \\
+
+LiveBench 0831 & 31.1 & 39.6 & 43.3 & 42.3 & 44.4 & \textbf{50.7} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Mathematics \& Science Tasks}} \\
+
+\midrule
+
+GPQA & 34.3 & 38.4 & 40.2 & 42.3 & 45.5 & \textbf{49.5} \\
+
+MATH & 49.1 & 54.4 & 70.2 & 81.1 & 80.0 & \textbf{83.1} \\
+
+GSM8K & 85.3 & 90.4 & 93.2 & 93.8 & 94.8 & \textbf{95.9} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Coding Tasks}} \\
+
+\midrule
+
+HumanEval & 79.9 & 78.7 & \textbf{88.4} & 86.6 & 83.5 & \textbf{88.4} \\
+
+MBPP & 70.9 & 81.0 & \textbf{85.7} & 82.8 & 82.0 & 84.0 \\
+
+MultiPL-E & 66.4 & 67.4 & 75.0 & 73.7 & 72.8 & \textbf{75.4} \\
+
+LiveCodeBench & 22.5 & - & 40.7 & 37.8 & 42.6 & \textbf{51.2} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Alignment Tasks}} \\
+
+\midrule
+
+IFEval & 59.9 & 77.1 & 80.4 & 76.3 & \textbf{81.0} & 79.5 \\
+
+Arena-Hard & 17.8 & 57.5 & \textbf{74.9} & 67.1 & 68.3 & 74.5 \\
+
+
+MTbench & 8.55 & 9.10 & - & 8.81 & 8.88 & \textbf{9.20} \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+
+
+
+\paragraph{Qwen2.5-72B-Instruct \& Qwen2.5-Plus} 
+As shown in Table~\ref{tab:70b_instruct}, we compare Qwen2.5-72B-Instruct and Qwen2.5-Plus to other leading open-weight instrution-tuned models: Llama3.1-70B-Instruct~\citep{llama3}, Llama3.1-405B-Instruct~\citep{llama3}, and our previous 72B version, Qwen2-72B-Instruct~\citep{qwen2}. 
+The Qwen2.5-72B-Instruct model delivers exceptional performance, even surpassing the larger Llama-3.1-405B-Instruct in several critical benchmarks, including MMLU-redux, MATH, MBPP, MultiPL-E, LiveCodeBench, Arena-Hard and MTBench.
+Moreover, Qwen2.5-Plus outperforms Qwen2.5-72B-Instruct on 9 out of 13 benchmarks.
+
+
+
+
+
+
+\paragraph{Qwen2.5-14B/32B-Instruct \& Qwen2.5-Turbo}
+The performance of the Qwen2.5-Turbo, Qwen2.5-14B-Instruct, and Qwen2.5-32B-Instruct models is evaluated and compared against baselines of similar sizes. The baselines include GPT4o-mini, Gemma2-27B-IT~\citep{gemma2}, and Qwen2-57BA14B-Instruct~\citep{qwen2}. The results are summarized in Table~\ref{tab:14b-instruct}.
+The Qwen2.5-32B-Instruct model exhibits superior performance across most tasks when compared to other models of similar size. Notably, our open-weight Qwen2.5-14B-Instruct model delivers competitive results across all benchmarks, rivaling those of GPT-4o-mini.
+Despite its significantly lower training and inference costs, the Qwen2.5-Turbo model outperforms Qwen2.5-14B-Instruct on eight out of ten benchmarks. This demonstrates that Qwen2.5-Turbo achieves remarkable efficiency and effectiveness, making it a compelling choice for resource-constrained environments.
+
+
+\begin{table}[t]
+
+\centering
+
+\caption{\textbf{Performance of the 7B+ instruction-tuned models.}}
+
+\label{tab:7b-instruct}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lcccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Gemma2-9B} & \textbf{Llama3.1-8B} & \textbf{Qwen2-7B} & \textbf{Qwen2.5-7B} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{General Tasks}} \\
+
+\midrule
+
+MMLU-Pro & 52.1 & 48.3 & 44.1 & \textbf{56.3} \\
+
+MMLU-redux & 72.8 & 67.2 & 67.3 & \textbf{75.4} \\
+
+LiveBench 0831 & 30.6 & 26.7 & 29.2 & \textbf{35.9} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Mathematics \& Science Tasks}} \\
+
+\midrule
+
+GPQA & 32.8 & 32.8 & 34.3 & \textbf{36.4} \\
+
+MATH & 44.3 & 51.9 & 52.9 & \textbf{75.5} \\
+
+GSM8K & 76.7 & 84.5 & 85.7 & \textbf{91.6} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Coding Tasks}} \\
+
+\midrule
+
+HumanEval & 68.9 & 72.6 & 79.9 & \textbf{84.8} \\
+
+MBPP & 74.9 & 69.6 & 67.2 & \textbf{79.2} \\
+
+MultiPL-E & 53.4 & 50.7 & 59.1 & \textbf{70.4} \\
+
+LiveCodeBench & 18.9 & 8.3 & 23.9 & \textbf{28.7} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Alignment Tasks}} \\
+
+\midrule
+
+IFEval & 70.1 & \textbf{75.9} & 54.7 & 71.2 \\
+
+Arena-Hard & 41.6 & 27.8 & 25.0 & \textbf{52.0} \\
+
+
+MTbench & 8.49 & 8.23 & 8.26 & \textbf{8.75} \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+
+
+
+\begin{table}[t]
+
+\centering
+
+\caption{\textbf{Performance comparison of 2B-4B instruction-tuned models.}}
+
+\label{tab:4b-instruct}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lcccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Gemma2-2B} & \textbf{Phi3.5-Mini} & \textbf{MiniCPM3-4B} & \textbf{Qwen2.5-3B} \\
+
+\midrule
+
+Non-Emb Params & 2.0B & 3.6B & 4.0B & 2.8B \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{General Tasks}} \\
+
+\midrule
+
+MMLU-Pro & 26.7 & \textbf{47.5} & 43.0 & 43.7 \\
+
+MMLU-redux & 51.9 & \textbf{67.7} & 59.9 & 64.4 \\
+
+LiveBench 0831 & 20.1 & 27.4 & \textbf{27.6} & 26.8 \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Mathematics \& Science Tasks}} \\
+
+\midrule
+
+GPQA & 29.3 & 27.2 & \textbf{31.3} & 30.3 \\
+
+MATH & 26.6 & 48.5 & 46.6 & \textbf{65.9} \\
+
+GSM8K & 63.2 & 86.2 & 81.1 & \textbf{86.7} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Coding Tasks}} \\
+
+\midrule
+
+HumanEval & 68.9 & 72.6 & \textbf{74.4} & \textbf{74.4} \\
+
+MBPP & \textbf{74.9} & 63.2 & 72.5 & 72.7 \\
+
+MultiPL-E & 30.5 & 47.2 & 49.1 & \textbf{60.2} \\
+
+LiveCodeBench & 5.8 & 15.8 & \textbf{23.8} & 19.9 \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Alignment Tasks}} \\
+
+\midrule
+
+IFEval & 51.0 & 52.1 & \textbf{68.4} & 58.2 \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+\paragraph{Other Instruction-tuned Models} 
+As illustrated in Table~\ref{tab:7b-instruct}, the Qwen2.5-7B-Instruct model significantly outperforms its competitors, Gemma2-9B-IT and Llama3.1-8B-Instruct, across all tasks except IFEval. Notably, Qwen2.5-7B-Instruct exhibits clear advantages in mathematics (MATH: 75.5) and coding (HumanEval: 84.8).
+For the edge-side instruction models, the Qwen2.5-3B-Instruct model, despite having fewer parameters than both the Phi3.5-mini-instruct~\citep{phi3} and MiniCPM3-4B-Instruct~\citep{minicpm} models, surpasses them in mathematics and coding tasks, as shown in Table~\ref{tab:4b-instruct}. Additionally, it delivers competitive results in language understanding.
+The Qwen2.5-1.5B-Instruct and Qwen2.5-0.5B-Instruct models have also seen substantial performance improvements over their previous versions, as detailed in Table~\ref{tab:2b-instruct}. These enhancements make them particularly well-suited for edge-side applications in highly resource-constrained environments.
+
+
+
+
+\begin{table}[t]
+
+\centering
+
+\caption{\textbf{Performance comparison of 0.5B-1.5B instruction-tuned models.}}
+
+\label{tab:2b-instruct}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lcccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Qwen2-0.5B} & \textbf{Qwen2.5-0.5B} & \textbf{Qwen2-1.5B} & \textbf{Qwen2.5-1.5B} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{General Tasks}} \\
+
+\midrule
+
+MMLU-Pro & 14.4 & \textbf{15.0} & 22.9 & \textbf{32.4} \\
+
+MMLU-redux & 12.9 & \textbf{24.1} & 41.2 & \textbf{50.7} \\
+
+LiveBench & 7.4 & \textbf{12.6} & 12.4 & \textbf{18.8} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Mathematics \& Science Tasks}} \\
+
+\midrule
+
+GPQA & 23.7 & \textbf{29.8} & 21.2 & \textbf{29.8} \\
+
+MATH & 13.9 & \textbf{34.4} & 25.3 & \textbf{55.2} \\
+
+GSM8K & 40.1 & \textbf{49.6} & 61.6 & \textbf{73.2} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Coding Tasks}} \\
+
+\midrule
+
+HumanEval & 31.1 & \textbf{35.4} & 42.1 & \textbf{61.6} \\
+
+MBPP & 39.7 & \textbf{49.6} & 44.2 & \textbf{63.2} \\
+
+MultiPL-E & 20.8 & \textbf{28.5} & 38.5 & \textbf{50.4} \\
+
+LiveCodeBench & 1.6 & \textbf{5.1} & 4.5 & \textbf{14.8} \\
+
+\midrule
+
+\multicolumn{5}{c}{\textit{Alignment Tasks}} \\
+
+\midrule
+
+IFEval & 14.6 & \textbf{27.9} & 29.0 & \textbf{42.5} \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+\subsubsection{In-house Automatic Evaluation}
+
+
+
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\textbf{Performance Comparison on our in-house English automatic evaluation benchmark.} }
+\label{tab:eval_v11_EN}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Models} & \textbf{IF} & \textbf{Knowledge} & \textbf{Comprehension} & \textbf{Coding} & \textbf{Math} & \textbf{Reasoning} \\
+\midrule
+\multicolumn{7}{c}{\textit{Proprietary LLMs}} \\
+\midrule
+GPT-4o-2024-08-06 & 83.28 & 68.08 & 76.51 & 58.05 & 52.36 & 66.45 \\
+GPT-4o-2024-11-20 & 80.06 & 65.25 & 79.07 & 60.19 & 49.74 & 67.07 \\
+Claude3.5-sonnet-2024-10-22 & 84.22 & 74.61 & 79.02 & 67.17 & 48.67 & 70.20\\
+\midrule
+\multicolumn{7}{c}{\textit{Qwen2 Series}} \\
+\midrule
+Qwen2-0.5B-Instruct & 18.33 & 18.59 & 30.64 & 5.42 & 13.16 & 32.03 \\
+Qwen2-1.5B-Instruct & 29.42 & 29.23 & 45.81 & 17.02 & 20.34 & 38.86 \\
+Qwen2-7B-Instruct & 50.47 & 44.79 & 58.04 & 43.04 & 38.31 & 50.25 \\
+Qwen2-72B-Instruct & 76.08 & 59.49 & 72.19 & 48.95 & 48.07 & 60.33 \\
+\midrule
+\multicolumn{7}{c}{\textit{Llama-3.1 Series}} \\
+\midrule
+Llama-3.1-70B-Instruct & 81.33 & 63.42 & 69.29 & 55.96 & 48.00 & 63.18 \\
+Llama-3.1-405B-Instruct & 83.33 & 67.10 & 75.55 & 58.14 & 47.09 & 64.74\\
+\midrule
+\multicolumn{7}{c}{\textit{Qwen2.5 Series}} \\
+\midrule
+Qwen2.5-0.5B-Instruct & 33.35 & 30.29 & 29.78 & 15.41 & 26.29 & 36.13 \\
+Qwen2.5-1.5B-Instruct & 40.25 & 41.19 & 47.69 & 26.19 & 40.99 & 42.23 \\
+Qwen2.5-3B-Instruct & 60.60 & 46.11 & 57.98 & 41.43 & 49.38 & 49.80 \\
+Qwen2.5-7B-Instruct & 70.01 & 52.74 & 62.69 & 48.41 & 56.93 & 54.69 \\
+Qwen2.5-14B-Instruct & 74.17 & 59.78 & 69.11 & 52.68 & 59.68 & 62.51 \\
+Qwen2.5-Turbo        & 72.76 & 58.56 & 68.70 & 54.48 & 57.77 & 61.06 \\
+Qwen2.5-32B-Instruct & 76.79 & 64.08 & 71.28 & 58.90 & 60.97 & 65.49 \\
+Qwen2.5-72B-Instruct & 82.65 & 66.09 & 74.43 & 60.41 & 59.73 & 65.90 \\
+Qwen2.5-Plus         & 83.18 & 68.41 & 79.35 & 59.58 & 62.52 & 66.92 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\textbf{Performance Comparison on our in-house Chinese automatic evaluation benchmark.} }
+\label{tab:eval_v11_ZH}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Models} & \textbf{IF} & \textbf{Knowledge} & \textbf{Comprehension} & \textbf{Coding} & \textbf{Math} & \textbf{Reasoning} \\
+\midrule
+\multicolumn{7}{c}{\textit{Proprietary LLMs}} \\
+\midrule
+GPT-4o-2024-08-06 & 42.50 & 68.55 & 80.11 & 61.53 & 61.74 & 56.88 \\
+GPT-4o-2024-11-20 & 42.71 & 71.29 & 83.04 & 62.39 & 66.04 & 62.04 \\
+Claude3.5-sonnet-2024-10-22 & 49.25 & 72.09 & 82.16 & 66.00 & 63.71 & 66.60\\
+\midrule
+\multicolumn{7}{c}{\textit{Qwen2 Series}} \\
+\midrule
+Qwen2-0.5B-Instruct & 4.69 & 40.43 & 39.13 & 9.85 & 14.07 & 32.73 \\
+Qwen2-1.5B-Instruct & 6.81 & 51.54 & 46.89 & 14.14 & 24.57 & 35.19 \\
+Qwen2-7B-Instruct & 16.83 & 65.95 & 60.30 & 37.05 & 50.52 & 44.96 \\
+Qwen2-72B-Instruct & 31.98 & 74.96 & 75.49 & 41.57 & 65.55 & 58.19 \\
+\midrule
+\multicolumn{7}{c}{\textit{Llama-3.1 Series}} \\
+\midrule
+Llama-3.1-70B-Instruct & 28.96 & 57.41 & 67.24 & 54.82 & 41.18 & 52.42 \\
+Llama-3.1-405B-Instruct & 30.39 & 63.79 & 72.27 & 60.73 & 46.05 & 55.88\\
+\midrule
+\multicolumn{7}{c}{\textit{Qwen2.5 Series}} \\
+\midrule
+Qwen2.5-0.5B-Instruct & 6.12 & 39.13 & 42.97 & 9.60 & 24.03 & 33.72 \\
+Qwen2.5-1.5B-Instruct & 7.38 & 48.68 & 49.69 & 22.96 & 37.30 & 39.17 \\
+Qwen2.5-3B-Instruct & 16.50 & 57.18 & 62.55 & 29.88 & 51.64 & 39.57 \\
+Qwen2.5-7B-Instruct & 26.64 & 65.77 & 67.55 & 39.56 & 61.06 & 49.70 \\
+Qwen2.5-14B-Instruct & 26.87 & 70.28 & 76.96 & 49.78 & 67.01 & 56.41 \\
+Qwen2.5-Turbo        & 32.94 & 72.93 & 74.37 & 51.92 & 66.08 & 53.30 \\
+Qwen2.5-32B-Instruct & 32.64 & 74.70 & 79.46 & 54.45 & 67.86 & 60.19 \\
+Qwen2.5-72B-Instruct & 37.22 & 75.86 & 78.85 & 56.71 & 68.39 & 63.02 \\
+Qwen2.5-Plus         & 46.15 & 72.07 & 82.64 & 58.48 & 69.96 & 62.98 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Despite the availability of several open benchmark datasets for evaluation, we believe that these are insufficient to fully capture the capabilities of LLMs.
+To address this, we have developed a series of in-house datasets designed to assess various aspects of model performance, including knowledge understanding, text generation, coding, and more. 
+These evaluations are conducted in both Chinese and English.
+In addition, we have specifically evaluated the multilingual performance of instruction-tuned models. 
+The results are summarized in Table \ref{tab:eval_v11_EN} for English, Table \ref{tab:eval_v11_ZH} for Chinese, Table \ref{tab:eval_multilingual_70B} for multilingualism of 70B+ Instruct models, and Table \ref{tab:eval_multilingual_14B} for 7B-14B models, respectively.
+
+
+
+\paragraph{English \& Chinese Evaluation}
+
+We compare the performance of Qwen2.5-Instruct models against several leading language models, including GPT-4, Claude3.5-sonnet, Qwen2, and Llama-3.1, across both English and Chinese languages. Our analysis focuses on model size and its impact on performance, as well as how our latest Qwen2.5 series compares to previous iterations and competing models.
+For smaller models, we observe that the Qwen2.5-0.5B model achieves performance that is on par with or even surpasses the Qwen2-1.5B model. 
+This indicates that the Qwen2.5 series has optimized parameter usage, enabling mid-sized models to achieve similar performance levels to larger models from the previous generation.
+The Qwen2.5-3B model demonstrates performance that is comparable to the Qwen2-7B model. 
+Notably, the Qwen2.5-32B model exhibits a remarkable improvement over the Qwen2-72B model.
+Our flagship model, Qwen2.5-72B, further narrows the gap between Qwen and state-of-the-art models like GPT-4 and Claude3.5-sonnet. In particular, Qwen2.5-72B matches or exceeds the performance of Llama-3.1-405B in all metrics except for instruction following. This achievement underscores the competitiveness of Qwen2.5-72B in a wide range of language processing tasks, while also identifying areas for future improvement.
+Qwen2.5-Plus addresses the previous shortcomings in Chinese instruction following and further enhances its advantages in other areas.
+
+
+\paragraph{Multilingual Evaluation}
+
+
+
+\begin{table}[t]
+
+\centering
+
+\small
+
+\caption{\textbf{Performance of the 70B+ Instruct models on Multilingual Tasks.}}
+
+\label{tab:eval_multilingual_70B}
+
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lcccccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Qwen2-72B} & \textbf{Llama3.1-70B} & \textbf{Qwen2.5-32B} & \textbf{Mistral-Large} & \textbf{GPT4o-mini} & \textbf{Qwen2.5-72B} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Instruction Following}} \\
+
+\midrule
+
+IFEval (multilingual) & 79.69 & 80.47 & 82.68 & 82.69 & 85.03 & \textbf{86.98} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Knowledge}} \\
+
+\midrule
+
+AMMLU (Arabic) & 68.85 & 70.08 & 70.44 & 69.24 & 69.73 & \textbf{72.44} \\
+
+JMMLU (Japanese) & 77.37 & 73.89 & 76.55 & 75.77 & 73.74 & \textbf{80.56} \\
+
+KMMLU (Korean) & 57.04 & 53.23 & 60.75 & 56.42 & 56.77 & \textbf{61.96} \\
+
+IndoMMLU (Indonesian) & 66.31 & 67.50 & 66.42 & 63.21 & 67.75 & \textbf{69.25} \\
+
+TurkishMMLU (Turkish) & 69.22 & 66.89 & 72.41 & 64.78 & 71.19 & \textbf{76.12} \\
+
+okapi MMLU (translated) & 77.84 & 76.49 & 77.16 & 78.37 & 73.44 & \textbf{79.97} \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Math Reasoning}} \\
+
+\midrule
+
+MGSM8K (extended) & 82.72 & 73.31 & 87.15 & \textbf{89.01} & 87.36 & 88.16 \\
+
+\midrule
+
+\multicolumn{7}{c}{\textit{Cultural Nuances}} \\
+
+\midrule
+
+BLEnD & 25.90 & 30.49 & 27.88 & 33.47 & \textbf{35.91} & 32.48 \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+
+\begin{table}[t]
+
+\centering
+
+\caption{\textbf{Performance of the 7B-14B Instruct models on Multilingual Tasks.}}
+
+\label{tab:eval_multilingual_14B}
+\small
+\setlength{\tabcolsep}{2.6pt}
+
+\begin{tabular}{@{}lccccc@{}}
+
+\toprule
+
+\textbf{Datasets} & \textbf{Qwen2-7B} & \textbf{Llama3.1-8B} & \textbf{Qwen2.5-7B} & \textbf{Gemma2-9B} & \textbf{Qwen2.5-14B} \\
+
+\midrule
+
+\multicolumn{6}{c}{\textit{Instruction Following}} \\
+
+\midrule
+
+IFEval (multilingual) & 51.43 & 60.68 & 74.87 & \textbf{77.47} & 77.08 \\
+
+\midrule
+
+\multicolumn{6}{c}{\textit{Knowledge}} \\
+
+\midrule
+
+AMMLU (Arabic) & 54.87 & 54.28 & 59.78 & 60.26 & \textbf{66.81} \\
+
+JMMLU (Japanese) & 57.71 & 53.26 & 61.88 & 64.59 & \textbf{72.78} \\
+
+KMMLU (Korean) & 43.96 & 42.28 & 46.59 & 46.24 & \textbf{59.71} \\
+
+IndoMMLU (Indonesian) & 54.05 & 53.92 & 56.42 & 61.73 & \textbf{65.09} \\
+
+TurkishMMLU (Turkish) & 49.27 & 45.61 & 54.28 & 55.44 & \textbf{66.85} \\
+
+okapi MMLU (translated) & 60.47 & 55.18 & 66.98 & 46.72 & \textbf{72.12} \\
+
+\midrule
+
+\multicolumn{6}{c}{\textit{Math Reasoning}} \\
+
+\midrule
+
+MGSM8K (extended) & 56.13 & 66.05 & 66.11 & 78.37 & \textbf{82.27} \\
+
+\midrule
+
+\multicolumn{6}{c}{\textit{Cultural Nuances}} \\
+
+\midrule
+
+BLEnD & 22.49 & 19.47 & 23.66 & \textbf{28.31} & 26.99 \\
+
+\bottomrule
+
+\end{tabular}
+
+\end{table}
+
+To comprehensively evaluate the multilingual capabilities of instruction-tuned models, we followed P-MMEval~\citep{pmmeval} and extended several benchmarks as follows:
+(1) IFEval (Multilingual): We expanded the IFEval benchmark, originally in English, to include multilingual examples. To ensure language neutrality, we removed instances that contained language-specific content (e.g., "start with letter A"). 
+(2) Knowledge Utilization: to assess the knowledge utilization abilities of the Qwen2.5 series models across multiple languages, we employed five MMLU-like benchmarks (multiple-choice format). These benchmarks include: AMMLU (Arabic), JMMLU (Japanese), KMMLU (Korean), IndoMMLU (Indonesian), and TurkishMMLU (Turkish). 
+Additionally, we evaluated the models' performance on the translated version of the MMLU benchmark (okapi\_MMLU), which has been adapted into multiple languages from its original English form.
+(3) MGSM8K (Extended): Building upon the original MGSM8K benchmark, we extended the language support to include Arabic (ar), Korean (ko), Portuguese (pt), and Vietnamese (vi). 
+(4) Cultural Nuances: To evaluate the models' ability to capture cultural nuances, we utilized the BLEnD benchmark~\citep{blend}. This benchmark is specifically designed to test LLMs on their understanding of cultural subtleties. 
+
+Qwen2.5 exhibits competitive performance in instruction following, multilingual knowledge, and mathematical reasoning, aligning well with models of comparable size. Although it shows notable improvements in capturing cultural nuances relative to its predecessor, Qwen2, there remains potential for further refinement in this domain.
+
+
+
+\subsubsection{Reward Model}
+
+The reward model serves as the cornerstone for guiding RL processes, and thus we conduct a separate evaluation of the reward model used in the Qwen2.5 series. Our assessment benchmarks encompass Reward Bench~\citep{Lambert2024RewardBenchER}, RMB~\citep{Zhou2024RMBCB}, PPE~\citep{Frick2024HowTE}, and an internally collected out-of-domain Chinese human preference benchmark (Human-Preference-Chinese) to provide a comprehensive analysis.
+For comparison, we included baseline models such as Nemotron-4-340B-Reward~\citep{Adler2024Nemotron43T}, Llama-3.1-Nemotron-70B-Reward~\citep{Wang2024HelpSteer2PreferenceCR}, and Athene-RM-70B~\citep{Athene2024}. The results are shown in Table~\ref{tab:eval_reward_bench_metrics}. Overall, our findings indicate that Llama-3.1-Nemotron-70B-Reward excels on the Reward Bench, while Athene-RM-70B performs best on the RMB benchmark. The Qwen2.5-RM-72B, leads in both the PPE and Human-Preference-Chinese evaluations, ranking second only to Athene-RM-70B on the RMB and achieving a performance level comparable to Nemotron-4-340B-Reward on the Reward Bench, albeit slightly behind Llama-3.1-Nemotron-70B-Reward.
+
+Due to the lack of evaluation methods for reward models, current reward models are typically evaluated using Reward Bench. However, our evaluation results from multiple RM benchmarks suggest that over-optimization on a specific benchmark may trigger Goodhart's law~\citep{hoskin1996}, resulting in degraded performance on other benchmarks and potentially impacting downstream alignment performance. This highlights the need for a comprehensive evaluation of reward models across diverse benchmarks rather than relying solely on a single benchmark.
+
+More importantly, through iterative experimentation, we have also come to recognize a critical limitation: current reward model evaluation benchmarks do not accurately predict the performance of the RL models trained under their guidance. In other words, a higher score on RM benchmarks does not necessarily correlate with superior performance of the resulting RL model. This insight underscores the need for further research into more predictive evaluation methods for reward models.
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Performance comparison across multiple RM benchmarks.}}
+\label{tab:eval_reward_bench_metrics}
+\small
+\setlength{\tabcolsep}{3pt} %
+
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Metric} & \textbf{\shortstack{Nemotron-4-340B-\\Reward}} & \textbf{\shortstack{Llama-3.1-Nemotron-\\70B-Reward}} & \textbf{\shortstack{Athene-RM\\-70B}} & \textbf{\shortstack{Qwen2.5-RM\\-72B}} \\
+\midrule
+\multicolumn{5}{c}{\textit{Reward Bench}} \\
+\midrule
+Chat & 95.80 & 97.50 & \textbf{98.32} & 97.21 \\
+Chat Hard & \textbf{87.10} & 85.70 & 70.61 & 78.73 \\
+Safety & 91.50 & \textbf{95.10} & 92.10 & 92.71 \\
+Reasoning & 93.60 & \textbf{98.10} & 92.19 & 97.65 \\
+Score & 92.00 & \textbf{94.10} & 88.32 & 91.59 \\
+\midrule
+\multicolumn{5}{c}{\textit{RMB}} \\
+\midrule
+Helpfulness (BoN) & 48.85 & 61.02 & \textbf{67.24} & 65.72 \\
+Helpfulness (Pairwise) & 68.70 & 75.28 & \textbf{80.82} & 78.83 \\
+Harmlessness (BoN) & 50.92 & 52.00 & \textbf{67.02} & 56.35 \\
+Harmlessness (Pairwise) & 70.84 & 69.96 & \textbf{80.83} & 73.94 \\
+Overall & 59.83 & 64.57 & \textbf{73.98} & 68.71 \\
+\midrule
+\multicolumn{5}{c}{\textit{PPE}} \\
+\midrule
+Human Preference & 59.28 & 64.32 & \textbf{66.48} & 64.80 \\
+IFEval & 62.66 & 63.40 & 62.15 & \textbf{67.97} \\
+GPQA & 56.56 & 59.14 & 59.26 & \textbf{59.80} \\
+MATH & 65.12 & 69.73 & 79.14 & \textbf{81.48} \\
+MBPP-Plus & 49.15 & 55.62 & \textbf{67.97} & 64.34 \\
+MMLU-Pro & 69.69 & 70.20 & \textbf{76.95} & 75.66 \\
+Objective-Avg & 60.64 & 63.62 & 69.09 & \textbf{69.85} \\
+\midrule
+\multicolumn{5}{c}{\textit{Human-Preference-Chinese}} \\
+\midrule
+Accuracy & 50.46 & 59.95 & 61.11 & \textbf{61.27} \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Performance of Qwen2.5 Models on RULER.} \textit{YARN+DCA} does not change the model behavior within 32K tokens.}
+\label{tab:ruler}
+\small
+\begin{tabular}{@{}lrlllllll@{}}
+\toprule
+\multirow{2}{*}{\bf Model} & \bf \multirow{2}[2]{*}{\makecell{\bf Claimed \\ Length}} & \multicolumn{6}{c}{\bf RULER}  \\ 
+\cmidrule{3-9}
+ & &  \bf Avg.  & \bf 4K   & \bf 8K    & \bf 16K  & \bf 32K  & \bf 64K   & \bf 128K  \\ \midrule
+ GLM4-9b-Chat-1M & 1M         & 89.9   & 94.7   & 92.8            & 92.1   & 89.9   & 86.7          & 83.1             \\
+Llama-3-8B-Instruct-Gradient-1048k & 1M         & 88.3   & 95.5   & 93.8            & 91.6   & 87.4   & 84.7          & 77.0      \\
+Llama-3.1-70B-Instruct & 128K & 89.6 & 96.5 & 95.8 &  95.4 & 94.8  & 88.4 &  66.6 \\
+GPT-4o-mini    & 128K       & 87.3   & 95.0   & 92.9            & 92.7   & 90.2   & 87.6          & 65.8                \\ 
+GPT-4        & 128K     & 91.6 & 96.6 & 96.3 & 95.2 & 93.2 & 87.0          & 81.2              \\ 
+\midrule
+\textbf{Qwen2.5-7B-Instruct}  & 128K & 85.4 & 96.7 & 95.1 &93.7 & 89.4&82.3&55.1\\
+\textcolor{gray}{\quad w/o DCA + YARN} &  & \textcolor{gray}{80.1} & \textcolor{gray}{96.7} & \textcolor{gray}{95.1} & \textcolor{gray}{93.7} & \textcolor{gray}{89.4} &\textcolor{gray}{74.5}&\textcolor{gray}{31.4} \\
+\textbf{Qwen2.5-14B-Instruct} & 128K & 91.4 &97.7 &96.8 &95.9 &93.4 & 86.7 & 78.1 \\
+\quad \textcolor{gray}{w/o DCA + YARN} &  & \textcolor{gray}{86.5} & \textcolor{gray}{97.7} & \textcolor{gray}{96.8} & \textcolor{gray}{95.9} & \textcolor{gray}{93.4} & \textcolor{gray}{82.3} & \textcolor{gray}{53.0} \\
+\textbf{Qwen2.5-32B-Instruct} & 128K & 92.9 & 96.9 & 97.1 & 95.5 & 95.5 & 90.3 & 82.0  \\
+\quad \textcolor{gray}{w/o DCA + YARN} &  & \textcolor{gray}{88.0} & \textcolor{gray}{96.9} & \textcolor{gray}{97.1} & \textcolor{gray}{95.5} & \textcolor{gray}{95.5} & \textcolor{gray}{85.3} & \textcolor{gray}{57.7} \\
+\textbf{Qwen2.5-72B-Instruct} & 128K & \bf95.1 & \bf97.7 & \bf 97.2 & \bf 97.7 & \bf 96.5 & \bf 93.0 & \bf 88.4 \\
+\quad \textcolor{gray}{w/o DCA + YARN} &  & \textcolor{gray}{90.8} & \textcolor{gray}{97.7} & \textcolor{gray}{97.2} & \textcolor{gray}{97.7} & \textcolor{gray}{96.5} &  \textcolor{gray}{88.5} & \textcolor{gray}{67.0} \\
+\midrule
+\textbf{Qwen2.5-Turbo}  & 1M & {93.1} & {97.5} & 95.7 & {95.5} & {94.8} & {90.8} & {84.5} \\                 
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Long Context Capabilities}
+
+We utilize three benchmarks to evaluate the long context capabilities of Qwen2.5 models: RULER~\citep{hsieh2024ruler}, LV-Eval~\citep{yuan2024lveval}, and Longbench-Chat~\citep{longalign2024bai}. In LV-Eval, we adopt keyword recall as the reported score to mitigate the high rate of false negatives present in the original metrics.
+
+
+
+
+The results are shown in Table \ref{tab:ruler} and Table \ref{tab:lveval}. We can observe that the Qwen2.5 models, after equipping length extrapolation techniques (i.e., DCA + YARN), have demonstrated strong long context processing capabilities on the three datasets. Among them, Qwen2.5-72B-Instruct has shown the strongest performance across all context lengths, significantly outperforming existing open-weight long-context models as well as the proprietary models like GPT-4o-mini and GPT-4.
+
+\begin{table}[tbp]
+\caption{\textbf{Performance of Qwen2.5 Models on LV-Eval and LongBench-Chat.} \textit{YARN+DCA} does not change the model behavior within 32k tokens.}
+\label{tab:lveval}
+\small
+\centering
+\begin{tabular}{@{}lrrrrrrc@{}}
+\toprule
+\multirow{2}{*}{\bf Model} & \bf \multirow{2}[2]{*}{\makecell{\bf Claimed \\ Length}} & \multicolumn{5}{c}{\bf LV-Eval} & \multirow{2}[2]{*}{\makecell{\bf LongBench-\\ \bf Chat }} \\ 
+\cmidrule{3-7}
+ & \bf   & \bf 16k   & \bf 32k    & \bf 64k  & \bf 128k  & \bf 256k    \\ \midrule
+GLM4-9B-Chat-1M                    & 1M     &    46.4	&43.2	&42.9	&40.4	&37.0	&7.82                      \\
+Llama-3-8B-Instruct-Gradient-1048k & 1M          &   31.7	 &31.8	 & 28.8	 & 26.3	& 21.1 &	6.20            \\
+Llama-3.1-70B-Instruct & 128k & 48.6 & 47.4 & 42.9 & 26.2 & N/A & 6.80 \\
+GPT-4o-mini                       & 128k    & 52.9	& 48.1	& 46.0	& 40.7	& N/A	& 8.48            \\ 
+\midrule
+\textbf{Qwen2.5-7B-Instruct}  & 128k & 55.9&49.7&48.0 & 41.1 & 36.9 & 7.42\\
+\quad \textcolor{gray}{w/o DCA + YARN}  &  & \textcolor{gray}{55.9}&\textcolor{gray}{49.7}&\textcolor{gray}{33.1}&\textcolor{gray}{13.6}&\textcolor{gray}{0.5} & \textcolor{gray}{-}\\ 
+\textbf{Qwen2.5-14B-Instruct} & 128k & 53.0 &50.8 & 46.8 & 43.6 & 39.4 & 8.04  \\
+\quad \textcolor{gray}{w/o DCA + YARN}&  & \textcolor{gray}{53.0} &\textcolor{gray}{50.8} & \textcolor{gray}{37.0} & \textcolor{gray}{18.4} & \textcolor{gray}{0.8} & \textcolor{gray}{-}\\
+\textbf{Qwen2.5-32B-Instruct} & 128k& 56.0 & 53.6 & 48.8 & 45.3 & 41.0 & 8.70 \\
+\quad \textcolor{gray}{w/o DCA + YARN} &  & \textcolor{gray}{56.0} & \textcolor{gray}{53.6} & \textcolor{gray}{40.1} & \textcolor{gray}{20.5} & \textcolor{gray}{0.7} & \textcolor{gray}{-}\\
+\textbf{Qwen2.5-72B-Instruct} & 128k & \bf60.4 & \bf 57.5 &  \bf53.9 & \bf50.9 & \bf45.2 & \bf 8.72 \\
+\quad \textcolor{gray}{w/o DCA + YARN} &  & \textcolor{gray}{60.4} & \textcolor{gray}{57.5} & \textcolor{gray}{47.4} & \textcolor{gray}{27.0} & \textcolor{gray}{2.4} & \textcolor{gray}{-} \\
+\midrule
+\textbf{Qwen2.5-Turbo}             & 1M     & 53.4	& 50.0	&45.4 	& 43.9	& 38.0&	8.34        \\   
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+Furthermore, as shown in Figure \ref{fig:passkey_retrieval}, Qwen2.5-Turbo achieves 100\% accuracy in the 1M-token passkey retrieval task, demonstrating its exceptional ability to capture detailed information from ultra-long contexts. 
+We develop a sparse attention mechanism based on Minference~\citep{jiang2024minference} to significantly enhance inference speed, which is critical for user experience when processing long contexts. For sequences of 1M tokens, this approach reduces the computational load of the attention mechanism by 12.5 times. Figure \ref{fig:inference_time} illustrates the time to first token (TTFT) of Qwen2.5-Turbo across various hardware configurations, where our method achieves a 3.2 to 4.3 times speedup.
+
+
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/passkey_retrieval.pdf}
+    \caption{\textbf{Performance of Qwen2.5-Turbo on Passkey Retrieval Task with 1M Token Lengths.}}
+    \label{fig:passkey_retrieval}
+\end{figure}
+
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/inference_speed.pdf}
+    \caption{\textbf{TTFT (Time To First Token) of Qwen2.5-Turbo and Qwen2.5-7B with Full Attention and Our Method.}}
+    \label{fig:inference_time}
+\end{figure}
+

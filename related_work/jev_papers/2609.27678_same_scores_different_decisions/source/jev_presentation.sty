@@ -1,0 +1,11 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{jev_presentation}[2026/09/22 Neutral manuscript presentation]
+% Keep the official neurips_2026.sty unchanged. The preprint option selects
+% non-anonymous typography; this local override removes its first-page notice.
+% No conference acceptance or submission status is asserted.
+\makeatletter
+\renewcommand{\@notice}{}
+\makeatother
+% Avoid stretched vertical gaps on pages that carry a full-width float.
+\raggedbottom
+\endinput

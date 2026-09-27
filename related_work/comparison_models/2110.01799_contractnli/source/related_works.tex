@@ -1,0 +1,18 @@
+\section{Related Works}
+
+Helped by their accessibility, there exist multiple prior works on ``legal NLI'' for case and statute laws.
+One of the subtasks in COLIEE-2020 shared task \cite{rabelo_coliee_nodate} was, given a court decision Q and relevant cases, to extract relevant paragraphs from the cases and to classify whether those paragraphs entail ``Q'' or ``not Q''.
+\citet{holzenberger_dataset_2020} introduced a dataset for predicting an entailment relationship between a statement and a statute excerpt.
+While they are both ``legal'' and ``NLI'', statutes and contracts exhibit different characteristics including the fact that statutes/cases tend to be written in consistent vocabulary and styles.
+Moreover, there only exists a single right answer for a hypothesis in case/statute law NLI, whereas a hypothesis can be entailed by or contradicting to each contract in our task; i.e., hypotheses and documents have one-to-one relationships in case/statute law NLI, but they have many-to-many relationships in our task.
+
+As discussed in \cref{sec:introduction}, our task has practical and scientific significance compared to information extraction for contracts \cite{leivaditi_benchmark_2020,hendrycks_cuad_2021}.
+We showed in our experiments that the NLI part of our task is much more challenging than the evidence identification task.
+% Unlike \cite{hendrycks_cuad_2021}, which were annotated by multiple professionals, our dataset might not be as faithful to an existing law as theirs due to less involvement of law professionals.
+% We argue that annotation based on guideline .. and our dataset should therefore be good enough as a proxy for studying legal data.
+Furthermore, we gave observations to linguistic characteristics of our dataset that are lacking in these prior works.
+
+\citet{lippi_claudette_2019} presented a dataset where certain types of contract clauses are identified and annotated with ``clearly fair'', ``potentially unfair'' or ``clearly unfair''.
+While the format of the task input and output is quite similar, our task requires reasoning over a much diverse set of hypotheses than just fair or unfair.
+Similarly, fact extraction and claim verification tasks \cite{thorne_fever_2018,jiang_hover_2020}, where the task is to extract facts from Wikipedia articles and to classify whether the claim is entailed by the facts, have similar input and output formats.
+Such claims and our hypotheses are quite different in nature and working on contracts poses unique challenges as discussed in \cref{sec:discussion-observations}.

@@ -1,0 +1,16 @@
+% Generated from audited Qwen9B reports and hash-checked request snapshots.
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Phase & Calls & Tokens/call & Known/calls & Seconds/call & Known/calls \\
+\midrule
+\multirow[c]{2}{*}{\modelicon{qwen}Qwen3.5-9B} & Base & 30/30 & 227.03 & 30/30 & 2.93 & 30/30 \\
+ & A--D & 360/360 & 111.33 & 360/360 & 1.40 & 360/360 \\
+\bottomrule
+\end{tabular}
+\caption{Qwen3.5-9B development-set output length and latency. Calls gives observed/planned requests; Known/calls gives the number with available measurements. Values are mean completion tokens and measured client latency per request. The A--D mean pools conditions with different requested output sizes. Both phases disable thinking and use temperature zero. These measurements describe the evaluated configuration; they are not monetary charges.}
+\label{tab:qwenextensionresources}
+\end{table*}

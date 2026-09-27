@@ -1,0 +1,29 @@
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{Xrrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{Accuracy\\(\%) $\uparrow$} & \shortstack{95\%\\interval} & \shortstack{Macro-F1\\(\%) $\uparrow$} & \shortstack{Cost\\(USD/contract) $\downarrow$} & \shortstack{Median\\time (s) $\downarrow$} & \shortstack{Valid\\calls} \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 77.38 & [75.99, 78.81] & 72.23 & \bestscore{0.000228} & \bestscore{1.24} & 123/123 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 82.54 & [81.11, 83.98] & 76.96 & 0.001353 & \secondscore{1.60} & 123/123 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \bestscore{83.21} & [81.68, 84.79] & \bestscore{77.71} & 0.008474 & 3.73 & 123/123 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 78.96 & [77.19, 80.63] & 73.77 & \secondscore{0.000931} & 1.74 & 123/123 \\
+\modelicon{openai}GPT-5.6 Terra & \secondscore{82.59} & [81.16, 84.03] & \secondscore{77.23} & 0.011839 & 11.61 & 123/123 \\
+\modelicon{openai}GPT-6 Astra & 81.83 & [80.20, 83.36] & 76.55 & 0.091890 & 20.94 & 123/123 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 79.44 & [77.81, 81.11] & 74.46 & 0.005396 & 5.65 & 123/123 \\
+\modelicon{claude}Claude Sonnet 5 & 82.40 & [80.97, 83.84] & 76.38 & 0.011352 & 3.27 & 123/123 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 74.22 & [70.59, 77.38] & 71.67 & 0.053653 & 86.87 & 117/123 \\
+\modelicon{qwen}Qwen3.5-9B & 79.15 & [76.81, 81.21] & 74.57 & 0.077361 & 134.64 & 122/123 \\
+\bottomrule
+\end{tabularx}
+\caption{Official-test baseline: 123 contracts and 2,091 judgments per model. Failed requests remain incorrect; cost and median client response time include all 123 attempts. Accuracy intervals use 5,000 whole-contract bootstrap samples, without multiplicity adjustment. Section~\ref{sec:protocol} defines cost and timing. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} mark the best and second-best distinct values in columns with arrows, including ties; these marks do not imply statistical significance.}
+\label{tab:testbaseline}
+\end{table*}

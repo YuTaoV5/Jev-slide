@@ -1,0 +1,123 @@
+\section{Evaluation Methodology}
+\label{sec:design}
+\subsection{Comparison and Evidence Design}
+The principal comparison is between Jev and DeepSeek configured for concise
+structured output without a generated reasoning trace. Both use the same
+intent contract, admission limits, execution policy, and caching mechanism.
+The real-service comparison adds a self-hosted Qwen model and a fixed rule
+parser. Model identifiers, software,
+hardware, workload parameters, and execution procedures are provided in
+Appendix~\ref{app:settings}.
+
+Study A measures live API decisions and
+combines their actual timing with modeled service execution. It evaluates
+the interpretation tradeoff and how decision waiting consumes execution
+slack. Study B executes a real two-node OCR service and checks the returned
+text. It tests whether lower decision latency remains useful after actual
+communication and processing. The measured hosted latency includes provider
+execution, routing, and network transport in both studies.
+
+\subsection{Workloads and Matched Comparisons}
+Study A evaluates 216 synthetic English requests covering the full intent
+contract. The same requests recur across three consecutive measurement
+blocks, with input order varied and backend call order alternated within
+pairs. Thus the blocks probe within-session variation on a shared corpus.
+An agent generates both the descriptions and their reference labels.
+
+Service conditions vary three factors: steady or bursty arrivals, changing
+or repeated descriptions, and caching disabled or enabled. Each of the eight
+conditions has a matched workload for the two hosted backends. In Study A,
+live admission events feed modeled execution on the same elapsed-time axis;
+no images are processed in that study. Study B holds the corresponding
+request descriptions, image assignments, arrival schedules, and service
+configuration fixed across all four backends. Complete backend runs are
+executed sequentially in randomized order. Consequently, matching controls
+the workload but does not eliminate variation in provider or network state.
+
+The real service uses Tesseract recognition~\cite{smith2007overview} on images
+from the IIIT5K scene-text dataset~\cite{mishra2012scene}. Separate development
+images calibrate the scheduler's service-duration estimates. Evaluation
+images are selected before recognition results are observed and are not
+filtered by whether a tier recognizes them correctly. The tiers are execution
+configurations, rather than guarantees of recognition quality. Each condition
+includes 36 supported OCR requests and 12 unsupported requests. Images and
+intent descriptions are reused across conditions, while a new service run
+is still required after an interpretation-cache hit. Deadlines and offered
+loads are controlled study parameters.
+
+\subsection{Correctness and Completion}
+\label{sec:metrics}
+Exact semantic correctness requires all four interpreted fields to equal
+their reference values. Study A measures it on the complete paired request
+set. Operational completion instead requires a supported request to finish
+modeled execution by its deadline while satisfying the reference service,
+locality, minimum tier, and mapped priority. Its strict companion additionally
+requires exact field equality. Study B's correct completion adds equality
+between the returned OCR text and the reference text after canonical Unicode
+normalization and removal of surrounding whitespace. Case and internal
+characters are retained. This distinguishes interpretation
+accuracy, execution compliance, and service-output correctness.
+
+For a given backend and condition, let $K$ be the number of supported
+requests and let $C$ be the number meeting the applicable completion
+criterion. For $K>0$, the completion rate is $C/K$; matched conditions share $K$, so
+their completion counts can also be compared directly. Unsupported requests
+and their correct rejections are reported separately. Outcome distributions
+over all arrivals retain both unsupported requests and failures. This
+prevents successful rejections from inflating service completion.
+
+\subsection{Latency and API Cost}
+Decision latency is measured from client call initiation to receipt of the
+full interpretation response. Admission waiting is accounted for separately
+in the service timeline. We report medians and empirical 95th percentiles
+(p95). The figures also show empirical cumulative distribution functions
+(CDFs) and interquartile ranges (IQRs). These describe observed variation;
+they are not confidence intervals.
+
+For backend $m$ and request $i$, let $f_i^m$ be the time when its service
+response reaches the originating controller. Its full request latency is
+$T_i^m=f_i^m-a_i$, including admission waiting, interpretation, service
+queueing, transfer, and execution. For a matched Jev--DeepSeek condition,
+let $\mathcal{S}$ contain the requests completed correctly by both backends,
+and let $N=|\mathcal{S}|$. The median paired saving
+$\Delta_{\mathrm{paired}}$ is
+\begin{equation}
+\Delta_{\mathrm{paired}}=
+\operatorname{median}_{i\in\mathcal{S}}
+\left(T_i^{\mathrm{DeepSeek}}-T_i^{\mathrm{Jev}}\right).
+\label{eq:paired}
+\end{equation}
+Positive values favor Jev. The percentage reduction of median latency uses
+a different summary. Let $M_m$ be the median of $T_i^m$ over $\mathcal{S}$;
+the reduction $R_T$, expressed as a percentage, is
+\begin{equation}
+R_T=100\left(1-\frac{M_{\mathrm{Jev}}}{M_{\mathrm{DeepSeek}}}\right).
+\label{eq:latency-reduction}
+\end{equation}
+Equation~\ref{eq:paired} need not equal $M_{\mathrm{DeepSeek}}-M_{\mathrm{Jev}}$.
+Both summaries are conditional on shared success, so we report $N$ and each
+backend's completion count alongside them.
+
+For a backend and condition, let $A$ be the provider-reported interpretation fees in
+United States dollars (USD) and let $c$ be API cost per completion. Using
+the corresponding completion count $C$, we define
+\begin{equation}
+c=\frac{A}{C},\qquad C>0.
+\label{eq:cost}
+\end{equation}
+The numerator includes all interpretation calls for that condition, including
+unsupported requests, unsuccessful jobs, and calls ending after their
+deadline. It excludes warmups and separate semantic measurements. Study A
+uses operational completion for $C$; Study B uses correct OCR completion.
+Cost is undefined when $C=0$. Relative cost reductions use the same ratio
+as Equation~\ref{eq:latency-reduction}, with $c$ replacing $M$.
+These fees exclude computation, communication infrastructure, energy, and
+maintenance.
+
+\subsection{Analysis Scope}
+The comparison units are matched conditions and consecutive measurement
+blocks. Repeated texts, images, and cached interpretations make arrivals
+dependent. We therefore report descriptive counts, quantiles, and differences.
+Observed retention means matching or exceeding the measured completion count
+under a matched condition. It does not establish statistical noninferiority:
+no application-justified noninferiority margin was specified.

@@ -1,0 +1,15 @@
+\section{Conclusion}
+
+In this work, we introduced a novel, real-world application of NLI, \emph{document-level NLI for contracts} which aim to assist contract review.
+We annotated a dataset consisting of 607 contracts and showed that linguistic characteristics of contracts, particularly negations by exceptions, make the problem difficult.
+
+We introduced Span NLI BERT that incorporates more natural solution to evidence identification by modeling the problem as multi-label classification over spans instead of trying to predict the start and the end token as in previous works.
+Span NLI BERT performed significantly better than existing Transformer-based models.
+
+Notwithstanding the performance gain by Span NLI BERT, there exists much room for improvement.
+Span NLI BERT still has poor performance on rare labels, as well as being easily impacted by negations by exceptions.
+
+For future works, we will also explore systems that can generalize to different types of contracts and hypotheses.
+We believe that studying how hypothesis phrasing can affect performance and developing a better way to utilize hypothesis text can be the key to such goal.
+
+We hope that the dataset and Span NLI BERT will serve as a starting point for tackling the interesting challenges in our ContractNLI task.

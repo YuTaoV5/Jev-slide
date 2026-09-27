@@ -1,0 +1,13 @@
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+option names & flip & range \\
+\midrule
+neutral (\textit{0/1}, \textit{A/B}) & \m{decNeut}\% & \m{decNeutLo}--\m{decNeutHi}\% \\
+polar, unseen in voc.\ (3 pairs) & \m{decPolar}\% & \m{decPolarLo}--\m{decPolarHi}\% \\
+polar, in voc.\ (2 pairs) & \m{decVocab}\% & \m{decVocabLo}--\m{decVocabHi}\% \\
+\midrule
+\multicolumn{2}{@{}l}{polarity, over neutral} & $+$\m{incrPolar}~pp \\
+\multicolumn{2}{@{}l}{training-vocabulary familiarity, on top} & $+$\m{incrVocab}~pp \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & Repeat changed (\%) $\downarrow$ & Valid pairs & Order changed (\%) $\downarrow$ & Valid pairs \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & \secondscore{0.78} & 510/510 & \secondscore{1.57} & 510/510 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 3.14 & 510/510 & 5.88 & 510/510 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & 5.49 & 510/510 & 8.63 & 510/510 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 2.75 & 510/510 & 5.88 & 510/510 \\
+\modelicon{openai}GPT-5.6 Terra & 6.47 & 510/510 & 7.25 & 510/510 \\
+\modelicon{openai}GPT-6 (Convert) & \secondscore{0.78} & 510/510 & \bestscore{0.78} & 510/510 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 4.90 & 510/510 & 8.24 & 510/510 \\
+\modelicon{claude}Claude Sonnet 5 & 2.94 & 510/510 & 5.69 & 510/510 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & \bestscore{0.00} & 510/510 & 16.27 & 510/510 \\
+\modelicon{qwen}Qwen3.5-9B & \bestscore{0.00} & 510/510 & 10.00 & 510/510 \\
+\bottomrule
+\end{tabularx}
+\caption{Within-run $K{=}17$ repetition and order controls on 30 development contracts. Changed-answer percentages use jointly valid pairs; coverage retains all 510 planned pairs. Each perturbation is paired with its baseline from the same evaluation, which can differ from Table~\ref{tab:baseline}. Gemini Pro, GPT-6 (Convert), Sonnet, Terra, and Haiku each contribute a complete additional set of 90 requests. GPT-6 (Convert) uses a different API configuration from the historical GPT-6 Astra baseline. These additional measurements cover repetition and order only, with no $K{=}1/4/8$ or concurrency experiments. Low change rates measure consistency, not correctness. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} indicate the best and second-best distinct values, including ties, within each indicated comparison; these marks do not imply statistical significance.}
+\label{tab:developmentcontrols}
+\end{table*}

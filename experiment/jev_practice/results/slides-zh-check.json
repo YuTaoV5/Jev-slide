@@ -1,0 +1,330 @@
+{
+  "timestamp_utc": "2026-09-27T13:50:04.514387+00:00",
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "device_scale_factor": 1
+  },
+  "external_requests_blocked": [],
+  "page_errors": [],
+  "http_errors": [],
+  "request_failures": [],
+  "checks": [
+    {
+      "name": "deck-practice/http/load-and-page-count",
+      "passed": true,
+      "seconds": 0.26
+    },
+    {
+      "name": "deck-practice/http/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.06
+    },
+    {
+      "name": "deck-practice/http/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "name": "deck-practice/http/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.56
+    },
+    {
+      "name": "deck-practice/http/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.8
+    },
+    {
+      "name": "deck-practice/http/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.3
+    },
+    {
+      "name": "deck-practice/file/load-and-page-count",
+      "passed": true,
+      "seconds": 0.12
+    },
+    {
+      "name": "deck-practice/file/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.03
+    },
+    {
+      "name": "deck-practice/file/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.11
+    },
+    {
+      "name": "deck-practice/file/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.58
+    },
+    {
+      "name": "deck-practice/file/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.77
+    },
+    {
+      "name": "deck-practice/file/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.28
+    },
+    {
+      "name": "deck-practice/render-all-pages",
+      "passed": true,
+      "seconds": 1.89
+    },
+    {
+      "name": "deck/http/load-and-page-count",
+      "passed": true,
+      "seconds": 0.27
+    },
+    {
+      "name": "deck/http/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.17
+    },
+    {
+      "name": "deck/http/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.25
+    },
+    {
+      "name": "deck/http/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.61
+    },
+    {
+      "name": "deck/http/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.78
+    },
+    {
+      "name": "deck/http/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.3
+    },
+    {
+      "name": "deck/http/video-25-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.33
+    },
+    {
+      "name": "deck/http/video-26-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.33
+    },
+    {
+      "name": "deck/http/video-27-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.34
+    },
+    {
+      "name": "deck/file/load-and-page-count",
+      "passed": true,
+      "seconds": 0.27
+    },
+    {
+      "name": "deck/file/buttons-keyboard-digits-toc-boundaries",
+      "passed": true,
+      "seconds": 1.09
+    },
+    {
+      "name": "deck/file/hashchange-refresh-clamping",
+      "passed": true,
+      "seconds": 0.22
+    },
+    {
+      "name": "deck/file/wheel-threshold-inertia-and-reverse",
+      "passed": true,
+      "seconds": 1.58
+    },
+    {
+      "name": "deck/file/touch-swipe-without-double-advance",
+      "passed": true,
+      "seconds": 2.81
+    },
+    {
+      "name": "deck/file/maze-play-reset-scrub-and-canvases",
+      "passed": true,
+      "seconds": 0.3
+    },
+    {
+      "name": "deck/file/video-25-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.34
+    },
+    {
+      "name": "deck/file/video-26-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.33
+    },
+    {
+      "name": "deck/file/video-27-load-play-pause-restart-and-controls",
+      "passed": true,
+      "seconds": 0.33
+    },
+    {
+      "name": "deck/render-all-pages",
+      "passed": true,
+      "seconds": 17.97
+    }
+  ],
+  "renders": {
+    "deck-practice.html": {
+      "pages": 7,
+      "contact_sheet": "X:\\Items\\Jev-proj\\related_work\\08-第30期-Jev-不生成文本的决策模型\\slides\\预览-实战新版.png",
+      "screenshots": [
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-01.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-02.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-03.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-04.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-05.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-06.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-practice-07.png"
+      ],
+      "titles": [
+        "NanoJev 把“小判断”做成可训练模型",
+        "同一张迷宫，NanoJev 先到终点",
+        "少的是尝试次数：2,738 → 225",
+        "控制器先过门槛，再优先靠近终点",
+        "这次，NanoJev 把所有方向都放过了",
+        "移除模型判断，同一控制器只用 162 次",
+        "单条展示，不能替代成功率评估"
+      ]
+    },
+    "deck.html": {
+      "pages": 60,
+      "contact_sheet": "X:\\Items\\Jev-proj\\related_work\\08-第30期-Jev-不生成文本的决策模型\\slides\\预览-全部页面.png",
+      "screenshots": [
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-01.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-02.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-03.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-04.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-05.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-06.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-07.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-08.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-09.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-10.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-11.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-12.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-13.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-14.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-15.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-16.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-17.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-18.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-19.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-20.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-21.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-22.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-23.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-24.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-25.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-26.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-27.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-28.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-29.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-30.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-31.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-32.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-33.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-34.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-35.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-36.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-37.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-38.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-39.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-40.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-41.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-42.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-43.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-44.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-45.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-46.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-47.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-48.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-49.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-50.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-51.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-52.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-53.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-54.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-55.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-56.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-57.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-58.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-59.png",
+        "X:\\Items\\Jev-proj\\experiment\\jev_practice\\results\\slides-v4\\deck-60.png"
+      ],
+      "titles": [
+        "封面",
+        "谁做的",
+        "有多火",
+        "官方公开的 · 社区反推的",
+        "过渡：什么是 Jev",
+        "一句话",
+        "输入和输出",
+        "训练改参数，推理用参数",
+        "真实的请求和返回",
+        "一条工单，三道题",
+        "过渡：动机",
+        "输出要人裁决 vs 输出自带把握",
+        "“报 0.8”描述一组预测的可靠性",
+        "过渡：架构",
+        "一份 state，三条互不相见的分支",
+        "共享的是材料，每道题仍有自己的条件",
+        "每条分支的最后一个 token 做决定",
+        "改变选项，也改变了模型面对的问题",
+        "三种读出头",
+        "输入长度与问题批量都会影响延迟",
+        "底座画像",
+        "过渡：训练",
+        "RLHF、RLVR、RLCD：差别在优化目标",
+        "三条后训练路线",
+        "RLHF：人类排序，训练奖励，再更新策略",
+        "RLVR：答案先生成，再由规则验证",
+        "Jev 的 RLCD：让概率接受结果检验",
+        "为什么 0.60 比 0.90 更诚实？",
+        "过渡：数据",
+        "创始人怎么说数据",
+        "倒果为因：先抽结果，再造材料",
+        "模拟器怎么造一条数据",
+        "三种样本，一个代价",
+        "模拟器知道标签，模型未必看见全部信息",
+        "过渡：实验",
+        "官方评测：Pareto 前沿",
+        "官方评测：分工作流",
+        "两端可信，中间不可信",
+        "短文本持平小模型，要推理的输前沿",
+        "NanoJev 把“小判断”做成可训练模型",
+        "同一张迷宫，NanoJev 先到终点",
+        "少的是尝试次数：2,738 → 225",
+        "控制器先过门槛，再优先靠近终点",
+        "这次，NanoJev 把所有方向都放过了",
+        "移除模型判断，同一控制器只用 162 次",
+        "单条展示，不能替代成功率评估",
+        "迁移到定位：每一步都要减少无效排查",
+        "当前工作台已成形，分析核心仍是模拟",
+        "Jev 放在取证之后、动作之前",
+        "先把证据变成“可定位、可核对”的状态",
+        "候选要先找全，再让模型调整顺序",
+        "把“谁是根因”改成三类可核验小问题",
+        "每次取证后更新状态，避免原地打转",
+        "例如：hung task，先区分等待发生在哪里",
+        "高分只是建议，停止条件由代码定义",
+        "是否值得接入，用整条定位流程验收",
+        "先把“候选排序”做成最小试点",
+        "一个 agent 任务里，判断点比生成点多",
+        "发现问题的重要性",
+        "收尾"
+      ]
+    }
+  },
+  "layout_issues": [],
+  "test_method": "UI navigation, native keyboard/wheel, CDP touch, DOM/media assertions; external requests blocked",
+  "elapsed_seconds": 48.23,
+  "passed": true
+}

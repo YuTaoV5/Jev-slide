@@ -1,0 +1,355 @@
+{
+  "slide_count": 49,
+  "console_errors": [],
+  "http_errors": [],
+  "practice_overflow": [],
+  "demo_checks": [
+    "before/after",
+    "abstain at .70",
+    "accept at .30",
+    "7 questions",
+    "iframe replay"
+  ],
+  "maze_snapshot": {
+    "ready": true,
+    "error": null,
+    "exampleIndex": 0,
+    "exampleId": "maze:ood:50:24310922",
+    "game": "maze",
+    "size": 50,
+    "controller": "Local Boolean safety + deterministic verified-edge exploration",
+    "globalStep": 225,
+    "step": 225,
+    "totalSteps": 4726,
+    "playing": false,
+    "stepsPerSecond": 256,
+    "showTrail": true,
+    "synchronization": "environment_step",
+    "decisionTemporalMeaning": "decision_producing_this_frame",
+    "systems": [
+      {
+        "id": "jev",
+        "name": "Jev",
+        "systemIndex": 0,
+        "localStep": 225,
+        "step": 225,
+        "totalSteps": 2738,
+        "finished": false,
+        "frame": {
+          "position": [
+            26,
+            7
+          ],
+          "decision_position": [
+            26,
+            7
+          ],
+          "score": 0,
+          "action": "west",
+          "probabilities": {
+            "north": 0.43,
+            "east": 0.14,
+            "south": 0.91,
+            "west": 0.42
+          },
+          "collision": true,
+          "decision_source": "low_probability_probe",
+          "done": false
+        },
+        "summary": {
+          "steps": 2738,
+          "score": 1,
+          "collisions": 1044,
+          "outcome": "goal"
+        }
+      },
+      {
+        "id": "nanojev",
+        "name": "NanoJev",
+        "systemIndex": 1,
+        "localStep": 225,
+        "step": 225,
+        "totalSteps": 225,
+        "finished": true,
+        "frame": {
+          "position": [
+            47,
+            1
+          ],
+          "decision_position": [
+            46,
+            1
+          ],
+          "score": 1,
+          "action": "south",
+          "probabilities": {
+            "north": 0.815232515335083,
+            "east": 0.7853085398674011,
+            "south": 0.7969253659248352,
+            "west": 0.815232515335083
+          },
+          "collision": false,
+          "decision_source": "model_predicted_open",
+          "done": true
+        },
+        "summary": {
+          "steps": 225,
+          "score": 1,
+          "collisions": 77,
+          "outcome": "goal"
+        }
+      },
+      {
+        "id": "base",
+        "name": "Untuned Qwen",
+        "systemIndex": 2,
+        "localStep": 225,
+        "step": 225,
+        "totalSteps": 4726,
+        "finished": false,
+        "frame": {
+          "position": [
+            25,
+            47
+          ],
+          "decision_position": [
+            25,
+            47
+          ],
+          "score": 0,
+          "action": "north",
+          "probabilities": {
+            "north": 0.3486451506614685,
+            "east": 0.43782350420951843,
+            "south": 0.43782350420951843,
+            "west": 0.29421496391296387
+          },
+          "collision": true,
+          "decision_source": "low_probability_probe",
+          "done": false
+        },
+        "summary": {
+          "steps": 4726,
+          "score": 1,
+          "collisions": 2044,
+          "outcome": "goal"
+        }
+      }
+    ]
+  },
+  "snake_snapshot": {
+    "ready": true,
+    "error": null,
+    "exampleIndex": 1,
+    "exampleId": "snake:showcase:12:61005",
+    "game": "snake",
+    "size": 12,
+    "controller": "Greedy model choices + shared safety and food planner",
+    "globalStep": 50,
+    "step": 50,
+    "totalSteps": 256,
+    "playing": false,
+    "stepsPerSecond": 16,
+    "showTrail": true,
+    "synchronization": "environment_step",
+    "decisionTemporalMeaning": "decision_producing_this_frame",
+    "systems": [
+      {
+        "id": "jev",
+        "name": "Jev",
+        "systemIndex": 0,
+        "localStep": 50,
+        "step": 50,
+        "totalSteps": 256,
+        "finished": false,
+        "frame": {
+          "body": [
+            [
+              3,
+              9
+            ],
+            [
+              2,
+              9
+            ],
+            [
+              1,
+              9
+            ],
+            [
+              0,
+              9
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ]
+          ],
+          "food": [
+            6,
+            9
+          ],
+          "score": 5,
+          "action": "south",
+          "probabilities": {
+            "south": 1
+          },
+          "collision": false,
+          "decision_source": "forced_move",
+          "done": false
+        },
+        "summary": {
+          "steps": 256,
+          "score": 30,
+          "collisions": 0,
+          "outcome": "horizon_survived",
+          "forced_moves": 171,
+          "model_decisions": 85
+        }
+      },
+      {
+        "id": "nanojev",
+        "name": "NanoJev",
+        "systemIndex": 1,
+        "localStep": 50,
+        "step": 50,
+        "totalSteps": 256,
+        "finished": false,
+        "frame": {
+          "body": [
+            [
+              1,
+              7
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              9
+            ],
+            [
+              1,
+              9
+            ],
+            [
+              2,
+              9
+            ],
+            [
+              3,
+              9
+            ],
+            [
+              4,
+              9
+            ]
+          ],
+          "food": [
+            6,
+            7
+          ],
+          "score": 5,
+          "action": "south",
+          "probabilities": {
+            "south": 1
+          },
+          "collision": false,
+          "decision_source": "forced_move",
+          "done": false
+        },
+        "summary": {
+          "steps": 256,
+          "score": 30,
+          "collisions": 0,
+          "outcome": "horizon_survived",
+          "forced_moves": 184,
+          "model_decisions": 72
+        }
+      },
+      {
+        "id": "base",
+        "name": "Untuned Qwen",
+        "systemIndex": 2,
+        "localStep": 50,
+        "step": 50,
+        "totalSteps": 211,
+        "finished": false,
+        "frame": {
+          "body": [
+            [
+              2,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              9
+            ],
+            [
+              1,
+              9
+            ],
+            [
+              2,
+              9
+            ],
+            [
+              3,
+              9
+            ],
+            [
+              4,
+              9
+            ]
+          ],
+          "food": [
+            6,
+            7
+          ],
+          "score": 5,
+          "action": "south",
+          "probabilities": {
+            "south": 0.9980732202529907,
+            "west": 0.0019267346942797303
+          },
+          "collision": false,
+          "decision_source": "model_tiebreak",
+          "done": false
+        },
+        "summary": {
+          "steps": 211,
+          "score": 25,
+          "collisions": 0,
+          "outcome": "trapped",
+          "forced_moves": 140,
+          "model_decisions": 71
+        }
+      }
+    ]
+  }
+}

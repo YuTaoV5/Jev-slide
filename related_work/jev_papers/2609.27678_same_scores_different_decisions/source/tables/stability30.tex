@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrl}
+\toprule
+\rowcolor{tableHeader}
+Model & $K{=}17$ & $K{=}1$ & $K$ flips & Order & Repeat & C$\to$W / W$\to$C / W$\to$W \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 77.06 & 76.47 & 6 & 8 & 4 & 4 / 1 / 1 \\
+\modelicon{qwen}Qwen3.5-4B & 78.24 & 77.45 & 87 & 83 & 0 & 38 / 34 / 15 \\
+\modelicon{qwen}Qwen3.5-9B & 78.63 & 75.49 & 74 & 51 & 0 & 38 / 22 / 14 \\
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 80.98 & 80.00 & 68 & 30 & 16 & 33 / 28 / 7 \\
+\modelicon{openai}GPT-5.6 Luna & 78.63 & 78.82 & 68 & 30 & 14 & 29 / 30 / 9 \\
+\bottomrule
+\end{tabular}
+\caption{Development-set sensitivity to judgment-set size, order, and repetition on 30 contracts. Accuracy is reported in percentages; flip counts use 510 paired targets. Each model is compared with its own $K{=}17$ baseline. The final column decomposes the $K{=}17\to1$ transitions, where C/W denotes correctness rather than entailment class. Order and Repeat each represent one perturbation.}
+\label{tab:stability30}
+\end{table*}

@@ -1,0 +1,70 @@
+{
+  "source_sha256": "a0cafaba6f49b97b1d1f00583b27d07347964df5802c8384f317d1a5fdc074a7",
+  "case_id": "maze:ood:50:24310922",
+  "protocol": {
+    "window_size": 5,
+    "max_steps": 0,
+    "default_horizon": "2*size^2 attempts including collisions",
+    "threshold": 0.5,
+    "temperature": 1.0,
+    "prediction_cache": "once per visited coordinate in a static maze",
+    "selection_rule": "untried p>=0.5 edges first; goal Manhattan distance, destination visits, descending p, N/E/S/W",
+    "probe_rule": "if all untried edges have p<0.5, physically attempt by descending p, goal Manhattan distance, destination visits, N/E/S/W",
+    "reposition_rule": "BFS to nearest frontier using only physically traversed open edges",
+    "collision_rule": "nonfatal; preserve position; mark the undirected edge blocked and never retry it",
+    "fallback_definition": "low-probability probes only; no full-map route or safe-action fallback",
+    "memory_termination": "all frontiers exhausted, goal reached, or attempt budget exhausted",
+    "oracle_used_for_policy": false,
+    "full_map_bfs_used": false,
+    "atomic_metric_scope": "first-visit states chosen by this model-guided trajectory; not an identical cross-model audit cohort",
+    "brier_definition": "mean scalar Bernoulli squared error",
+    "nll_probability_floor": 1e-12
+  },
+  "model_api_calls": 0,
+  "systems": {
+    "jev": {
+      "steps": 2738,
+      "score": 1,
+      "collisions": 1044,
+      "outcome": "goal",
+      "successful_moves": 1694,
+      "prediction_sites": 939,
+      "atomic_predictions": 3756,
+      "predictions_ge_half": 1688,
+      "p_min": 0.08,
+      "p_max": 0.96,
+      "modes": {
+        "model_predicted_open": 879,
+        "low_probability_probe": 1216,
+        "verified_edge_reposition": 643
+      },
+      "original_controller_replay_verified": true
+    },
+    "nanojev": {
+      "steps": 225,
+      "score": 1,
+      "collisions": 77,
+      "outcome": "goal",
+      "successful_moves": 148,
+      "prediction_sites": 143,
+      "atomic_predictions": 572,
+      "predictions_ge_half": 572,
+      "p_min": 0.6884684562683105,
+      "p_max": 0.9046505093574524,
+      "modes": {
+        "model_predicted_open": 221,
+        "verified_edge_reposition": 4
+      },
+      "original_controller_replay_verified": true
+    }
+  },
+  "scope": "One fixed upstream showcase; no latency measurement",
+  "constant_half_ablation": {
+    "steps": 162,
+    "collisions": 34,
+    "goal": true,
+    "description": "Local deterministic run; all directions p=0.5; no model and no full-map planner"
+  },
+  "attempt_ratio_jev_over_nano": 12.168888888888889,
+  "interpretation": "All 572 NanoJev probabilities pass 0.5; geometry, visit memory and probability tie-breaks choose the path. Constant scores need only 162 attempts here: this showcase does not establish model accuracy or necessity."
+}

@@ -1,0 +1,18 @@
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{polar} & \multicolumn{2}{c}{no polarity} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+model & in voc. & unseen in voc. & neutral & random \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{flip rate}} \\
+Laya & \m{opqFlipMkVocab}\% & \m{opqFlipMkPolar}\% & \m{opqFlipMkNeut}\% & \m{opqFlipMkOpq}\% \\
+Open-Jev & \m{opqFlipSpVocab}\% & \m{opqFlipSpPolar}\% & \m{opqFlipSpNeut}\% & \m{opqFlipSpOpq}\% \\
+Jev & \m{opqFlipApiVocab}\% & \m{opqFlipApiPolar}\% & \m{opqFlipApiNeut}\% & \m{opqFlipApiOpq}\% \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{balanced accuracy, aligned arm}} \\
+Laya & \m{opqBalMkVocab}\% & \m{opqBalMkPolar}\% & \m{opqBalMkNeut}\% & \m{opqBalMkOpq}\% \\
+Open-Jev & \m{opqBalSpVocab}\% & \m{opqBalSpPolar}\% & \m{opqBalSpNeut}\% & \m{opqBalSpOpq}\% \\
+Jev & \m{opqBalApiVocab}\% & \m{opqBalApiPolar}\% & \m{opqBalApiNeut}\% & \m{opqBalApiOpq}\% \\
+\bottomrule
+\end{tabular}

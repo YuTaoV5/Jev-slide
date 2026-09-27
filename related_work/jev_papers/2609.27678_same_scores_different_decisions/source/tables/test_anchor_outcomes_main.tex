@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & \shortstack{Mean correct\\(\%) $\uparrow$} & \shortstack{All 12\\correct $\uparrow$} & \shortstack{Same\\wrong} & \shortstack{Changed\\valid} & \shortstack{Any\\invalid} \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 79.44 & \secondscore{23/30} & 5 & 2 & 0 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 82.50 & 21/30 & 4 & 5 & 0 \\
+\modelicon{gemini}Gemini 3.1 Pro Preview & \secondscore{85.28} & 22/30 & 2 & 5 & 1 \\
+\addlinespace[3pt]
+\modelicon{openai}GPT-5.6 Luna & 81.94 & 22/30 & 3 & 5 & 0 \\
+\modelicon{openai}GPT-5.6 Terra & 80.56 & 20/30 & 2 & 8 & 0 \\
+\modelicon{openai}GPT-6 Astra & 76.39 & 22/30 & 6 & 2 & 0 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & 81.94 & 19/30 & 2 & 9 & 0 \\
+\modelicon{claude}Claude Sonnet 5 & \bestscore{86.67} & \bestscore{24/30} & 1 & 5 & 0 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 77.50 & 17/30 & 2 & 8 & 3 \\
+\modelicon{qwen}Qwen3.5-9B & 79.17 & 18/30 & 2 & 8 & 2 \\
+\bottomrule
+\end{tabularx}
+\caption{Mean correctness scores the same 30 test anchors across four conditions and three repeats (360 judgments); invalid responses count wrong. All 12 correct requires every answer to be correct. Remaining anchors have twelve identical wrong labels, twelve valid but changing labels, or an invalid response; invalidity takes precedence. The four outcome counts sum to 30. \textbf{Bold}/\underline{underlining} mark the best/second-best distinct values in arrowed columns; they do not indicate significance.}
+\label{tab:teststates}
+\end{table*}

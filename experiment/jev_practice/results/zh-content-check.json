@@ -1,0 +1,11 @@
+{
+  "pages": 60,
+  "speaker_pages": 60,
+  "restored_original_sections": 32,
+  "chinese_videos": [
+    "media/jev-training-rlhf-zh.mp4",
+    "media/jev-training-rlvr-zh.mp4",
+    "media/jev-training-rlcd-zh.mp4"
+  ],
+  "branding_removed": true
+}

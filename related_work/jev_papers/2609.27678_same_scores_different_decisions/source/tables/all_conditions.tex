@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & $K1$ & $K4$ & $K8$ & $K17$ & Repeat & Order & $K1,c4$ \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 76.47 & 76.86 & 77.06 & 77.06 & 76.67 & 76.67 & 77.45 \\
+\modelicon{qwen}Qwen3.5-4B & 77.45 & 74.90 & 75.88 & 78.24 & 78.24 & 77.06 & 77.45 \\
+\modelicon{qwen}Qwen3.5-9B & 75.49 & 72.16 & 76.86 & 78.63 & 78.63 & 78.43 & 75.69 \\
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 80.00 & 81.37 & 81.37 & 80.98 & 81.18 & 80.78 & 80.98 \\
+\modelicon{openai}GPT-5.6 Luna & 78.82 & 80.98 & 79.61 & 78.63 & 78.63 & 79.02 & 79.22 \\
+\bottomrule
+\end{tabular}
+\caption{Development-set accuracy across conditions on 30 contracts (percent). $c4$ denotes four concurrent requests; all other conditions use one request at a time.}
+\label{tab:allconditions}
+\end{table*}

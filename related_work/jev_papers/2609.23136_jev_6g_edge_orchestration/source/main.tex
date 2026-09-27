@@ -1,0 +1,40 @@
+% Independent mobile-edge manuscript. Unmodified IEEE Computer Society class.
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage[nocompress]{cite}
+\usepackage{amsmath,amssymb}
+\interdisplaylinepenalty=2500
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\definecolor{TableHeaderShade}{HTML}{EAF0F4}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Fast Intent-Driven Service Orchestration with Jev for 6G Edge Networks},pdfauthor={Delong Li, Xu Wang, Haochen Gong, Rui Lang, Guangsheng Yu}}
+\begin{document}
+\title{Fast Intent-Driven Service Orchestration with Jev for 6G Edge Networks}
+\author{Delong Li, Xu Wang, Haochen Gong, Rui Lang, Guangsheng Yu\textsuperscript{*}%
+\thanks{The authors are with the School of Electrical, Mechanical and Biomedical Engineering, University of Technology Sydney, Sydney, Australia.
+\textsuperscript{*}Corresponding author: Guangsheng Yu (e-mail: \href{mailto:Guangsheng.Yu@uts.edu.au}{Guangsheng.Yu@uts.edu.au}).}}
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+Intent-driven services envisioned for sixth-generation (6G) edge networks must translate changing requirements into executable contracts while wireless requests continue to arrive. Interpretation consumes part of the same deadline budget as transmission, queueing, and execution. We evaluate Jev as a decision model for this stage, asking whether faster contract activation improves service timeliness while preserving interpretation quality. Contracts specify permitted execution locations, deadlines, and priorities; a numerical scheduler uses them to allocate edge work. The evaluation combines live Jev, DeepSeek, Gemini, and self-hosted Qwen responses with packet-level New Radio simulation, mobility events, shared edge queues, and a real image-reading service. Cached interpretation with numerical scheduling substantially improves completion over direct model-selected placement. With correct interpretation on all evaluated contracts, Jev reduces median decision latency by 22.4\% against DeepSeek and 61.9\% against Gemini; completion in the modeled update scenarios rises by 3.50 and 8.35 percentage points. A separate comparison with direct-attribute Qwen retains a 53.0\% latency reduction and a 4.78-point completion gain. Exchanging recorded model and scheduling waits reproduces the comparator completion summaries for all 12 trajectories in each of two modeled comparisons. In the real image service, Jev retains faster decisions and completes 459 requests correctly and on time, compared with 463 for DeepSeek and 435 for Qwen out of 1,080 each. These findings connect fast intent decisions to timely edge service execution and support using Jev at contract activation, with numerical scheduling adapting placements to current network and computing state.
+\end{abstract}
+\begin{IEEEkeywords}
+6G networks, intent-based networking, mobile edge computing, service orchestration, quality of service, decision models, large language models, Jev.
+\end{IEEEkeywords}}
+\maketitle
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+\input{sections/introduction}
+\input{sections/related-work}
+\input{sections/system}
+\input{sections/study}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\appendices
+\input{sections/appendix}
+\end{document}

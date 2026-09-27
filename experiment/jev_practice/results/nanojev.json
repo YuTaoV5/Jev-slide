@@ -1,0 +1,155 @@
+{
+  "mode": "upstream-recording-audit",
+  "api_calls": 0,
+  "source_sha256": "a0cafaba6f49b97b1d1f00583b27d07347964df5802c8384f317d1a5fdc074a7",
+  "protocol": {
+    "selected_checkpoint_sha256": "f68c47d66998231b86b7e91b4ed5e82ae23acf104c8b7cd6d165c3ac7b7ffe1b",
+    "checkpoint_scope": "The same current unified NanoJev checkpoint used in all four development demos",
+    "case_file_sha256": "0c9f14ee7f063ea22de34d980ab6d3a260e294b490c3e65198a2a602fd10ee6b",
+    "synchronization": "physical_step",
+    "selection": {
+      "selected_case_ids": [
+        "maze:ood:50:24310922",
+        "snake:showcase:12:61005"
+      ],
+      "rule": "Restore the original fixed 50x50 Maze and 12x12, 256-move Snake showcases; run the current NanoJev checkpoint on those cases without searching for new outcomes.",
+      "outcome_selected": false,
+      "scope": "Two fixed demonstrations; not a new aggregate benchmark"
+    },
+    "source_recordings_sha256": {
+      "maze": {
+        "jev": "d2da6034d08ef084bfccc7887562c1c1ef84decfaed86b2a2c7152f05162a6fe",
+        "nanojev": "eb78cf421ef3321360efb41acf530ab3e2e3aa7ebc8647b13554fc5c5f84028d",
+        "base": "21424db3f4f947326eb6a37f999076fee139ff5a449ec6adb6da8d3174e6f747"
+      },
+      "snake": {
+        "jev": "c7fe407a262ed70200ff5469f9e2d0e6dedd22487d379e37d4330d6ee20e9798",
+        "nanojev": "a384582514f6ae84e9c847e9eb1dc94c2a26bafa350c3c371222e54230af85f5",
+        "base": "3d4bc6eba5f55dbd8436450235b78a98f3a3907e2b40032dc2c57c614fd40343"
+      }
+    },
+    "controllers": {
+      "maze": {
+        "window_size": 5,
+        "max_steps": 0,
+        "default_horizon": "2*size^2 attempts including collisions",
+        "threshold": 0.5,
+        "temperature": 1.0,
+        "prediction_cache": "once per visited coordinate in a static maze",
+        "selection_rule": "untried p>=0.5 edges first; goal Manhattan distance, destination visits, descending p, N/E/S/W",
+        "probe_rule": "if all untried edges have p<0.5, physically attempt by descending p, goal Manhattan distance, destination visits, N/E/S/W",
+        "reposition_rule": "BFS to nearest frontier using only physically traversed open edges",
+        "collision_rule": "nonfatal; preserve position; mark the undirected edge blocked and never retry it",
+        "fallback_definition": "low-probability probes only; no full-map route or safe-action fallback",
+        "memory_termination": "all frontiers exhausted, goal reached, or attempt budget exhausted",
+        "oracle_used_for_policy": false,
+        "full_map_bfs_used": false,
+        "atomic_metric_scope": "first-visit states chosen by this model-guided trajectory; not an identical cross-model audit cohort",
+        "brier_definition": "mean scalar Bernoulli squared error",
+        "nll_probability_floor": 1e-12
+      },
+      "snake": {
+        "controller": "greedy",
+        "seed": 17,
+        "temperature": 1.0,
+        "max_steps": 256,
+        "planner": "actual next-step collision filter, then shortest static next-head path to current food; next body except head is blocked",
+        "no_path_rule": "all immediately safe actions remain",
+        "single_candidate_rule": "forced move without model call",
+        "zero_candidate_rule": "trapped, not a win",
+        "model_input": "current physical state, action question, candidate descriptions only",
+        "future_food_used_for_planning": false,
+        "greedy_tie_order": "offered N/E/S/W order",
+        "sample_rng": "independent Python Random per episode, SHA256([episode_id, seed]) first 32 bits; one recorded draw per model decision",
+        "attribution": "food collection and survival use a common code planner; models choose only residual ties"
+      }
+    },
+    "reused_baselines": "Original Jev and original Qwen runs; exact initial states, inputs, controllers and complete physical trajectories revalidated",
+    "probabilities": "Maze uses four independent local-safety probabilities; Snake uses a conditional distribution over common-planner candidates",
+    "terminal_playback": "Hold each system at its actual recorded terminal frame",
+    "new_api_calls": 0
+  },
+  "examples": [
+    {
+      "id": "maze:ood:50:24310922",
+      "game": "maze",
+      "seed": 24310922,
+      "systems": [
+        {
+          "id": "jev",
+          "summary": {
+            "steps": 2738,
+            "score": 1,
+            "collisions": 1044,
+            "outcome": "goal"
+          },
+          "frame_count": 2739
+        },
+        {
+          "id": "nanojev",
+          "summary": {
+            "steps": 225,
+            "score": 1,
+            "collisions": 77,
+            "outcome": "goal"
+          },
+          "frame_count": 226
+        },
+        {
+          "id": "base",
+          "summary": {
+            "steps": 4726,
+            "score": 1,
+            "collisions": 2044,
+            "outcome": "goal"
+          },
+          "frame_count": 4727
+        }
+      ]
+    },
+    {
+      "id": "snake:showcase:12:61005",
+      "game": "snake",
+      "seed": 61005,
+      "systems": [
+        {
+          "id": "jev",
+          "summary": {
+            "steps": 256,
+            "score": 30,
+            "collisions": 0,
+            "outcome": "horizon_survived",
+            "forced_moves": 171,
+            "model_decisions": 85
+          },
+          "frame_count": 257
+        },
+        {
+          "id": "nanojev",
+          "summary": {
+            "steps": 256,
+            "score": 30,
+            "collisions": 0,
+            "outcome": "horizon_survived",
+            "forced_moves": 184,
+            "model_decisions": 72
+          },
+          "frame_count": 257
+        },
+        {
+          "id": "base",
+          "summary": {
+            "steps": 211,
+            "score": 25,
+            "collisions": 0,
+            "outcome": "trapped",
+            "forced_moves": 140,
+            "model_decisions": 71
+          },
+          "frame_count": 212
+        }
+      ]
+    }
+  ],
+  "limitation": "Upstream recordings; metadata and browser replay checked, not new inference or independent simulator validation."
+}

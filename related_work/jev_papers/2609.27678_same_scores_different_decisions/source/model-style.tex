@@ -1,0 +1,15 @@
+% Shared vector icons and restrained blue/lavender table palette.
+% Model icons: Lobe Icons (MIT License, https://github.com/lobehub/lobe-icons); Jev icon from the Typesafe wordmark.
+\definecolor{tableHeader}{HTML}{E0E0F4}
+\definecolor{jevRow}{HTML}{D6EFF6}
+\definecolor{bestCell}{HTML}{B0B0E3}
+\definecolor{secondCell}{HTML}{C9DAF3}
+% Icon files are named explicitly so that every graphic path appears literally in the source.
+\newcommand{\jeviconjev}{figures/icon_jev.png}
+\newcommand{\jevicongemini}{figures/icon_gemini.png}
+\newcommand{\jeviconopenai}{figures/icon_openai.png}
+\newcommand{\jeviconclaude}{figures/icon_claude.png}
+\newcommand{\jeviconqwen}{figures/icon_qwen.png}
+\newcommand{\modelicon}[1]{\makebox[0.9em][c]{\raisebox{-0.12em}{\includegraphics[width=0.9em,height=0.9em,keepaspectratio]{\csname jevicon#1\endcsname}}}\hspace{0.3em}}
+\newcommand{\bestscore}[1]{\cellcolor{bestCell}\textbf{#1}}
+\newcommand{\secondscore}[1]{\cellcolor{secondCell}\underline{#1}}

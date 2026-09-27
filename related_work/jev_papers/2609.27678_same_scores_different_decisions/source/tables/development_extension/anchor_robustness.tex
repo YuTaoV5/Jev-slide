@@ -1,0 +1,24 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{Xrrrrr}
+\toprule
+\rowcolor{tableHeader}
+Model & All 12 correct $\uparrow$ & 95\% interval & Same answer & Stable-wrong $\downarrow$ & All 12 valid \\
+\midrule
+\rowcolor{jevRow}
+\modelicon{jev}Jev 1.13.0 & 21/30 & [56.67, 83.33] & 24/30 & \secondscore{3/30} & 30/30 \\
+\addlinespace[3pt]
+\modelicon{gemini}Gemini 3.5 Flash-Lite & 21/30 & [53.33, 86.67] & 25/30 & 4/30 & 30/30 \\
+\modelicon{openai}GPT-5.6 Terra & 19/30 & [43.33, 83.33] & 22/30 & \secondscore{3/30} & 30/30 \\
+\addlinespace[3pt]
+\modelicon{claude}Claude Haiku 4.5 & \secondscore{22/30} & [60.00, 86.67] & 24/30 & \bestscore{2/30} & 30/30 \\
+\modelicon{claude}Claude Sonnet 5 & \bestscore{23/30} & [56.67, 93.33] & 25/30 & \bestscore{2/30} & 30/30 \\
+\addlinespace[3pt]
+\modelicon{qwen}Qwen3.5-4B & 17/30 & [43.33, 70.00] & 19/30 & \bestscore{2/30} & 30/30 \\
+\modelicon{qwen}Qwen3.5-9B & 16/30 & [33.33, 73.33] & 20/30 & 4/30 & 30/30 \\
+\bottomrule
+\end{tabularx}
+\caption{Development robustness over the same 30 anchors across all twelve requests. All 12 correct requires twelve valid correct responses. Same answer requires twelve valid identical labels; it includes stable-wrong answers and is therefore not ranked. Stable-wrong means repeating one incorrect label twelve times. Percentage intervals resample whole contracts, keeping the three anchors together. $\uparrow$/$\downarrow$: higher/lower is better. \textbf{Bold} and \underline{underlining} indicate the best and second-best distinct values, including ties, within each indicated comparison; these marks do not imply statistical significance.}
+\label{tab:anchorrobustness}
+\end{table*}

@@ -1,0 +1,384 @@
+\section{Pre-training}
+
+In this section, we describe the construction of our pretraining data, the details of our pretraining approach, and present experimental results from evaluating the base models on standard benchmarks.
+
+\label{sec:pre}
+
+\subsection{Pre-training Data}
+Compared with Qwen2.5 \citep{qwen2.5}, we have significantly expanded the scale and diversity of our training data. Specifically, we collected twice as many pre-training tokens—covering three times more languages. All Qwen3 models are trained on a large and diverse dataset consisting of \textbf{119 languages and dialects}, with a total of \textbf{36 trillion tokens}. This dataset includes high-quality content in various domains such as coding, STEM (Science, Technology, Engineering, and Mathematics), reasoning tasks, books, multilingual texts, and synthetic data.
+
+To further expand the pre-training data corpus, we first employ the Qwen2.5-VL model \citep{qwen2.5vl} to perform text recognition on a large volume of PDF-like documents. The recognized text is then refined using the Qwen2.5 model \citep{qwen2.5}, which helps improve its quality. Through this two-step process, we are able to obtain an additional set of high-quality text tokens, amounting to trillions in total. 
+Besides, we employ Qwen2.5 \citep{qwen2.5}, Qwen2.5-Math \citep{qwen2.5math}, and Qwen2.5-Coder \citep{qwen2.5coder} models to synthesize trillions of text tokens in different formats, including textbooks, question-answering, instructions, and code snippets, covering dozens of domains. 
+Finally, we further expand the pre-training corpus by incorporating additional multilingual data and introducing more languages. Compared to the pre-training data used in Qwen2.5, the number of supported languages has been significantly increased from 29 to 119, enhancing the model's linguistic coverage and cross-lingual capabilities.
+
+We have developed a multilingual data annotation system designed to enhance both the quality and diversity of training data.
+This system has been applied to our large-scale pre-training datasets, annotating over 30 trillion tokens across multiple dimensions such as educational value, fields, domains, and safety. These detailed annotations support more effective data filtering and combination. 
+Unlike previous studies \citep{doremi,doge,regmix} that optimize the data mixture at the data source or domain level, our method optimizes the data mixture at the instance-level through extensive ablation experiments on small proxy models with the fine-grained data labels.
+
+
+
+
+\subsection{Pre-training Stage}
+The Qwen3 models are pre-trained through a three-stage process:
+
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{General Stage (S1)}: At the first pre-training stage, all Qwen3 models are trained on over 30 trillion tokens using a sequence length of 4,096 tokens. At this stage, the models have been fully pre-trained on language proficiency and general world knowledge, with training data covering 119 languages and dialects.  
+    \item \textbf{Reasoning Stage (S2)}: To further improve the reasoning ability, we optimize the pre-training corpus of this stage by increasing the proportion of STEM, coding, reasoning, and synthetic data. The models are further pre-trained with about 5T higher-quality tokens at a sequence length of 4,096 tokens. We also accelerate the learning rate decay during this stage.
+    \item \textbf{Long Context Stage}: In the final pre-training stage, we collect high-quality long context corpora to extend the context length of Qwen3 models. All models are pre-trained on hundreds of billions of tokens with a sequence length of 32,768 tokens. The long context corpus includes 75\% of text between 16,384 to 32,768 tokens in length, and 25\% of text between 4,096 to 16,384 in length. Following Qwen2.5 \citep{qwen2.5}, we increase the base frequency of RoPE from 10,000 to 1,000,000 using the ABF technique \citep{ropeabf}. Meanwhile, we introduce YARN \citep{yarn} and Dual Chunk Attention~(DCA, \citealp{chunkllama}) to achieve a four-fold increase in sequence length capacity during inference.
+\end{enumerate}
+
+Similar to Qwen2.5 \citep{qwen2.5}, we develop scaling laws for optimal hyper-parameters (e.g., learning rate scheduler, and batch size) predictions based on three pre-training stages mentioned above. Through extensive experiments, we systematically study the relationship between model architecture, training data, training stage, and optimal training hyper-parameters. Finally, we set the predicted optimal learning rate and batch size strategy for each dense or MoE model.
+
+
+
+
+\subsection{Pre-training Evaluation}
+
+We conduct comprehensive evaluations of the base language models of the Qwen3 series. 
+The evaluation of base models mainly focuses on their performance in general knowledge, reasoning, mathematics, scientific knowledge, coding, and multilingual capabilities. The evaluation datasets for pre-trained base models include 15 benchmarks:
+
+
+%
+\begin{itemize}
+
+\item \textbf{General Tasks}: MMLU \citep{mmlu} (5-shot), MMLU-Pro \citep{mmlupro} (5-shot, CoT), MMLU-redux \citep{mmluredux} (5-shot), BBH \citep{bbh} (3-shot, CoT), SuperGPQA \citep{supergpqa}(5-shot, CoT).
+
+\item \textbf{Math \& STEM Tasks}: GPQA \citep{gpqa} (5-shot, CoT), GSM8K \citep{gsm8k} (4-shot, CoT), MATH \citep{math} (4-shot, CoT).
+
+\item \textbf{Coding Tasks}: EvalPlus \citep{evalplus} (0-shot) (Average of HumanEval \citep{humaneval}, MBPP \citep{mbpp}, Humaneval+, MBPP+) \citep{evalplus}, MultiPL-E \citep{multiple} (0-shot) (Python, C++, JAVA, PHP, TypeScript, C\#, Bash, JavaScript), MBPP-3shot \citep{mbpp}, CRUX-O of CRUXEval (1-shot) \citep{gu2024cruxeval}.
+
+\item \textbf{Multilingual Tasks}: MGSM \citep{mgsm} (8-shot, CoT), MMMLU \citep{mmmlu} (5-shot), INCLUDE \citep{romanou2024includeevaluatingmultilinguallanguage} (5-shot).
+
+\end{itemize}
+
+
+For the base model baselines, we compare the Qwen3 series base models with the Qwen2.5 base models \citep{qwen2.5} and other leading open-source base models, including DeepSeek-V3 Base \citep{deepseekv3}, Gemma-3 \citep{gemma3}, Llama-3 \citep{llama3}, and Llama-4 \citep{llama4} series base models, in terms of scale of parameters. All models are evaluated using the same evaluation pipeline and the widely-used evaluation settings to ensure fair comparison.
+
+
+\paragraph{Summary of Evaluation Results}
+Based on the overall evaluation results, we highlight some key conclusions of Qwen3 base models. 
+\begin{enumerate}[label=(\arabic*)]
+\item Compared with the previously open-source SOTA dense and MoE base models (such as DeepSeek-V3 Base, Llama-4-Maverick Base, and Qwen2.5-72B-Base), Qwen3-235B-A22B-Base outperforms these models in most tasks with significantly fewer total parameters or activated parameters.
+
+\item For the Qwen3 MoE base models, our experimental results indicate that: (a) Using the same pre-training data, Qwen3 MoE base models can achieve similar performance to Qwen3 dense base models with only \textbf{1/5} activated parameters. (b) Due to the improvements of the Qwen3 MoE architecture, the scale-up of the training tokens, and more advanced training strategies, the Qwen3 MoE base models can outperform the Qwen2.5 MoE base models with less than \textbf{1/2} activated parameters and fewer total parameters. (c) Even with \textbf{1/10} of the activated parameters of the Qwen2.5 dense base model, the Qwen3 MoE base model can achieve comparable performance, which brings us significant advantages in inference and training costs.
+
+\item The overall performance of the Qwen3 dense base models is comparable to the Qwen2.5 base models at higher parameter scales. For example, Qwen3-1.7B/4B/8B/14B/32B-Base achieve comparable performance to Qwen2.5-3B/7B/14B/32B/72B-Base, respectively. Especially in STEM, coding, and reasoning benchmarks, the performance of Qwen3 dense base models even surpasses Qwen2.5 base models at higher parameter scales.
+\end{enumerate}
+The detailed results are as follows.
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen3-235B-A22B-Base and other representative strong open-source baselines. The highest,
+the second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-235A22B}
+\small %
+\setlength{\tabcolsep}{3pt} %
+%\renewcommand{\arraystretch}{0.9} 
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+& \textbf{Qwen2.5-72B} & \textbf{Qwen2.5-Plus} & \textbf{Llama-4-Maverick} & \textbf{DeepSeek-V3} & \textbf{Qwen3-235B-A22B} \\
+& \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base} \\
+\midrule
+Architecture & Dense & MoE & MoE & MoE & MoE\\
+\# Total Params & 72B & 271B & 402B & 671B & 235B\\
+\# Activated Params & 72B & 37B & 17B & 37B & 22B\\
+\midrule
+\multicolumn{6}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 86.06 & 85.02 & 85.16 & \underline{87.19} & \textbf{87.81}\\
+MMLU-Redux & 83.91 & 82.69 & 84.05 & \underline{86.14} & \textbf{87.40} \\
+MMLU-Pro & 58.07 & 63.52 & \underline{63.91} & 59.84 & \textbf{68.18} \\
+SuperGPQA & 36.20 & 37.18 & 40.85 & \underline{41.53} & \textbf{44.06} \\
+BBH & \underline{86.30} & 85.60 & 83.62 & 86.22 & \textbf{88.87} \\
+\midrule
+\multicolumn{6}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & \underline{45.88} & 41.92 & 43.94 & 41.92 & \textbf{47.47} \\
+GSM8K & 91.50 & \underline{91.89} & 87.72 & 87.57 & \textbf{94.39} \\
+MATH & 62.12 & 62.78 & \underline{63.32} & 62.62 & \textbf{71.84} \\
+\midrule
+\multicolumn{6}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & 65.93 & 61.43 & \underline{68.38} & 63.75 & \textbf{77.60} \\
+MultiPL-E & 58.70 & 62.16 & 57.28 & \underline{62.26} & \textbf{65.94} \\
+MBPP & \underline{76.00} & 74.60 & 75.40 & 74.20 & \textbf{81.40} \\
+CRUX-O & 66.20 & 68.50 & \underline{77.00} & 76.60 & \textbf{79.00} \\
+\midrule
+\multicolumn{6}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 82.40 & 82.21 & 79.69 & \underline{82.68} & \textbf{83.53} \\
+MMMLU & 84.40 & 83.49 & 83.09 & \underline{85.88} & \textbf{86.70} \\
+INCLUDE & 69.05 & 66.97 & \underline{73.47} & \textbf{75.17} & 73.46 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\paragraph{Qwen3-235B-A22B-Base}
+We compare Qwen3-235B-A22B-Base to our previous similar-sized MoE Qwen2.5-Plus-Base \citep{qwen2.5} and other leading open-source base models: Llama-4-Maverick \citep{llama4}, Qwen2.5-72B-Base \citep{qwen2.5}, DeepSeek-V3 Base \citep{deepseekv3}. From the results in Table~\ref{tab:base-235A22B}, the Qwen3-235B-A22B-Base model attains the highest performance scores across most of the evaluated benchmarks. We further compare Qwen3-235B-A22B-Base with other baselines separately for the detailed analysis.
+\begin{enumerate}[label=(\arabic*)]
+    \item  Compared with the recently open-source model Llama-4-Maverick-Base, which has about \textbf{twice} the number of parameters, Qwen3-235B-A22B-Base still performs better on most benchmarks.
+    \item  Compared with the previously state-of-the-art open-source model DeepSeek-V3-Base, Qwen3-235B-A22B-Base outperforms DeepSeek-V3-Base on 14 out of 15 evaluation benchmarks with only about \textbf{1/3} the total number of parameters and \textbf{2/3} activated parameters, demonstrating the powerful and cost-effectiveness of our models. 
+    \item  Compared with our previous MoE Qwen2.5-Plus of similar size, Qwen3-235B-A22B-Base significantly outperforms it with fewer parameters and activated parameters, which shows the remarkable advantages of Qwen3 in pre-training data, training strategy, and model architecture.
+    \item  Compared with our previous flagship open-source dense model Qwen2.5-72B-Base, Qwen3-235B-A22B-Base surpasses the latter in all benchmarks and uses fewer than \textbf{1/3} of the activated parameters. Meanwhile, due to the advantage of the model architecture, the inference costs and training costs on each trillion tokens of Qwen3-235B-A22B-Base are much cheaper than those of Qwen2.5-72B-Base.
+\end{enumerate}
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen3-32B-Base and other strong open-source baselines. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-32B}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \textbf{Qwen2.5-32B} & \textbf{Qwen2.5-72B} & \textbf{Gemma-3-27B} & \textbf{Llama-4-Scout} & \textbf{Qwen3-32B} \\
+ & \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base}& \textbf{Base} \\
+\midrule
+Architecture & Dense & Dense & Dense & MoE & Dense\\
+\# Total Params & 32B & 72B & 27B & 109B & 32B\\
+\# Activated Params & 32B & 72B & 27B & 17B & 32B\\
+\midrule
+\multicolumn{6}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 83.32 & \textbf{86.06} & 78.69 & 78.27 & \underline{83.61} \\
+MMLU-Redux & 81.97 & \textbf{83.91} & 76.53 & 71.09 & \underline{83.41} \\
+MMLU-Pro & 55.10 & \underline{58.07} & 52.88 & 56.13 & \textbf{65.54} \\
+SuperGPQA & 33.55 & \underline{36.20} & 29.87 & 26.51 & \textbf{39.78} \\
+BBH & 84.48 & \underline{86.30} & 79.95 & 82.40 & \textbf{87.38} \\
+\midrule
+\multicolumn{6}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & \underline{47.97} & 45.88 & 26.26 & 40.40 & \textbf{49.49} \\
+GSM8K & \underline{92.87} & 91.50 & 81.20 & 85.37 & \textbf{93.40} \\
+MATH & 57.70 & \textbf{62.12} & 51.78 & 51.66 & \underline{61.62} \\
+\midrule
+\multicolumn{6}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & \underline{66.25} & 65.93 & 55.78 & 59.90 & \textbf{72.05} \\
+MultiPL-E & 58.30 & \underline{58.70} & 45.03 & 47.38 & \textbf{67.06} \\
+MBPP & 73.60 & \underline{76.00} & 68.40 & 68.60 & \textbf{78.20} \\
+CRUX-O & \underline{67.80} & 66.20 & 60.00 & 61.90 & \textbf{72.50} \\
+\midrule
+\multicolumn{6}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 78.12 & \underline{82.40} & 73.74 & 79.93 & \textbf{83.06} \\
+MMMLU & 82.40 & \textbf{84.40} & 77.62 & 74.83 & \underline{83.83} \\
+INCLUDE & 64.35 & \textbf{69.05} & \underline{68.94} & 68.09 & 67.87 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen3-14B-Base, Qwen3-30B-A3B-Base, and other strong open-source baselines. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-14B}
+\adjustbox{center=\textwidth}{
+\small
+\setlength{\tabcolsep}{3pt} %
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+ & \textbf{Gemma-3-12B} & \textbf{Qwen2.5-14B} & \textbf{Qwen2.5-32B} & \textbf{Qwen2.5-Turbo} & \textbf{Qwen3-14B} & \textbf{Qwen3-30B-A3B} \\
+ &   \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base}& \textbf{Base} & \textbf{Base}\\
+\midrule
+Architecture & Dense & Dense & Dense & MoE & Dense & MoE\\
+\# Total Params & 12B & 14B & 32B & 42B & 14B & 30B\\
+\# Activated Params & 12B & 14B & 32B & 6B & 14B & 3B\\
+\midrule
+\multicolumn{7}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 73.87 & 79.66 & \textbf{83.32} & 79.50 & 81.05 & \underline{81.38} \\
+MMLU-Redux & 70.70 & 76.64 & \textbf{81.97} & 77.11 & 79.88 & \underline{81.17} \\
+MMLU-Pro & 44.91 & 51.16 & 55.10 & 55.60 & \underline{61.03} & \textbf{61.49} \\
+SuperGPQA & 24.61 & 30.68 & 33.55 & 31.19 & \underline{34.27} & \textbf{35.72} \\
+BBH & 74.28 & 78.18 & \textbf{84.48} & 76.10 & 81.07 & \underline{81.54} \\
+\midrule
+\multicolumn{7}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & 31.31 & 32.83 & \textbf{47.97} & 41.41 & 39.90 & \underline{43.94} \\
+GSM8K & 78.01 & 90.22 & \textbf{92.87} & 88.32 & \underline{92.49} & 91.81 \\
+MATH & 44.43 & 55.64 & 57.70 & 55.60 & \textbf{62.02} & \underline{59.04} \\
+\midrule
+\multicolumn{7}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & 52.65 & 60.70 & 66.25 & 61.23 & \textbf{72.23} & \underline{71.45} \\
+MultiPL-E & 43.03 & 54.79 & 58.30 & 53.24 & \underline{61.69} & \textbf{66.53} \\
+MBPP & 60.60 & 69.00 & \underline{73.60} & 67.60 & 73.40 & \textbf{74.40} \\
+CRUX-O & 52.00 & 61.10 & \underline{67.80} & 60.20 & \textbf{68.60} & 67.20 \\
+\midrule
+\multicolumn{7}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 64.35 & 74.68 & 78.12 & 70.45 & \textbf{79.20} & \underline{79.11} \\
+MMMLU & 72.50 & 78.34 & \textbf{82.40} & 79.76 & 79.69 & \underline{81.46} \\
+INCLUDE & 63.34 & 60.26 & 64.35 & 59.25 & \underline{64.55} & \textbf{67.00} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen8B-Base and other strong open-source baselines. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-8B}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{Llama-3-8B} & \textbf{Qwen2.5-7B} & \textbf{Qwen2.5-14B}  & \textbf{Qwen3-8B} \\
+&   \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base} \\
+\midrule
+Architecture & Dense & Dense & Dense & Dense\\
+\# Total Params & 8B & 7B & 14B & 8B \\
+\# Activated Params & 8B & 7B & 14B & 8B \\
+\midrule
+\multicolumn{5}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 66.60 & 74.16 & \textbf{79.66} & \underline{76.89}  \\
+MMLU-Redux & 61.59 & 71.06 & \textbf{76.64} & \underline{76.17}  \\
+MMLU-Pro & 35.36 & 45.00 &  \underline{51.16} & \textbf{56.73}  \\
+SuperGPQA & 20.54 & 26.34 & \underline{30.68} & \textbf{31.64}  \\
+BBH & 57.70 & 70.40 & \underline{78.18} & \textbf{78.40} \\
+\midrule
+\multicolumn{5}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & 25.80 & \underline{36.36} & 32.83 & \textbf{44.44} \\
+GSM8K & 55.30 & 85.36 & \textbf{90.22} & \underline{89.84} \\
+MATH & 20.50 & 49.80 & \underline{55.64} & \textbf{60.80}  \\
+\midrule
+\multicolumn{5}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & 44.13 & \underline{62.18} & 60.70 & \textbf{67.65} \\
+MultiPL-E & 31.45 & 50.73 & \underline{54.79} & \textbf{58.75}  \\
+MBPP & 48.40 & 63.40 & \underline{69.00} & \textbf{69.80} \\
+CRUX-O & 36.80 & 48.50 & \underline{61.10} & \textbf{62.00}  \\
+\midrule
+\multicolumn{5}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 38.92 & 63.60 & \underline{74.68} & \textbf{76.02}  \\
+MMMLU & 59.65 & 71.34 & \textbf{78.34} & \underline{75.72} \\
+IINCLUDE & 44.94 & 53.98 & \textbf{60.26} & \underline{59.40} \\
+\bottomrule
+\end{tabular}
+%\vspace{2mm}
+\end{table}
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen3-4B-Base and other strong open-source baselines. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-4B}
+\small %
+%\setlength{\tabcolsep}{3pt} %
+%\renewcommand{\arraystretch}{0.9} 
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{Gemma-3-4B} & \textbf{Qwen2.5-3B} & \textbf{Qwen2.5-7B} & \textbf{Qwen3-4B} \\
+ & \textbf{Base} & \textbf{Base}& \textbf{Base}& \textbf{Base} \\
+\midrule
+Architecture & Dense & Dense & Dense & Dense\\
+\# Total Params & 4B & 3B & 7B & 4B \\
+\# Activated Params & 4B & 3B & 7B & 4B \\
+\midrule
+\multicolumn{5}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 59.51 & 65.62 & \textbf{74.16} & \underline{72.99} \\
+MMLU-Redux & 56.91 & 63.68 & \underline{71.06} & \textbf{72.79} \\
+MMLU-Pro & 29.23 & 34.61 & \underline{45.00} & \textbf{50.58} \\
+SuperGPQA & 17.68 & 20.31 & \underline{26.34} & \textbf{28.43} \\
+BBH & 51.70 & 56.30 & \underline{70.40} & \textbf{72.59} \\
+\midrule
+\multicolumn{5}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & 24.24 & 26.26 & \underline{36.36} & \textbf{36.87} \\
+GSM8K & 43.97 & 79.08 & \underline{85.36} & \textbf{87.79} \\
+MATH & 26.10 & 42.64 & \underline{49.80} & \textbf{54.10} \\
+\midrule
+\multicolumn{5}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & 43.23 & 46.28 & \underline{62.18} & \textbf{63.53} \\
+MultiPL-E & 28.06 & 39.65 & \underline{50.73} & \textbf{53.13} \\
+MBPP & 46.40 & 54.60 & \underline{63.40} & \textbf{67.00} \\
+CRUX-O & 34.00 & 36.50 & \underline{48.50} & \textbf{55.00} \\
+\midrule
+\multicolumn{5}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 33.11 & 47.53 & \underline{63.60} & \textbf{67.74} \\
+MMMLU & 59.62 & 65.55 & \underline{71.34} & \textbf{71.42} \\
+INCLUDE & 49.06 & 45.90 & \underline{53.98} & \textbf{56.29} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[tbp]
+\centering
+\caption{\textbf{Comparison among Qwen3-1.7B-Base, Qwen3-0.6B-Base, and other strong open-source baselines. The highest and second-best scores are shown in \textbf{bold} and \underline{underlined}, respectively.}}
+\label{tab:base-1B}
+\small %
+%\setlength{\tabcolsep}{3pt} %
+%\renewcommand{\arraystretch}{0.9} 
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \textbf{Qwen2.5-0.5B} & \textbf{Qwen3-0.6B} & \textbf{Gemma-3-1B} & \textbf{Qwen2.5-1.5B} & \textbf{Qwen3-1.7B} \\
+ & \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base} & \textbf{Base} \\
+\midrule
+Architecture & Dense & Dense & Dense & Dense & Dense\\
+\# Total Params & 0.5B & 0.6B & 1B & 1.5B & 1.7B \\
+\# Activated Params & 0.5B & 0.6B & 1B & 1.5B & 1.7B \\
+\midrule
+\multicolumn{6}{c}{\textit{General Tasks}} \\
+\midrule
+MMLU & 47.50 & 52.81 & 26.26 & \underline{60.90} & \textbf{62.63} \\
+MMLU-Redux & 45.10 & 51.26 & 25.99 & \underline{58.46} & \textbf{61.66} \\
+MMLU-Pro & 15.69 & 24.74 & 9.72 & \underline{28.53} & \textbf{36.76} \\
+SuperGPQA & 11.30 & 15.03 & 7.19 & \underline{17.64} & \textbf{20.92} \\
+BBH & 20.30 & 41.47 & 28.13 & \underline{45.10} & \textbf{54.47} \\
+\midrule
+\multicolumn{6}{c}{\textit{Math \& STEM Tasks}} \\
+\midrule
+GPQA & 24.75 & \underline{26.77} & 24.75 & 24.24 & \textbf{28.28} \\
+GSM8K & 41.62 & 59.59 & 2.20 & \underline{68.54} & \textbf{75.44} \\
+MATH & 19.48 & 32.44 & 3.66 & \underline{35.00} & \textbf{43.50} \\
+\midrule
+\multicolumn{6}{c}{\textit{Coding Tasks}} \\
+\midrule
+EvalPlus & 31.85 & 36.23 & 8.98 & \underline{44.80} & \textbf{52.70} \\
+MultiPL-E & 18.70 & 24.58 & 5.15 & \underline{33.10} & \textbf{42.71} \\
+MBPP & 29.80 & 36.60 & 9.20 & \underline{43.60} & \textbf{55.40} \\
+CRUX-O & 12.10 & 27.00 & 3.80 & \underline{29.60} & \textbf{36.40} \\
+\midrule
+\multicolumn{6}{c}{\textit{Multilingual Tasks}} \\
+\midrule
+MGSM & 12.07 & 30.99 & 1.74 & \underline{32.82} & \textbf{50.71} \\
+MMMLU & 31.53 & 50.16 & 26.57 & \underline{60.27} & \textbf{63.27} \\
+INCLUDE & 24.74 & 34.26 & 25.62 & \underline{39.55} & \textbf{45.57} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\paragraph{Qwen3-32B-Base}
+Qwen3-32B-Base is our largest dense model among the Qwen3 series. We compare it to the baselines of similar sizes, including Gemma-3-27B \citep{gemma3} and Qwen2.5-32B \citep{qwen2.5}. In addition, we introduce two strong baselines: the recently open-source MoE model Llama-4-Scout, which has three times the parameters of Qwen3-32B-Base but half the activated parameters; and our previous flagship open-source dense model Qwen2.5-72B-Base, which has more than twice the number of parameters compared to Qwen3-32B-Base.
+The results are shown in Table~\ref{tab:base-32B}, which support three key conclusions:
+\begin{enumerate}[label=(\arabic*)]
+\item Compared with the similar-sized models, Qwen3-32B-Base outperforms Qwen2.5-32B-Base and Gemma-3-27B Base on most benchmarks. Notably, Qwen3-32B-Base achieves 65.54 on MMLU-Pro and 39.78 on SuperGPQA, significantly outperforming its predecessor Qwen2.5-32B-Base. In addition, Qwen3-32B-Base achieves significantly higher encoding benchmark scores than all baseline models.
+\item Surprisingly, we find that Qwen3-32B-Base achieves competitive results compared to Qwen2.5-72B-Base. Although Qwen3-32B-Base has less than half the number of parameters of Qwen2.5-72B-Base, it outperforms Qwen2.5-72B-Base in 10 of the 15 evaluation benchmarks. On coding, mathematics, and reasoning benchmarks, Qwen3-32B-Base has remarkable advantages.
+\item Compared to Llama-4-Scout-Base, Qwen3-32B-Base significantly outperforms it on all 15 benchmarks, with only one-third of the number of parameters of Llama-4-Scout-Base, but twice the number of activated parameters.
+\end{enumerate}
+
+\paragraph{Qwen3-14B-Base \& Qwen3-30B-A3B-Base}
+The evaluation of the Qwen3-14B-Base and Qwen3-30B-A3B-Base is compared against baselines of similar sizes, including Gemma-3-12B Base, Qwen2.5-14B Base. Similarly, we also introduce two strong baselines: (1) Qwen2.5-Turbo \citep{qwen2.5}, which has 42B parameters and 6B activated parameters. Note that its activated parameters are twice those of Qwen3-30B-A3B-Base. (2) Qwen2.5-32B-Base, which has 11 times the activated parameters of Qwen3-30B-A3B and more than twice that of Qwen3-14B.
+The results are shown in Table~\ref{tab:base-14B}, where we can draw the following conclusions.
+\begin{enumerate}[label=(\arabic*)]
+\item Compared with the similar-sized models, Qwen3-14B-Base significantly performs better than Qwen2.5-14B-Base and Gemma-3-12B-Base on all 15 benchmarks. 
+\item Similarly, Qwen3-14B-Base also achieves very competitive results compared to Qwen2.5-32B-Base with less than half of the parameters.
+\item With only 1/5 activated non-embedding parameters, Qwen3-30B-A3B significantly outperforms Qwen2.5-14B-Base on all tasks, and achieves comparable performance to Qwen3-14B-Base and Qwen2.5-32B-Base, which brings us significant advantages in inference and training costs.
+\end{enumerate}
+
+
+
+\paragraph{Qwen3-8B / 4B / 1.7B / 0.6B-Base}
+For edge-side models, we take similar-sized Qwen2.5, Llama-3, and Gemma-3 base models as the baselines. The results can be seen in Table~\ref{tab:base-8B}, Table~\ref{tab:base-4B}, and Table~\ref{tab:base-1B}. All Qwen3 8B / 4B / 1.7B / 0.6B-Base models continue to maintain strong performance across nearly all benchmarks. Notably, Qwen3-8B / 4B / 1.7B-Base models even outperform larger size Qwen2.5-14B / 7B / 3B Base models on over half of the benchmarks, especially on STEM-related and coding benchmarks, reflecting the significant improvement of the Qwen3 models.
+
