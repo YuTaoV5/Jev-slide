@@ -1,0 +1,8 @@
+{
+  "example_id": "36076ae1954b8630067c2a26bd539b4a64d1af59573b8913c74c3233bd6331fd",
+  "token_ids_equal": true,
+  "tokens": 455,
+  "sha256": "de8ea73bb4328b6e359fd893bf29f621e32d9e8dd1b790cdfe4fa01cef4f09eb",
+  "prompt_format_version": 1,
+  "note": "System One and decisions share the installed _encode_question renderer; local chat IDs match served decision IDs"
+}

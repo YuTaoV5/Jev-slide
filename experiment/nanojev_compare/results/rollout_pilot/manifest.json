@@ -1,0 +1,133 @@
+{
+  "selected_cases": [
+    {
+      "id": "ood-maze16-7840001",
+      "seed": 7840001,
+      "spec": {
+        "max_steps": 160,
+        "size": 16,
+        "task": "maze",
+        "topology": "tree"
+      },
+      "split": "ood",
+      "variant": "maze16"
+    },
+    {
+      "id": "ood-maze8-408001",
+      "seed": 408001,
+      "spec": {
+        "max_steps": 160,
+        "size": 16,
+        "task": "maze",
+        "topology": "tree"
+      },
+      "split": "ood",
+      "variant": "maze8"
+    },
+    {
+      "id": "ood-snake12-7842000",
+      "seed": 7842000,
+      "spec": {
+        "max_steps": 160,
+        "size": 12,
+        "target_food": 3,
+        "task": "snake"
+      },
+      "split": "ood",
+      "variant": "snake12"
+    },
+    {
+      "id": "ood-snake8-418005",
+      "seed": 418005,
+      "spec": {
+        "max_steps": 160,
+        "size": 10,
+        "target_food": 3,
+        "task": "snake"
+      },
+      "split": "ood",
+      "variant": "snake8"
+    },
+    {
+      "id": "test-maze16-7830001",
+      "seed": 7830001,
+      "spec": {
+        "max_steps": 160,
+        "size": 16,
+        "task": "maze",
+        "topology": "tree"
+      },
+      "split": "test",
+      "variant": "maze16"
+    },
+    {
+      "id": "test-maze8-308040",
+      "seed": 308040,
+      "spec": {
+        "max_steps": 32,
+        "size": 8,
+        "task": "maze",
+        "topology": "tree"
+      },
+      "split": "test",
+      "variant": "maze8"
+    },
+    {
+      "id": "test-snake12-7832000",
+      "seed": 7832000,
+      "spec": {
+        "max_steps": 160,
+        "size": 12,
+        "target_food": 3,
+        "task": "snake"
+      },
+      "split": "test",
+      "variant": "snake12"
+    },
+    {
+      "id": "test-snake8-318000",
+      "seed": 318000,
+      "spec": {
+        "max_steps": 96,
+        "size": 8,
+        "target_food": 2,
+        "task": "snake"
+      },
+      "split": "test",
+      "variant": "snake8"
+    }
+  ],
+  "cases_sha256": "6348cebda686166cbbb50044e96bfe97b6f14ac0740aad9d01dc432856d07383",
+  "arms": [
+    "systemone",
+    "chat_1token"
+  ],
+  "prompt": "same installed System One renderer, thinking disabled",
+  "controller": "greedy; singletons executed by code for every arm",
+  "budget": "identical physical action deadline from unchanged case specification",
+  "source_sha256": {
+    "unified_game_pipeline.py": "c176e06d7088bafbf0fbe4ca7e2be05eef6f1f5c3bf00b2d946caa21cce42313",
+    "unified_grid_envs.py": "8ab8a9ff56f88866efc26bca41c16416e432d5ed8415cdcd33f622c5c7030663",
+    "scaled_maze.py": "4eef4a1052c913755ccccc54b9e7ee2cca5e6a1258ab748d59bfd45386d410bb",
+    "snake_game.py": "adacc7a6013f0195e5a0952bc2a13ec14964325b52b56b2e69d780794edf549e"
+  },
+  "finished": true,
+  "summary": {
+    "systemone": {
+      "episodes": 8,
+      "successes": 6,
+      "complete": 8,
+      "physical_steps": 555,
+      "model_calls": 460,
+      "model_latency_s": 107.61528361216187
+    },
+    "chat_1token": {
+      "episodes": 8,
+      "successes": 6,
+      "complete": 8,
+      "physical_steps": 555,
+      "model_calls": 460,
+      "model_latency_s": 194.45178160630167
+    }
+  }
+}

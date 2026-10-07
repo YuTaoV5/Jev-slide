@@ -1,0 +1,12 @@
+SELECTED 96 {'test': {'maze': 211, 'snake': 116, 'shooting': 2169}, 'ood': {'maze': 202, 'snake': 143, 'shooting': 1597}}
+NANO_LOAD_S 11.38983029127121
+DONE 10 of 96
+DONE 20 of 96
+DONE 30 of 96
+DONE 40 of 96
+DONE 50 of 96
+DONE 60 of 96
+DONE 70 of 96
+DONE 80 of 96
+DONE 90 of 96
+COMPLETE {"n": 96, "nano_latency_s_median": 0.0353987542912364, "nano_latency_s_mean": 0.04253504923932875, "sglang_latency_s_median": 0.15821699146181345, "sglang_latency_s_mean": 0.17961175580664226, "model_top1_agreement": 0.3541666666666667, "nano_expert_argmax_match": 0.7833333333333333, "nano_jev_teacher_top1_match": 0.75, "nano_jev_teacher_cross_entropy": 0.745327249862312, "sglang_expert_argmax_match": 0.2, "sglang_jev_teacher_top1_match": 0.5277777777777778, "sglang_jev_teacher_cross_entropy": 1.0263719288384534}

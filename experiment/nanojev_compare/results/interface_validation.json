@@ -1,0 +1,415 @@
+{
+  "matched_n": 96,
+  "systemone_chat1_same_actions": 96,
+  "systemone_chat32_same_actions": 95,
+  "all_prompt_token_counts_equal": true,
+  "chat32_action_disagreements": [
+    {
+      "id": "f06e836dc01fd0ef1d224b9f05fac0ef778c18d4882527121e4a70ec2e8510d1",
+      "systemone": "shoot",
+      "chat32": "right"
+    }
+  ],
+  "rollout_pilot": {
+    "paired_cases": 8,
+    "identical_action_traces": 8,
+    "by_case": [
+      {
+        "case_id": "ood-maze16-7840001",
+        "split": "ood",
+        "variant": "maze16",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 76,
+          "decisions": 154,
+          "model_calls": 123,
+          "model_latency_s": 32.40638116188347
+        },
+        "chat_1token": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 76,
+          "decisions": 154,
+          "model_calls": 123,
+          "model_latency_s": 35.752149775624275
+        }
+      },
+      {
+        "case_id": "ood-maze8-408001",
+        "split": "ood",
+        "variant": "maze8",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 73,
+          "decisions": 154,
+          "model_calls": 128,
+          "model_latency_s": 110.72710433602333
+        },
+        "systemone": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 73,
+          "decisions": 154,
+          "model_calls": 128,
+          "model_latency_s": 33.79596657678485
+        }
+      },
+      {
+        "case_id": "ood-snake12-7842000",
+        "split": "ood",
+        "variant": "snake12",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 17,
+          "collisions": 0,
+          "decisions": 17,
+          "model_calls": 17,
+          "model_latency_s": 2.5006363429129124
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 17,
+          "collisions": 0,
+          "decisions": 17,
+          "model_calls": 17,
+          "model_latency_s": 1.428880924358964
+        }
+      },
+      {
+        "case_id": "ood-snake8-418005",
+        "split": "ood",
+        "variant": "snake8",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 13,
+          "collisions": 0,
+          "decisions": 13,
+          "model_calls": 13,
+          "model_latency_s": 2.2239684499800205
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 13,
+          "collisions": 0,
+          "decisions": 13,
+          "model_calls": 13,
+          "model_latency_s": 0.7458039913326502
+        }
+      },
+      {
+        "case_id": "test-maze16-7830001",
+        "split": "test",
+        "variant": "maze16",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 149,
+          "collisions": 57,
+          "decisions": 143,
+          "model_calls": 126,
+          "model_latency_s": 32.79513700120151
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 149,
+          "collisions": 57,
+          "decisions": 143,
+          "model_calls": 126,
+          "model_latency_s": 36.34271929971874
+        }
+      },
+      {
+        "case_id": "test-maze8-308040",
+        "split": "test",
+        "variant": "maze8",
+        "budget": 32,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 23,
+          "collisions": 9,
+          "decisions": 23,
+          "model_calls": 20,
+          "model_latency_s": 4.527869664132595
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 23,
+          "collisions": 9,
+          "decisions": 23,
+          "model_calls": 20,
+          "model_latency_s": 1.1386623065918684
+        }
+      },
+      {
+        "case_id": "test-snake12-7832000",
+        "split": "test",
+        "variant": "snake12",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 24,
+          "collisions": 0,
+          "decisions": 24,
+          "model_calls": 24,
+          "model_latency_s": 3.628091899678111
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 24,
+          "collisions": 0,
+          "decisions": 24,
+          "model_calls": 24,
+          "model_latency_s": 2.053691217675805
+        }
+      },
+      {
+        "case_id": "test-snake8-318000",
+        "split": "test",
+        "variant": "snake8",
+        "budget": 96,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 9,
+          "collisions": 0,
+          "decisions": 9,
+          "model_calls": 9,
+          "model_latency_s": 1.3953979387879372
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 9,
+          "collisions": 0,
+          "decisions": 9,
+          "model_calls": 9,
+          "model_latency_s": 0.6046043317764997
+        }
+      }
+    ]
+  },
+  "rollout_repeat": {
+    "paired_cases": 8,
+    "identical_action_traces": 8,
+    "by_case": [
+      {
+        "case_id": "ood-maze16-7840001",
+        "split": "ood",
+        "variant": "maze16",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 76,
+          "decisions": 154,
+          "model_calls": 123,
+          "model_latency_s": 32.44829743541777
+        },
+        "chat_1token": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 76,
+          "decisions": 154,
+          "model_calls": 123,
+          "model_latency_s": 35.71008042618632
+        }
+      },
+      {
+        "case_id": "ood-maze8-408001",
+        "split": "ood",
+        "variant": "maze8",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 73,
+          "decisions": 154,
+          "model_calls": 128,
+          "model_latency_s": 37.320669289678335
+        },
+        "systemone": {
+          "success": false,
+          "physical_steps": 160,
+          "collisions": 73,
+          "decisions": 154,
+          "model_calls": 128,
+          "model_latency_s": 33.8856387604028
+        }
+      },
+      {
+        "case_id": "ood-snake12-7842000",
+        "split": "ood",
+        "variant": "snake12",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 17,
+          "collisions": 0,
+          "decisions": 17,
+          "model_calls": 17,
+          "model_latency_s": 2.506377499550581
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 17,
+          "collisions": 0,
+          "decisions": 17,
+          "model_calls": 17,
+          "model_latency_s": 1.419688779860735
+        }
+      },
+      {
+        "case_id": "ood-snake8-418005",
+        "split": "ood",
+        "variant": "snake8",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 13,
+          "collisions": 0,
+          "decisions": 13,
+          "model_calls": 13,
+          "model_latency_s": 2.227195870131254
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 13,
+          "collisions": 0,
+          "decisions": 13,
+          "model_calls": 13,
+          "model_latency_s": 0.7342815976589918
+        }
+      },
+      {
+        "case_id": "test-maze16-7830001",
+        "split": "test",
+        "variant": "maze16",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 149,
+          "collisions": 57,
+          "decisions": 143,
+          "model_calls": 126,
+          "model_latency_s": 32.854106364771724
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 149,
+          "collisions": 57,
+          "decisions": 143,
+          "model_calls": 126,
+          "model_latency_s": 36.351118763908744
+        }
+      },
+      {
+        "case_id": "test-maze8-308040",
+        "split": "test",
+        "variant": "maze8",
+        "budget": 32,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 23,
+          "collisions": 9,
+          "decisions": 23,
+          "model_calls": 20,
+          "model_latency_s": 4.524748936295509
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 23,
+          "collisions": 9,
+          "decisions": 23,
+          "model_calls": 20,
+          "model_latency_s": 1.1297477539628744
+        }
+      },
+      {
+        "case_id": "test-snake12-7832000",
+        "split": "test",
+        "variant": "snake12",
+        "budget": 160,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "systemone": {
+          "success": true,
+          "physical_steps": 24,
+          "collisions": 0,
+          "decisions": 24,
+          "model_calls": 24,
+          "model_latency_s": 3.633537182584405
+        },
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 24,
+          "collisions": 0,
+          "decisions": 24,
+          "model_calls": 24,
+          "model_latency_s": 2.03788254968822
+        }
+      },
+      {
+        "case_id": "test-snake8-318000",
+        "split": "test",
+        "variant": "snake8",
+        "budget": 96,
+        "initial_world_equal": true,
+        "action_trace_equal": true,
+        "chat_1token": {
+          "success": true,
+          "physical_steps": 9,
+          "collisions": 0,
+          "decisions": 9,
+          "model_calls": 9,
+          "model_latency_s": 1.3954892996698618
+        },
+        "systemone": {
+          "success": true,
+          "physical_steps": 9,
+          "collisions": 0,
+          "decisions": 9,
+          "model_calls": 9,
+          "model_latency_s": 0.5216051768511534
+        }
+      }
+    ]
+  },
+  "artifact_sha256": {
+    "systemone_chat_predictions.jsonl": "b2963b78584ff46672caac977e1694d267b0a8895f6f7fe396a746c471646e2f",
+    "matched\\systemone_chat_predictions.jsonl": "f58a48fe033378961fae6935b341b5d13065efe0d8b581ae64b49534b71c43e2",
+    "rollout_pilot\\episodes.jsonl": "7c61feaac7fd5728fe2ebc50581c7c96db38207357530acb6aa18c1a4d9f9a8d",
+    "rollout_repeat\\episodes.jsonl": "626a00221ba98952d5cdb6e2316abfab04b8f968293dca96bfe8eea6044bdab9"
+  }
+}

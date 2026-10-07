@@ -1,0 +1,240 @@
+{
+  "model": "Qwen3.8-27B",
+  "selection": "SHA256(id), first record in up to 30 distinct episodes per split/task",
+  "request_order": "rotating 3 arms",
+  "matched_prompt": true,
+  "n": 96,
+  "overall": {
+    "n": 96,
+    "systemone": {
+      "latency_median_s": 0.08573116175830364,
+      "latency_mean_s": 0.1223427292619211,
+      "latency_p90_s": 0.18744627200067043,
+      "invalid": 0,
+      "input_tokens_mean": 570.6666666666666,
+      "output_tokens_mean": 0,
+      "expert_match": 0.2,
+      "teacher_top1_match": 0.5277777777777778
+    },
+    "chat_1token": {
+      "latency_median_s": 0.0575151639059186,
+      "latency_mean_s": 0.10033561295131221,
+      "latency_p90_s": 0.18964958563446999,
+      "invalid": 0,
+      "input_tokens_mean": 570.6666666666666,
+      "output_tokens_mean": 1,
+      "expert_match": 0.2,
+      "teacher_top1_match": 0.5277777777777778
+    },
+    "chat_32tokens": {
+      "latency_median_s": 0.1197271328419447,
+      "latency_mean_s": 0.14721513844172782,
+      "latency_p90_s": 0.19631416909396648,
+      "invalid": 0,
+      "input_tokens_mean": 570.6666666666666,
+      "output_tokens_mean": 2,
+      "expert_match": 0.2,
+      "teacher_top1_match": 0.5277777777777778
+    }
+  },
+  "by_split_task": {
+    "ood/maze": {
+      "n": 10,
+      "systemone": {
+        "latency_median_s": 0.08543872274458408,
+        "latency_mean_s": 0.19961997978389262,
+        "latency_p90_s": 0.3883050624281168,
+        "invalid": 0,
+        "input_tokens_mean": 1066.2,
+        "output_tokens_mean": 0,
+        "expert_match": null,
+        "teacher_top1_match": 0.5
+      },
+      "chat_1token": {
+        "latency_median_s": 0.058704232797026634,
+        "latency_mean_s": 0.11124478634446859,
+        "latency_p90_s": 0.24712414108216763,
+        "invalid": 0,
+        "input_tokens_mean": 1066.2,
+        "output_tokens_mean": 1,
+        "expert_match": null,
+        "teacher_top1_match": 0.5
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.11984401382505894,
+        "latency_mean_s": 0.16702378112822772,
+        "latency_p90_s": 0.2798926495015621,
+        "invalid": 0,
+        "input_tokens_mean": 1066.2,
+        "output_tokens_mean": 2,
+        "expert_match": null,
+        "teacher_top1_match": 0.5
+      }
+    },
+    "ood/shooting": {
+      "n": 30,
+      "systemone": {
+        "latency_median_s": 0.08529837522655725,
+        "latency_mean_s": 0.11253510396927595,
+        "latency_p90_s": 0.16759084910154343,
+        "invalid": 0,
+        "input_tokens_mean": 435,
+        "output_tokens_mean": 0,
+        "expert_match": 0.26666666666666666,
+        "teacher_top1_match": null
+      },
+      "chat_1token": {
+        "latency_median_s": 0.05638038273900747,
+        "latency_mean_s": 0.09490886175384124,
+        "latency_p90_s": 0.16553050465881824,
+        "invalid": 0,
+        "input_tokens_mean": 435,
+        "output_tokens_mean": 1,
+        "expert_match": 0.26666666666666666,
+        "teacher_top1_match": null
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.11940953694283962,
+        "latency_mean_s": 0.13847497620930274,
+        "latency_p90_s": 0.17217983677983284,
+        "invalid": 0,
+        "input_tokens_mean": 435,
+        "output_tokens_mean": 2,
+        "expert_match": 0.26666666666666666,
+        "teacher_top1_match": null
+      }
+    },
+    "ood/snake": {
+      "n": 8,
+      "systemone": {
+        "latency_median_s": 0.08486035838723183,
+        "latency_mean_s": 0.11073670629411936,
+        "latency_p90_s": 0.1885463036596775,
+        "invalid": 0,
+        "input_tokens_mean": 586,
+        "output_tokens_mean": 0,
+        "expert_match": null,
+        "teacher_top1_match": 1.0
+      },
+      "chat_1token": {
+        "latency_median_s": 0.05829923506826162,
+        "latency_mean_s": 0.10377418249845505,
+        "latency_p90_s": 0.19017254933714867,
+        "invalid": 0,
+        "input_tokens_mean": 586,
+        "output_tokens_mean": 1,
+        "expert_match": null,
+        "teacher_top1_match": 1.0
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.1205412931740284,
+        "latency_mean_s": 0.14833507034927607,
+        "latency_p90_s": 0.19613221287727356,
+        "invalid": 0,
+        "input_tokens_mean": 586,
+        "output_tokens_mean": 2,
+        "expert_match": null,
+        "teacher_top1_match": 1.0
+      }
+    },
+    "test/maze": {
+      "n": 10,
+      "systemone": {
+        "latency_median_s": 0.08641860540956259,
+        "latency_mean_s": 0.13411097507923841,
+        "latency_p90_s": 0.2220616675913334,
+        "invalid": 0,
+        "input_tokens_mean": 887.7,
+        "output_tokens_mean": 0,
+        "expert_match": null,
+        "teacher_top1_match": 0.1
+      },
+      "chat_1token": {
+        "latency_median_s": 0.05736683961004019,
+        "latency_mean_s": 0.13023128863424063,
+        "latency_p90_s": 0.24294330179691315,
+        "invalid": 0,
+        "input_tokens_mean": 887.7,
+        "output_tokens_mean": 1,
+        "expert_match": null,
+        "teacher_top1_match": 0.1
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.12044547591358423,
+        "latency_mean_s": 0.1652957271784544,
+        "latency_p90_s": 0.2515039723366499,
+        "invalid": 0,
+        "input_tokens_mean": 887.7,
+        "output_tokens_mean": 2,
+        "expert_match": null,
+        "teacher_top1_match": 0.1
+      }
+    },
+    "test/shooting": {
+      "n": 30,
+      "systemone": {
+        "latency_median_s": 0.08601053711026907,
+        "latency_mean_s": 0.11026964249710242,
+        "latency_p90_s": 0.18591670505702496,
+        "invalid": 0,
+        "input_tokens_mean": 460.5,
+        "output_tokens_mean": 0,
+        "expert_match": 0.13333333333333333,
+        "teacher_top1_match": null
+      },
+      "chat_1token": {
+        "latency_median_s": 0.05639835353940725,
+        "latency_mean_s": 0.09250047653913498,
+        "latency_p90_s": 0.1874451357871294,
+        "invalid": 0,
+        "input_tokens_mean": 460.5,
+        "output_tokens_mean": 1,
+        "expert_match": 0.13333333333333333,
+        "teacher_top1_match": null
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.12038665916770697,
+        "latency_mean_s": 0.14489701526860396,
+        "latency_p90_s": 0.19599084369838238,
+        "invalid": 0,
+        "input_tokens_mean": 460.5,
+        "output_tokens_mean": 2,
+        "expert_match": 0.13333333333333333,
+        "teacher_top1_match": null
+      }
+    },
+    "test/snake": {
+      "n": 8,
+      "systemone": {
+        "latency_median_s": 0.08485827408730984,
+        "latency_mean_s": 0.10469455202110112,
+        "latency_p90_s": 0.16342721693217754,
+        "invalid": 0,
+        "input_tokens_mean": 461.5,
+        "output_tokens_mean": 0,
+        "expert_match": null,
+        "teacher_top1_match": 0.625
+      },
+      "chat_1token": {
+        "latency_median_s": 0.05751736555248499,
+        "latency_mean_s": 0.09562306059524417,
+        "latency_p90_s": 0.1648028939962387,
+        "invalid": 0,
+        "input_tokens_mean": 461.5,
+        "output_tokens_mean": 1,
+        "expert_match": null,
+        "teacher_top1_match": 0.625
+      },
+      "chat_32tokens": {
+        "latency_median_s": 0.11939654126763344,
+        "latency_mean_s": 0.14020223752595484,
+        "latency_p90_s": 0.19577157497406006,
+        "invalid": 0,
+        "input_tokens_mean": 461.5,
+        "output_tokens_mean": 2,
+        "expert_match": null,
+        "teacher_top1_match": 0.625
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "method": "SHA256(id) order, first 30 distinct episodes per task and split; same raw state and question objects; NanoJev temperature 1, BF16 autocast, float32 weights; SGLang System One API",
+  "populations": {
+    "test": {
+      "maze": 211,
+      "snake": 116,
+      "shooting": 2169
+    },
+    "ood": {
+      "maze": 202,
+      "snake": 143,
+      "shooting": 1597
+    }
+  },
+  "sample_size": 96,
+  "nano_load_s": 11.38983029127121,
+  "versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.12.1"
+  },
+  "overall": {
+    "n": 96,
+    "nano_latency_s_median": 0.0353987542912364,
+    "nano_latency_s_mean": 0.04253504923932875,
+    "sglang_latency_s_median": 0.15821699146181345,
+    "sglang_latency_s_mean": 0.17961175580664226,
+    "model_top1_agreement": 0.3541666666666667,
+    "nano_expert_argmax_match": 0.7833333333333333,
+    "nano_jev_teacher_top1_match": 0.75,
+    "nano_jev_teacher_cross_entropy": 0.745327249862312,
+    "sglang_expert_argmax_match": 0.2,
+    "sglang_jev_teacher_top1_match": 0.5277777777777778,
+    "sglang_jev_teacher_cross_entropy": 1.0263719288384534
+  },
+  "by_split_task": {
+    "ood/maze": {
+      "n": 10,
+      "nano_latency_s_median": 0.044438157230615616,
+      "nano_latency_s_mean": 0.05040327366441488,
+      "sglang_latency_s_median": 0.2456554714590311,
+      "sglang_latency_s_mean": 0.29562240205705165,
+      "model_top1_agreement": 0.5,
+      "nano_expert_argmax_match": null,
+      "nano_jev_teacher_top1_match": 0.6,
+      "nano_jev_teacher_cross_entropy": 0.8938364842692795,
+      "sglang_expert_argmax_match": null,
+      "sglang_jev_teacher_top1_match": 0.5,
+      "sglang_jev_teacher_cross_entropy": 1.0977712348086783
+    },
+    "ood/shooting": {
+      "n": 30,
+      "nano_latency_s_median": 0.03430811781436205,
+      "nano_latency_s_mean": 0.036958087359865506,
+      "sglang_latency_s_median": 0.13580560497939587,
+      "sglang_latency_s_mean": 0.13890587879965702,
+      "model_top1_agreement": 0.3,
+      "nano_expert_argmax_match": 0.8333333333333334,
+      "nano_jev_teacher_top1_match": null,
+      "nano_jev_teacher_cross_entropy": null,
+      "sglang_expert_argmax_match": 0.26666666666666666,
+      "sglang_jev_teacher_top1_match": null,
+      "sglang_jev_teacher_cross_entropy": null
+    },
+    "ood/snake": {
+      "n": 8,
+      "nano_latency_s_median": 0.035661643370985985,
+      "nano_latency_s_mean": 0.03649757127277553,
+      "sglang_latency_s_median": 0.16158490907400846,
+      "sglang_latency_s_mean": 0.158713091397658,
+      "model_top1_agreement": 0.875,
+      "nano_expert_argmax_match": null,
+      "nano_jev_teacher_top1_match": 0.875,
+      "nano_jev_teacher_cross_entropy": 0.5687033119367465,
+      "sglang_expert_argmax_match": null,
+      "sglang_jev_teacher_top1_match": 1,
+      "sglang_jev_teacher_cross_entropy": 0.7245078420904896
+    },
+    "test/maze": {
+      "n": 10,
+      "nano_latency_s_median": 0.04438008461147547,
+      "nano_latency_s_mean": 0.07428474724292755,
+      "sglang_latency_s_median": 0.23058799095451832,
+      "sglang_latency_s_mean": 0.28617366068065164,
+      "model_top1_agreement": 0.4,
+      "nano_expert_argmax_match": null,
+      "nano_jev_teacher_top1_match": 0.7,
+      "nano_jev_teacher_cross_entropy": 0.821906928168514,
+      "sglang_expert_argmax_match": null,
+      "sglang_jev_teacher_top1_match": 0.1,
+      "sglang_jev_teacher_cross_entropy": 1.2302959840503496
+    },
+    "test/shooting": {
+      "n": 30,
+      "nano_latency_s_median": 0.03489010874181986,
+      "nano_latency_s_mean": 0.03893841672688723,
+      "sglang_latency_s_median": 0.13568487484008074,
+      "sglang_latency_s_mean": 0.16282696947455405,
+      "model_top1_agreement": 0.1,
+      "nano_expert_argmax_match": 0.7333333333333333,
+      "nano_jev_teacher_top1_match": null,
+      "nano_jev_teacher_cross_entropy": null,
+      "sglang_expert_argmax_match": 0.13333333333333333,
+      "sglang_jev_teacher_top1_match": null,
+      "sglang_jev_teacher_cross_entropy": null
+    },
+    "test/snake": {
+      "n": 8,
+      "nano_latency_s_median": 0.03334829956293106,
+      "nano_latency_s_mean": 0.0334511031396687,
+      "sglang_latency_s_median": 0.1373835038393736,
+      "sglang_latency_s_mean": 0.13788471883162856,
+      "model_top1_agreement": 0.75,
+      "nano_expert_argmax_match": null,
+      "nano_jev_teacher_top1_match": 0.875,
+      "nano_jev_teacher_cross_entropy": 0.6405900468964155,
+      "sglang_expert_argmax_match": null,
+      "sglang_jev_teacher_top1_match": 0.625,
+      "sglang_jev_teacher_cross_entropy": 0.9840818141087657
+    }
+  }
+}

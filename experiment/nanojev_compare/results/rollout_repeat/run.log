@@ -1,0 +1,17 @@
+EPISODE ood-maze16-7840001 systemone success False steps 154
+EPISODE ood-maze16-7840001 chat_1token success False steps 154
+EPISODE ood-maze8-408001 chat_1token success False steps 154
+EPISODE ood-maze8-408001 systemone success False steps 154
+EPISODE ood-snake12-7842000 systemone success True steps 17
+EPISODE ood-snake12-7842000 chat_1token success True steps 17
+EPISODE ood-snake8-418005 chat_1token success True steps 13
+EPISODE ood-snake8-418005 systemone success True steps 13
+EPISODE test-maze16-7830001 systemone success True steps 143
+EPISODE test-maze16-7830001 chat_1token success True steps 143
+EPISODE test-maze8-308040 chat_1token success True steps 23
+EPISODE test-maze8-308040 systemone success True steps 23
+EPISODE test-snake12-7832000 systemone success True steps 24
+EPISODE test-snake12-7832000 chat_1token success True steps 24
+EPISODE test-snake8-318000 chat_1token success True steps 9
+EPISODE test-snake8-318000 systemone success True steps 9
+COMPLETE {"systemone": {"episodes": 8, "successes": 6, "complete": 8, "physical_steps": 555, "model_calls": 460, "model_latency_s": 107.7135917712003}, "chat_1token": {"episodes": 8, "successes": 6, "complete": 8, "physical_steps": 555, "model_calls": 460, "model_latency_s": 120.98687391541898}}
