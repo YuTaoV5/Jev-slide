@@ -29,6 +29,7 @@ related_work/   论文、LaTeX 源码和文献索引
 
 - [65 页网页 slide](related_work/Jev报告slide/slides/deck.html)（下载仓库后打开 HTML）
 - [报告说明与讲稿](related_work/Jev报告slide/README.md)
+- [Markdown 博客：Jev 原理与开源替代实验](related_work/Jev报告slide/博客-Jev原理与开源替代实验.md)
 - [NanoJev 与 SGLang 实验报告、逐题数据](experiment/nanojev_compare/README.md)
 - [System One 与 Chat 对照协议及结果](experiment/nanojev_compare/SYSTEMONE_VS_CHAT_PROTOCOL.md)
 
